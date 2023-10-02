@@ -1,0 +1,134 @@
+<%- include('header') %>
+    <div class="col-md-8 d-flex justify-content-end" style="padding-top: 20px;">
+        <a href="/orders">See Orders</a>
+        </a>
+    </div>
+
+    <div class="center-container">
+        <div class="col-md-8 inside-container">
+            <% if (orderDetails.length> 0) { %>
+                <div class="product-details">
+                    <div class="col" style="border-bottom: 2px solid gray; padding: 10px;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 style="font-weight: 600; font-size: 1.5rem;">Order info:</h5>
+                                <h6>Order Id: <%= orderId %>
+                                </h6>
+                                <h6>Ordered Date: <%= orderDetails[0].orderDate.toDateString() %>
+                                </h6>
+                                <h6>Order Status:
+                                    <% if(orderDetails[0].orderStatus=='cancel_req' ){ %>
+                                        <p>Requested for cancellation</p>
+                                        <% }else{ %>
+                                            <%= orderDetails[0].orderStatus %>
+                                                <% } %>
+                                </h6>
+
+
+                            
+                                        <% if (orderDetails[0].orderStatus =='Pending'  ) { %>
+                                            <div class="col">
+                                                <button type="submit" class="btn cancel-order">Cancel Order</button>
+                                            </div>
+                                            <% }else if(orderDetails[0].orderStatus == 'delivered'){%>
+                                                <div class="col">
+                                                    <button type="submit" class="btn return-order"> Return order</button>
+                                                </div>
+                                                <% } %>
+
+                                      
+                                        
+                            </div>
+
+                            <div class="col-md-6" >
+                                <h5 style="font-weight: 600; font-size: 1.5rem;">Shipping info:</h5>
+                                <h6>Name: <%= orderDetails[0].address.FullName %></h6>
+                                <h6>Contact: <%= orderDetails[0].address.ContactNo %></h6>
+                                <p>Address:
+                                    <%= orderDetails[0].address.BuildingName %>,
+                                    <%= orderDetails[0].address.PostOffice %>,
+                                        <%= orderDetails[0].address.place %>,
+                                            <%= orderDetails[0].address.City %>,
+                                                <%= orderDetails[0].address.State %>,
+                                                    <%= orderDetails[0].address.PIN %>,
+                                </p>    
+                                       
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col">
+
+                        <div class="table">
+                            <table>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price (Per Unit)</th>
+                                </tr>
+                                <% orderDetails[0].products.forEach(product=> { %>
+                                    <tr>
+                                        <td style="vertical-align: middle;"><img src="/uploads/<%= product.productId.images[0] %>"
+                                                alt="<%= product.productId.productName %>"
+                                                style="width: 80px; height: 80px; border: 1px solid rgb(223, 219, 219); border-radius: 5px;">
+                                        </td>
+                                        <td style="vertical-align: middle;">
+                                            <%= product.productId.productName %>
+                                        </td>
+                                        <td style="vertical-align: middle;">
+                                            <%= product.quantity %>
+                                        </td>
+                                        <td style="vertical-align: middle;">₹ <%= product.productId.price %>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                            </table>
+                            <div class="col d-flex justify-content-end" style="border-top: 2px solid gray;;">
+                                <h5>Grand Total: ₹ <%= orderDetails[0].totalprice %>
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% } else { %>
+                    <p>Product not found</p>
+                    <% } %>
+        </div>
+
+    </div>
+
+    <script>
+        async function cancelOrder(orderId) {
+            try {
+                console.log('button clicked');
+                const response = await fetch(`/orders/cancel/${orderId}`, {
+                    method: 'POST',
+                });
+
+                if (response.ok) {
+                    // Order status has been updated
+                    alert('Order cancellation request sent.');
+                    window.location.reload(); // Refresh the page or update the UI as needed
+                } else {
+                    const errorMessage = await response.json();
+                    alert(`Error cancelling order: ${errorMessage.message}`);
+                }
+            } catch (error) {
+                console.error('Error cancelling order:', error);
+                alert('An error occurred while cancelling the order.');
+            }
+        }
+
+
+
+
+        document.querySelector('.cancel-order').addEventListener('click', () => {
+            const orderId = '<%= orderId %>';
+            cancelOrder(orderId);
+        });
+    </script>
+
+    <%- include('footer') %>

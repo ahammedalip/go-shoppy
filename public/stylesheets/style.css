@@ -1,0 +1,459 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo+2&display=swap');
+
+* {
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  list-style: none;
+  box-sizing: border-box;
+}
+
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.navbarBG {
+  background: #003F62;
+  width: 100%;
+}
+
+.navbar-brand {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 40px;
+  color: white !important;
+  text-decoration: none;
+
+}
+
+.navbar-nav {
+  padding-left: 200px;
+  gap: 20px;
+}
+
+
+
+.navbar-nav a {
+  font-weight: 400;
+  font-size: 1.2em;
+  color: white;
+}
+
+
+.navbar-nav a:hover {
+  color: #FBBC05;
+  transition: 0.5s;
+}
+
+
+.carousel {
+  height: 400px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  /* width: 80%; */
+
+}
+
+/* If you want to center the carousel vertically within its container */
+.carousel-inner {
+  display: flex;
+  /* justify-content: center; */
+  /* align-items: center; */
+  height: 100%;
+}
+
+/* If you want to maintain the aspect ratio of the images */
+.carousel-item img {
+  object-fit: cover;
+  height: 100%;
+}
+
+/* categories tiles */
+.responsive-div {
+  width: 100%;
+  /* By default, the div spans 100% of its container */
+  background-color: #f5f5f5;
+  /* Light background color */
+  padding: 20px 100px 20px 100px;
+  /* background-image: url(/public/images/2202_w039_n003_110b_p1_110.jpg); */
+  box-sizing: border-box;
+  /* Include padding and border in the div's total width */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  /* Add this line for box shadow */
+}
+
+
+.category-card {
+  background-color: #ffd75f;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  /* Add this line for box shadow */
+  /* other styles... */
+}
+
+
+/* partials */
+
+.category-list-partials {
+
+  /* background-color: #ffffff; */
+
+  border-right: 3px solid #cbcbcb;
+
+}
+
+.category-list-partials ul li a {
+  color: #000000;
+  text-decoration: none;
+  font-size: 1.2em;
+}
+
+.category-list-partials ul li a:hover {
+  transition: 0.s;
+  color: #FBBC05;
+}
+
+
+
+/* product list page */
+
+
+.product-title {
+  font-weight: bolder;
+  color: #000000;
+  border-bottom: 1px solid #aaaaaa;
+  /* border-radius: 2px; */
+}
+
+/* .scrollable-content {
+  max-height: 800px; 
+  overflow-y: auto; 
+
+} */
+
+
+.card-unique {
+  text-align: center;
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto;
+  box-shadow: 1px 1px 5px rgba(133, 133, 133, 0.5);
+  display: flex;
+  /* Use flexbox */
+  flex-direction: column;
+  /* Stack child elements vertically */
+}
+
+.card-inner {
+  flex: 1;
+  /* Allow the inner div to grow and take up all available space vertically */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Push child elements apart, distributing the available space evenly */
+}
+
+.card-img-top {
+  height: 150px;
+  width: auto;
+}
+
+.card-title {
+  color: #000000;
+  white-space: nowrap;
+  /* Prevent text from wrapping */
+  overflow: hidden;
+  /* Hide any overflowing text */
+  text-overflow: ellipsis;
+  flex: 0;
+  /* Prevent title from growing, keep it to its content height */
+}
+
+.card-text-prod {
+  color: #000000;
+  flex: 0;
+  /* Prevent text from growing, keep it to its content height */
+}
+
+
+/* individual page*/
+.product-images-individual {
+  width: 30px;
+}
+
+.imageclass {
+  background-color: white;
+  width: 260px;
+  height: 250px;
+  object-fit: contain;
+  /* Adjust this property */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ffffff;
+  box-shadow: 1px 1px 5px rgba(132, 132, 132, 0.5);
+  padding: 5px;
+}
+
+
+/* cart  */
+
+.tablecart {
+  /* padding: 50px; */
+  /* border: 1px solid rgb(194, 194, 194);
+  border-radius: 1em; */
+}
+
+.cart-empty {
+  width: 300px;
+  margin: 0 auto; /* Horizontally center the image */
+  /* display: flex;
+  justify-content: center; 
+  align-items: center;  */
+}
+
+
+.product-info {
+  max-width: 180px;
+  /* Adjust the value to your preferred maximum width */
+  overflow: hidden;
+  white-space: nowrap;
+  /* Prevent text from wrapping to the next line */
+  text-overflow: ellipsis;
+  /* Display an ellipsis (...) for overflowed text */
+}
+
+.remove-item {
+  color: rgb(255, 255, 255);
+  font-size: 1rem;
+  border-radius: 5px;
+  background-color: #003F62;
+  box-shadow: 1px 1px 5px rgba(133, 133, 133, 0.5);
+
+}
+
+.remove-item:hover {
+  background-color: white;
+  border: 1px solid black;
+}
+
+.placeOrderDiv{
+  background-color: #003F62;
+  border-radius: 5px;
+  color: white;
+
+}
+.placeOrderDiv:hover{
+  background-color: #FBBC05;
+  color: #000000;
+  transition: 0.5s;
+}
+
+/* Wishlist */
+
+.addToCart {
+  border-radius: 5px;
+  background-color: #FBBC05;
+  box-shadow: 1px 1px 5px rgba(133, 133, 133, 0.5);
+
+}
+
+.addToCart:hover {
+  background-color: #000000;
+  color: white;
+}
+
+
+/* profile partials */
+.profile-partials {
+  border-right: 3px solid #cbcbcb
+}
+
+.list-group-item-action {
+  font-size: 1.2rem;
+  font-family: 'Exo 2', sans-serif;
+}
+
+.list-group-item-action:hover {
+  background-color: #FBBC05;
+  transition: .5s;
+}
+
+/* profile */
+
+.textfromdb {
+  font-size: 1.2rem;
+  font-family: 'Exo 2', sans-serif;
+}
+
+.editprofileLink {
+  text-align: center;
+  /* position: absolute; */
+  font-size: 1.2rem;
+  text-decoration: none !important;
+  color: #ffffff;
+  background-color: #003F62;
+  width: fit-content;
+  border-radius: 4px;
+  box-shadow: 1px 1px 5px rgba(133, 133, 133, 0.5);
+}
+
+.editprofileLink:hover {
+  color: #FBBC05;
+}
+
+.addressMainDiv{
+  /* border:  1px solid grey; */
+  border-radius: 5px;
+  /* background-color: rgb(255, 255, 255); */
+  box-shadow: 1px 1px 5px rgba(133, 133, 133, 0.5);
+
+}
+
+.nowyouseeme{
+  border-bottom: 1px solid black;
+}
+
+.add-address-button{
+  padding: 15px;
+}
+
+.address-div{
+  border: 1px solid rgb(190, 190, 190);
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.addressEditDelete{
+  border: 1px solid grey;
+  border-radius: 30px;
+  width: 80px;
+  background-color: white;
+
+}
+
+.addressEditDelete:hover{
+  background-color: #000000;
+  transition: .5s;
+  color: white;
+}
+
+/* .error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 5px; 
+  display: none; 
+} */
+
+/* order details page */
+
+.center-container {
+  display: flex;
+  justify-content: center; /* Horizontal centering */
+  align-items: center; /* Vertical centering */
+  padding: 30px;
+}
+
+.order-details{
+  border: 1px solid grey;
+  border-radius: 10px;
+  box-shadow: 0px 4px 4px rgb(212, 212, 212);
+
+}
+
+
+
+/* final place order */
+
+.placeOrder{
+  background-color: #003F62;
+  color: white;
+}
+
+.placeOrder:hover{
+  border-radius: 5px;
+  background-color: #FBBC05;
+  color: #000000;
+}
+
+/* ordered products page */
+
+.inside-container{
+  border: 1px solid rgb(190, 190, 190);
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cancel-order{
+  border: 1px solid grey;
+  border-radius: 30px;
+  border: 0px;
+  background-color: #FBBC05;
+}
+
+.return-order{
+  border: 1px solid grey;
+  border-radius: 30px;
+  border: 0px;
+  background-color: #FBBC05;
+}
+
+.cancel-order:hover{
+  background-color: #000000;
+  transition: .5s;
+  color: white;
+}
+
+
+/* below is footer */
+
+
+footer {
+  background-color: #E2F4FF;
+  color: #0862a7;
+  padding: 20px;
+}
+
+.footer-logo {
+  font-size: 25px;
+  font-family: 'Exo 2', sans-serif;
+  color: rgb(0, 0, 0);
+  text-decoration: none;
+  list-style: none;
+}
+
+.footer-columns {
+  display: flex;
+  justify-content: space-between;
+}
+
+.footer-column {
+  flex: 1;
+}
+
+.footer-column h3 {
+  font-size: 18px;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column li {
+  margin-bottom: 10px;
+}
+
+.footer-column-1 a {
+  text-decoration: none;
+  color: #0862a7;
+}
+
+/* Media query for responsive layout */
+@media (max-width: 768px) {
+  .footer-columns {
+    flex-direction: column;
+  }
+
+  .footer-column {
+    margin-bottom: 20px;
+  }
+}

@@ -1,0 +1,80 @@
+<%- include('header') %>
+
+    <div class="wishlist-container">
+        <% if (wishlist.length===0) { %>
+            <p style="text-align: center; font-size: 1.3rem;">Your wishlist is empty</p>
+            <% } else { %>
+  
+                <h3 style="padding-top: 30px; text-align: center; font-family: 'Exo 2', sans-serif;">Your Wishlist</h3>
+                <div class="tableWishlist col-md-10"
+                    style="padding: 0 20px 0 20px; border: 1px solid rgb(221, 211, 211); border-radius: 10px; margin: auto;">
+                    <table class="table">
+
+                        <tbody>
+                            <% wishlist.forEach(item=> { %>
+                                <tr>
+                                    <td style="vertical-align: middle;"><img src="/uploads/<%= item.productId.images[0] %>"
+                                            alt="<%= item.productId.productName %>" width="70"></td>
+                                    <td class="" style="font-size: 1.2rem; vertical-align: middle;">
+                                            <%= item.productId.productName %>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <%= item.productId.brand %>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <%= item.productId.colour %>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <div>
+                                            <form action="/cart" method="POST">
+                                                <input type="hidden" name="productId" value="<%= item.productId._id %>">
+                                                <button type="submit" class="btn addToCart">Add to Cart</button>
+                                            </form>
+                                        </div>
+                                        <div style="padding-top: 5px;">
+                                        <button class="btn btn-sm wishlistRemove remove-item" style="border-radius: 5px;" data-product="<%= item._id %>">Remove</button>
+                                       
+                                        </div>
+                                       
+
+                                    </td>
+                                </tr>
+                                <% }); %>
+                        </tbody>
+                    </table>
+
+                    <% } %>
+                </div>
+
+                <script>
+                    const deleteFromWish = document.querySelectorAll('.wishlistRemove')
+
+                    deleteFromWish.forEach(button =>{
+                        button.addEventListener('click', () =>{
+                            const productId = button.getAttribute('data-product')
+
+                            console.log('consoling from script', productId )
+
+                            fetch('/wishlist/remove/'+productId ,{
+                                method: 'DELETE',
+                                headers: {
+                                    'content-Type' : 'application/json'
+                                }
+                            })
+                            .then(response => {
+                                if(response.ok){
+
+                                    return response.json();
+
+                                }
+                            })
+                            .then(data => {
+                                console.log('consoling from data', data)
+                                location.reload();
+                            })
+                        })
+                    })
+                </script>
+    </div>
+
+    <%- include('footer') %>

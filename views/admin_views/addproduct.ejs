@@ -1,0 +1,58 @@
+<%- include('partials') %>
+
+    <div class="" style=" margin-left: 240px; width:auto; padding-top: 30px; padding-left: 20px;">
+      
+        <div class="container"  style="max-width: 800px;">
+            <h1>Add Product</h1>
+            <form action="/admin/product/addproduct" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="productName">Product Name</label>
+                    <input type="text" class="form-control" id="productName" name="productName" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select class="form-control" id="category" name="category" required>
+                        <option value="" disabled selected>Select a category</option>
+                        <% categoryList.forEach(category=> { %>
+                            <option value="<%= category._id %>">
+                                <%= category.categoryName %>
+                            </option>
+                            <% }); %>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="price">Purchase Rate</label>
+                    <input type="number" class="form-control" id="purchaseRate" name="purchaseRate" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Price</label>
+                    <input type="number" class="form-control" id="price" name="price" required>
+                </div>
+                <div class="form-group">
+                    <label for="brand">Quantity</label>
+                    <input type="number" class="form-control" id="quantity" name="quantity" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Additional Details</label>
+                    <input type="text" class="form-control" id="additionalinfo" name="additionalInfo" required>
+                </div>
+                <div class="form-group">
+                    <label for="brand">Brand</label>
+                    <input type="text" class="form-control" id="brand" name="brand" required>
+                </div>
+                <div class="form-group">
+                    <label for="colour">Colour</label>
+                    <input type="text" class="form-control" id="colour" name="colour" required>
+                </div>
+                <!-- Image upload -->
+                <div class="form-group">
+                    <label for="images">Images</label>
+                    <input type="file" class="form-control" id="images" name="images" multiple>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-primary">Add Product</button>
+            </form>
+        </div>
+    </div>
+
+    <%- include ('footer') %>

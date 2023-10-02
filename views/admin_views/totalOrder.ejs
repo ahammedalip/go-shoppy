@@ -1,0 +1,105 @@
+<%- include('partials') %>
+
+
+
+<div class="" style="margin-left: 240px; width:auto; padding-top: 30px; padding-left: 20px;">
+    
+   <%  if(orderList.length ===0){ %>
+
+
+<h3>Order list is empty</h3>
+
+<% } else { %>
+    <h3>Orders</h3>
+    <div class="table-responsive">
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Order Id</th>
+                    <th>Order Date</th>
+                    <th>User Name</th>
+                   
+                    <th>Product</th>
+                    <th>Total Amount</th>
+                    <th>Order Status</th>
+                    <th>Payment Method</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% 
+             
+                orderList.sort((a, b) => b.orderDate - a.orderDate);
+
+                orderList.forEach(order => { %>
+                    <tr>
+                        <td>...<%= order._id.toString().slice(-7) %></td>
+                        <td><%= order.orderDate.toDateString() %></td>
+                        <td><%= order.userId.firstName %></td>
+                       
+                       
+     <td>
+        <% order.products.forEach(product => { %>
+            <span class="product-info"><%= product.productId.productName %> </span>
+            (Qua: <%= product.quantity %>)<br>
+        <% }); %>
+    </td>
+
+                        <td><%= order.totalprice %></td>
+                        <td>
+                            <select class="form-select order-status-select" aria-label="Order Status" data-order-id = "<%= order._id %>">
+                                console.log('hjfkjshd', <%= order._id %>) 
+                              <option value="shipped" <%= order.orderStatus === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                              <option value="cancel_req" <%= order.orderStatus === 'cancel_req' ? 'selected' : '' %>>Requested for cancel</option>
+                              <option value="pending" <%= order.orderStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+                              <option value="cancelled" <%= order.orderStatus === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                              <option value="delivered" <%= order.orderStatus === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                            </select>
+                          </td>
+                          
+                        <td><%= order.paymentMethod %></td> 
+                    </tr>
+                <% }); %>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+    
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const statusSelects = document.querySelectorAll('.order-status-select');
+  
+      statusSelects.forEach(select => {
+        select.addEventListener('change', function () {
+          const newStatus = this.value;
+          const orderId = this.getAttribute('data-order-id');
+  
+          // Send an AJAX request to update the order status using Fetch
+          fetch(`/admin/orders/update-status/` +orderId, {
+            method: 'POST', // You may need to use 'PUT' or 'PATCH' depending on your backend route
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: newStatus }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            // Update the displayed order status without refreshing the page
+            this.closest('tr').querySelector('td:nth-child(5)').textContent = newStatus;
+            alert('Order status updated successfully.');
+          })
+          .catch(error => {
+            console.error('Error updating order status:', error);
+            alert('Error updating order status: ' + error.message);
+          });
+        });
+      });
+    });
+  </script>
+    
+
+
+<%- include('footer') %>
+

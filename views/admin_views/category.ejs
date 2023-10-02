@@ -1,0 +1,124 @@
+<%- include('partials') %>
+
+    <div class="" style=" margin-left: 240px; width:auto; padding-top: 30px; padding-left: 20px;">
+
+        <style>
+            .btn-primary {
+                background-color: #003F62;
+                color: #fff;
+                transition: background-color 0.3s;
+                box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+            }
+
+            .btn-info {
+                box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+
+            }
+
+            .btn-primary:hover {
+                background-color: #F39C12;
+                /* Change the background color on hover */
+                box-shadow: 5px 3px 10px rgba(0, 0, 0, 0.2)
+            }
+        </style>
+        <!-- Button trigger modal -->
+        <div class="text-end" style="margin-right: 100px;">
+
+            <h2 style="float:left">Category </h2>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Add Category
+            </button>
+        </div>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Product</h1>
+
+                    </div>
+                    <form action="/admin/category" method="POST">
+                        <div class="modal-body">
+                            <div cl ass="form-group">
+                                <input type="text" class="form-control" placeholder="Add Category" id="category"
+                                    name="category" required>
+                            </div>
+                           
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                            <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <br>
+    <% if (errorMessage) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= errorMessage %>
+        </div>
+    <% } %>
+    <div class="table-responsive" style="padding-right: 10px;">
+        <table class="table table-hover">
+            <thead style="text-align: center; background-color: #003F62; color: #fff;">
+                <tr>
+                    <th>Category Name</th>
+                    <th>Edit</th>
+                    <th>Status</th>
+                    <th>List/Unlist</th>
+                </tr>
+            </thead>
+            <tbody style="text-align: center;">
+                <% categoryList.forEach(category=> { %>
+                    <tr>
+                        <td>
+                            <%= category.categoryName %>
+                        </td>
+                        <td>
+                            <form action="/admin/editcategory/<%= category._id %>" method="get">
+                                <button type="submit" class="btn btn-primary">Edit</button>
+                            </form>
+                        </td>
+                        <td>
+                            <% if (category.isUnlisted) { %>
+                                Unlisted
+                                <% } else { %>
+                                    Listed
+                                    <% } %>
+                        </td>
+                        <td>
+                            <form action="/admin/toggle-list/<%= category._id %>" method="post">
+                                <button type="submit" class="btn btn-info">
+                                    <% if (category.isUnlisted) { %>
+                                        List
+                                        <% } else { %>
+                                            Unlist
+                                            <% } %>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <%- include ('footer') %>

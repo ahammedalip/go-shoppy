@@ -1,0 +1,119 @@
+<%- include('partials') %>
+
+    <div class="" style=" margin-left: 240px; width:auto; padding-top: 30px; padding-left: 20px;">
+
+        <style>
+            .custom-button {
+                background-color: #003F62;
+                color: #fff;
+                transition: background-color 0.3s;
+                box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+            }
+
+            .custom-button:hover {
+                background-color: #F39C12;
+                /* Change the background color on hover */
+                box-shadow: 5px 3px 10px rgba(0, 0, 0, 0.2)
+            }
+
+            .btn-info {
+                box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+            }
+
+            .btn-primary {
+                box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+            }
+        </style>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end" style="margin-right: 100px;">
+            <a href="/admin/product/addproduct" class="btn me-md-2 custom-button">Add Product</a>
+        </div>
+
+        <h1>Product List</h1>
+        <table class="table table-hover">
+            <thead style="text-align: center; background-color: #003F62; color: #fff;">
+                <tr>
+                    <th>Images</th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Purchase Rate</th>
+                    <th>Selling Price</th>
+                    <th>Quantity</th>
+                    <th>Brand</th>
+                    <th>Colour</th>
+                    <th>List/Unlist</th>
+                    <th>Edit</th>
+
+                </tr>
+            </thead>
+            <tbody style="text-align: center;">
+                <% productList.forEach(product=> { %>
+                    <tr>
+                        <td>
+                            <img class="enlarge-image" src="<%= product.fullImages[0] %>" alt="Product Image"
+                                style="max-width: 80px; max-height: 70px;">
+                        </td>
+                        <td>
+                            <%= product.productName %>
+                        </td>
+                        <td>
+                            <%= product.category %>
+                        </td>
+                        <td>
+                            <%= product.purchaseRate %>
+                        </td>
+                        <td>
+                            <%= product.price %>
+                        </td>
+                        <td>
+                            <%= product.quantity %>
+                        </td>
+
+                        <td>
+                            <%= product.brand %>
+                        </td>
+                        <td>
+                            <%= product.colour %>
+                        </td>
+                        <td>
+                            <form action="/admin/toggle-product/<%= product._id %>" method="post">
+                                <button type="submit" class="btn btn-info">
+                                    <% if (product.unlisted) { %>
+                                        List
+                                        <% } else { %>
+                                            Unlist
+                                            <% } %>
+                                </button>
+                            </form>
+                        </td>
+                        <td>
+                            <form action="/admin/editproduct/<%= product._id %>">
+                                <button type="submit" class="btn btn-primary">Edit</button>
+                            </form>
+                        </td>
+
+
+                        <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    </div>
+
+    <style>
+        .enlarge-image {
+            transition: transform 0.3s ease;
+            border-radius: 8px;
+        }
+
+        /* Apply the scaling effect on hover */
+        .enlarge-image:hover {
+            transform: scale(2);
+            /* You can adjust the scale factor to your preference */
+            border-radius: 10px;
+        }
+    </style>
+
+
+
+    <%- include('footer') %>

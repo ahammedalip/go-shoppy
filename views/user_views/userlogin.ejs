@@ -1,0 +1,63 @@
+<%- include('header') %>
+
+
+  <div style="background-image: url(/images/2202_w039_n003_110b_p1_110.jpg); background-size: cover;">
+    <br>
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card blur-container" style=" border-radius: 20px; background-color: rgb(146, 151, 156);">
+            <div>
+              <br>
+              <h4 class="text-center">Login to Go Shoppy</h4>
+            </div>
+            <style>
+              .card {
+                margin-top: 100px;
+                border-radius: 20px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+              }
+            </style>
+            <div class="card-body">
+              <form action="/login" method="post"> <!-- Update the action accordingly -->
+
+                <% if (errorMessage) { %>
+                  <div class="alert alert-danger text-center">
+                    <%= errorMessage %>
+                  </div>
+                  <% } %>
+
+
+
+                    <div class="form-group">
+                      <!-- <label for="username">Enter email</label> -->
+                      <input type="text" class="form-control" placeholder="Enter email" id="email" name="email"
+                        required>
+                    </div>
+                    <div class="form-group">
+                      <!-- <label for="password">Password</label> -->
+                      <input type="password" class="form-control" placeholder="Password" id="password" name="password"
+                        required>
+                    </div>
+                    <div class="col-12 d-flex justify-content-center">
+                      <button class="btn btn-primary">Login</button>
+                    </div>
+                    <br>
+                    <p style="text-align: center;">Forgot password? <a href="/resetpassword"
+                        style="color: aliceblue;">Click here</a></p>
+
+                    <p style="text-align: center;">New user? <a href="/signup" style="color: aliceblue;">SignUp here</a>
+                    </p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br><br><br><br><br><br><br>
+  </div>
+
+
+
+
+  <%- include('footer') %>

@@ -1,0 +1,129 @@
+<%- include('partials') %>
+
+    <div class="" style=" margin-left: 240px; width:auto; padding-top: 30px; padding-left: 20px;">
+
+        <!-- Add your styling here -->
+
+        <h1>Edit Product</h1>
+        <form action="/admin/updateproduct/<%= editProduct._id %>" method="post">
+
+            <!-- First row -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="productName" style="color: #e82222;">Product Name</label>
+                        <input type="text" class="form-control" id="productName" name="productName"
+                            value="<%= editProduct.productName %>" required>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="purchaseRate" style="color: #e82222;">Purchase Rate</label>
+                        <input type="number" class="form-control" id="purchaseRate" name="purchaseRate"
+                            value="<%= editProduct.purchaseRate %>" required>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="price" style="color: #e82222;">Price</label>
+                        <input type="number" class="form-control" id="price" name="price"
+                            value="<%= editProduct.price %>" required>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="quantity" style="color: #e82222;">Quantity</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity"
+                            value="<%= editProduct.quantity %>" required>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <!-- Second row -->
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- Color and Brand -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="colour" style="color: #e82222;">Colour</label>
+                                <input type="text" class="form-control" id="colour" name="colour"
+                                    value="<%= editProduct.colour %>" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="brand" style="color: #e82222;">Brand</label>
+                                <input type="text" class="form-control" id="brand" name="brand"
+                                    value="<%= editProduct.brand %>" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="col-md-10">
+                        <label for="image" style="color: #e82222;">Add Image</label>
+                <input type="file" class="form-control" id="image" name="image">
+                    </div> -->
+
+                </div>
+                <div class="col-md-5">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="additionalinfo" style="color: #e82222;">Details</label>
+                            <textarea class="form-control" id="additionalinfo" name="additionalInfo" rows="4"
+                                required><%= editProduct.additionalInfo %></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+
+            <!-- Existing Images -->
+            <div class="form-group col-md-10">
+
+
+                <label for="existingImages" style="color: #e82222;">Existing Images(Max. 4 images):</label>
+                <div class="existing-images" style="display: flex; flex-wrap: nowrap; overflow-x: auto;">
+                    <% editProduct.fullImages.forEach(image=> { %>
+                        <div class="image-container" style="flex: 0 0 auto; margin-right: 10px;">
+                            <img class="enlarge-image" src="<%= image %>" alt="Product Image"
+                                style="max-width: 120px; max-height: 100px;">
+                            <div class="delete-link">
+                            </div>
+                        </div>
+                        <% }); %>
+                </div>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+        </form>
+
+        <!-- Add this script before the closing </body> tag -->
+        <script>
+            async function deleteImage(filename, productId, index) {
+                try {
+                    const response = await fetch(`/admin/deleteimage/${filename}`, {
+                        method: 'DELETE',
+                    });
+
+                    if (response.ok) {
+                        // Remove the image container from the DOM
+                        const imageContainer = document.querySelectorAll('.image-container')[index];
+                        imageContainer.remove();
+                    } else {
+                        console.error('Image deletion failed.');
+                    }
+                } catch (error) {
+                    console.error('An error occurred while deleting the image:', error);
+                }
+            }
+        </script>
+
+
+    </div>
+
+    <!-- Add your styles and scripts here -->
+
+    <%- include('footer') %>

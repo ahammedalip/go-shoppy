@@ -1,0 +1,38 @@
+<%- include('header') %>
+
+<div style="background-image: url(/images/2202_w039_n003_110b_p1_110.jpg); background-size: cover;">
+  <br><br><br>
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card" style="background-color: rgb(175, 172, 169);">
+          <div >
+            <br>
+            <h4 class="text-center">Enter OTP</h4>
+          </div>
+          <% if (errorMessage) { %>
+            <div class="alert alert-danger text-center">
+              <%= errorMessage %>
+            </div>
+          <% } %>
+          <div class="card-body">
+            <form action="/verify_otp" method="POST"> <!-- Update the action accordingly -->
+              <div class="form-group">
+                <!-- <label for="otp">Enter OTP</label> -->
+                <input type="text" class="form-control" placeholder="Enter OTP" id="otp" name="otp" required>
+              </div>
+              <div class="col-12 d-flex justify-content-center">
+                <button class="btn btn-primary">Enter OTP</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+</div>
+
+  <%- include('footer') %>
+ 

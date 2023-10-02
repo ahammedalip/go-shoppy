@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <%- include('header') %>
+
+    <div style="background-image: url(/images/2202_w039_n003_110b_p1_110.jpg); background-size: cover;">
+      <br>
+      <div class="container mt-5">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="card blur-container" style=" border-radius: 20px; background-color: rgb(146, 151, 156);">
+              <div>
+                <br>
+                <h4 class="text-center">Enter OTP</h4>
+              </div>
+              <style>
+                .card {
+                  margin-top: 100px;
+                  border-radius: 20px;
+                  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                }
+              </style>
+              <div class="card-body">
+                <form action="/otpverify" method="post"> <!-- Update the action accordingly -->
+    
+                  <% if (errorMessage) { %>
+                    <div class="alert alert-danger text-center">
+                      <%= errorMessage %>
+                    </div>
+                  <% } %>
+    
+                  <div class="form-group">
+                    <!-- <label for="email">Enter email</label> -->
+                    <input type="text" class="form-control" placeholder="Enter OTP" id="otp" name="otp"
+                      required>
+                  </div>
+                  <div class="col-12 d-flex justify-content-center">
+                    <button class="btn btn-primary">Submit</button>
+                  </div>
+                </form>
+                <br>
+                <p style="text-align: center;">Remember your password? <a href="/" style="color: aliceblue;">Login
+                    here</a></p>
+    
+                <p style="text-align: center;">New user? <a href="/signup" style="color: aliceblue;">Sign Up here</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br><br><br><br><br><br><br>
+    </div>
+    
+    <%- include('footer') %>
+    
+
+</body>
+</html>

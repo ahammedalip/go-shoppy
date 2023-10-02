@@ -1,0 +1,203 @@
+<%- include('header') %>
+
+
+    <div class="container-fluid">
+        <div style="padding: 30px;">
+            <div class="row"
+                style="padding: 30px; border: 1px solid #d1d1d1; border-radius: 10px; box-shadow:  1px 1px 5px rgba(133, 133, 133, 0.5);">
+
+                <div class="col-md-4">
+                    <form action="/cart/placeorder/submit" method="post" id="paymentForm">
+                        <div class="">
+                            <div class="row"
+                                style="border: 1px solid rgb(198, 198, 198); border-radius: 10px; padding: 20px; background-color: white;">
+                                <div class="col">
+                                    <p>Total Price:</p>
+                                </div>
+                                <div class="col">
+                                    <p style="font-weight: bold;">₹ <%= totalPrice %>
+                                    </p>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                        <br>
+                        <div class="w-100"
+                            style=" border: 1px solid rgb(198, 198, 198); border-radius: 10px; padding: 20px; background-color: white;">
+                            <h4>Payment Options</h4>
+
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="paymentOption" id="cashOnDelivery"
+                                    value="cash" onclick="updateSelectedPaymentOption('Cash on Delivery')">
+                                <label class="form-check-label" for="cashOnDelivery">
+                                    Cash on Delivery
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="paymentOption" id="onlinePay"
+                                    value="gpay" onclick="updateSelectedPaymentOption('Online payment')">
+                                <label class="form-check-label" for="onlinePay">
+                                    Online Payment
+                                </label>
+
+                                
+                            </div>
+                            <input type="hidden" name="selectedPaymentOption" id="selectedPaymentOptionInput" value="">
+
+
+                        </div>
+
+                </div>
+
+
+                <div class="col-md-8">
+
+                    <div
+                        style="border: 1px solid rgb(200, 200, 200); border-radius: 10px; padding: 30px; background-color: white;">
+                        <h4>Select Address</h4>
+                        <!-- <form id="addressForm"> -->
+                        <% addresses.forEach((address, index)=> { %>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="selectedAddress"
+                                    id="address<%= index %>" value="<%= address._id %>" onclick="updateSelectedAddress('<%= address._id %>')">
+                                <label class="form-check-label" for="address<%= index %>">
+                                    <%= address.FullName %>, <%= address.ContactNo %>, <%= address.BuildingName %>, <%=
+                                                    address.PostOffice %>, <%= address.place %>, <%= address.City %>,
+                                                            <%= address.State %>, <%= address.PostOffice %>, <%=
+                                                                        address.PIN %>
+                                </label>
+                                <input type="hidden" id="selectedAddressInput" name="selectedAddressInput" value="" >
+
+                            </div>
+                            <% }); %>
+
+
+
+                    </div>
+                </div>
+
+                <div class="col-md-12 d-flex justify-content-center align-items-center" style="padding: 10px;">
+                    <button id="placeOrderButton" type="submit" class="btn placeOrder" style="width: 200px;"
+                        onclick="" onsubmit="return validatePayment()">Place Order</button>
+                </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+  
+
+    <script>
+
+
+        function updateSelectedAddress(selectedAddress) {
+            // Update the hidden input field with the selected address
+            document.getElementById('selectedAddressInput').value = selectedAddress;
+            console.log(document.getElementById('selectedAddressInput').value);
+
+            console.log('id',selectedAddress)
+        }
+
+        function updateSelectedPaymentOption(selectedOption){
+            document.getElementById('selectedPaymentOptionInput').value = selectedOption
+
+            console.log('mode of payment', selectedOption);
+        }
+
+        function validatePayment() {
+            const paymentOptions = document.getElementsByName("paymentOption");
+            let paymentSelected = false;
+
+            for (let i = 0; i < paymentOptions.length; i++) {
+                if (paymentOptions[i].checked) {
+                    paymentSelected = true;
+                    break; // Exit the loop if a payment option is selected
+                }
+            }
+
+            const addressOptions = document.getElementsByName("selectedAddress");
+            let addressSelected = false;
+
+            for (let i = 0; i < addressOptions.length; i++) {
+                if (addressOptions[i].checked) {
+                    addressSelected = true;
+                    break;
+                }
+            }
+
+
+           
+            
+        }
+
+    
+        
+        
+        document.getElementById('placeOrderButton').addEventListener('click', function (event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    const selectedPaymentOption = document.getElementById('selectedPaymentOptionInput').value
+        console.log('selected payment option........',selectedPaymentOption);
+        if(!selectedPaymentOption){
+            alert("Please select a payment option.");
+                event.preventDefault();
+                return; // Prevent form submission
+        }
+        const selectedAddress = document.getElementById('selectedAddressInput').value
+        console.log('selected address option........',selectedAddress);
+        if(!selectedAddress){
+            alert("Please select an address.");
+                event.preventDefault();
+                return;
+                
+        }
+    // Send an AJAX request to the controller
+    fetch('/cart/placeorder/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        selectedPaymentOption: selectedPaymentOption,
+        selectedAddress: selectedAddress
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          // Order placed successfully, trigger success SweetAlert2 alert
+          Swal.fire({
+            icon: 'success',
+            title: 'Order Placed Successfully',
+            text: 'Keep shopping!',
+            showConfirmButton: false,
+            timer: 2000,
+          }).then(() => {
+            // Redirect to another page or perform other actions
+            window.location.href = '/userhome';
+          });
+        } else {
+          // Error occurred, trigger error SweetAlert2 alert
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: data.message, // Display an error message from the controller if needed
+          });
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  });
+   
+  </script>
+
+
+
+    <%- include('footer')%>

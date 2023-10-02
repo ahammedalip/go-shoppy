@@ -1,0 +1,127 @@
+<%- include('header') %>
+
+    <div class="row" style="width: 100%;">
+        <%- include('partials') %>
+            <div class="products-list col-md-10">
+
+                <!-- Add this code to your product listing page HTML -->
+                <div class="">
+                    <!-- Price Range Filter -->
+                    <div class="col-md-6">
+                        <form id="priceRangeForm">
+                            <label for="minPrice">Min Price:</label>
+                            <input type="number" id="minPrice" name="minPrice" placeholder="Min Price" min="0">
+                            <br>
+                            <label for="maxPrice">Max Price:</label>
+                            <input type="number" id="maxPrice" name="maxPrice" placeholder="Max Price" min="0">
+                            <br>
+                            <button type="submit" id="applyFilter">Apply Filter</button>
+                        </form>
+                    </div>
+                </div>
+
+
+
+                <div class="product-title">
+                    <h3 style="font-family: 'Exo 2', sans-serif;">PRODUCTS</h3>
+                </div>
+                <br>
+                <div class="row" id="products-container">
+                    <% products.forEach(product=> { %>
+                        <div class="col-md-4">
+                            <a href="/product/<%= product._id %>" class="text-decoration-none">
+                                <div class="card-unique">
+                                    <img class="card-img-top" src="/uploads/<%= product.images[0] %>"
+                                        alt="<%= product.productName %>">
+                                    <div class="card-body">
+                                        <h5 class="card-title single-line">
+                                            <%= product.productName %>
+                                        </h5>
+                                        <h6 class="card-text-prod">Brand: <%= product.brand %>
+                                        </h6>
+                                        <h6 class="card-text-prod" style="font-weight: bold; font-size: 1.2em;">₹ <%=
+                                                product.price %>
+                                        </h6>
+                                        <h6 class="card-text-prod">Color: <%= product.colour %>
+                                        </h6>
+                                        <form action="/cart/add" method="POST">
+                                            <input type="hidden" name="productId" value="<%= product._id %>">
+                                            <!-- <a href=""  class="btn btn-primary" data-product="<%= product._id %>">Add to Cart</a> -->
+                                            <a> <button type="submit" class="btn btn-primary">Add to Cart</button></a>
+                                        </form>
+
+
+                                    </div>
+
+
+
+
+
+                                </div>
+                            </a>
+                            <br>
+                        </div>
+                        <% }); %>
+                </div>
+            </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Check if there's a message query parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const message = urlParams.get("message");
+
+            if (message) {
+                // Show a SweetAlert2 pop-up with the message
+                Swal.fire({
+                    icon: 'success', // Success icon
+                    title: 'Added to Cart', // Message title
+                    text: message, // Message text from the query parameter
+                });
+            }
+        });
+
+
+        const productsContainer = document.getElementById("products-container");
+
+// Function to render products on the page
+function renderProducts(products) {
+    // Clear the existing product listing
+    productsContainer.innerHTML = "";
+
+    // Render the filtered products
+    products.forEach((product) => {
+        const productElement = document.createElement("div");
+        // Create and configure productElement with product data
+        // ...
+
+        // Append productElement to the container
+        productsContainer.appendChild(productElement);
+    });
+}
+
+// Handle the form submission for price range filtering
+const priceRangeForm = document.getElementById("priceRangeForm");
+priceRangeForm.addEventListener("submit", (event) => {
+    event.preventDefault(); // Prevent the form from submitting the traditional way
+
+    const minPrice = document.getElementById("minPrice").value;
+    const maxPrice = document.getElementById("maxPrice").value;
+
+    // Fetch filtered products based on the selected price range
+    fetch(`/products/filter?minPrice=${minPrice}&maxPrice=${maxPrice}`)
+        .then((response) => response.json())
+        .then((products) => {
+            renderProducts(products);
+        })
+        .catch((error) => {
+            console.error("Error fetching filtered products:", error);
+        });
+});
+    </script>
+
+
+
+    <%- include('footer') %>

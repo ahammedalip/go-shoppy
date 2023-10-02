@@ -1,0 +1,39 @@
+<%- include('header') %>
+
+<div class="row d-flex justify-content-center" style="padding: 30px;">
+    <div class="col-md-4" style="border: 1px solid rgb(181, 180, 180); padding: 30px; border-radius: 10px; box-shadow: 1px 1px 5px rgba(176, 175, 175, 0.5);">
+        <form action="/change-password" method="POST">
+ 
+            <% if(errorMessage) { %>
+                <div class="alert alert-danger">
+                    <%= errorMessage %>
+                </div>
+            <% } %>
+
+            <!-- Current Password -->
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="currentPassword" class="form-control" placeholder="Enter Password" required>
+                <div id="password-error" class="error-message"></div> <!-- Error message container -->
+            </div>
+            
+
+            <!-- New Password -->
+            <div class="form-group">
+                <label for="newPassword">New Password</label>
+                <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Enter your new password" required>
+            </div>
+
+           
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Change Password</button>
+            <a href="/resetpassword">Forgot Current Password</a>
+        </form>
+    </div>
+</div>
+
+
+
+
+<%- include('footer') %>

@@ -1,0 +1,445 @@
+<%- include('header') %>
+
+    <div class="row" style="width: 100%;">
+        <%- include('profilepartial') %>
+            <div class="profile-main col-md-10">
+                <div class="titleofProfile" style="border-bottom: 1px solid black;">
+                    <h3 class="text-center" style="font-family: 'Exo 2', sans-serif;">PROFILE</h3>
+
+                </div>
+                <br>
+                <div class="col-md-12 d-flex justify-content-center">
+                    <div class=" col-md-8 ">
+                        <div class="card mb-4" style="box-shadow: 1px 1px 5px rgba(132, 132, 132, 0.5) ;">
+                            <div class="card-body ">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <p class="mb-0">Full Name :</p>
+                                    </div>
+                                    <div class="col-sm-8 textfromdb">
+                                        <p class="textgiven mb-0">
+                                            <%= user.firstName%>
+                                                <%= user.lastName%>
+                                        </p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <p class="mb-0">Email :</p>
+                                    </div>
+                                    <div class="col-sm-8 textfromdb">
+                                        <p class="textgiven mb-0">
+                                            <%= user.email %>
+                                        </p>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <p class="mb-0">Mobile :</p>
+                                    </div>
+                                    <div class="col-sm-8 textfromdb">
+                                        <p class="textgiven mb-0">
+                                            <%= user.mobile %>
+                                        </p>
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-sm-12 d-flex justify-content-center ">
+                                        <button type="button" class="btn editprofileLink col-sm-3"
+                                            data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                            Edit
+                                        </button>
+                                        
+                                    </div>
+                                    <a href="/profile/changepassword">Change Password</a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="addressMainDiv container">
+                    <div class="row nowyouseeme justify-content-between">
+                        <div class="col-4" style="padding-top: 15px;">
+                            <h5 style="padding-left: 50px; vertical-align: middle;">Address</h5>
+                        </div>
+
+                        <div class="add-address-button">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#staticBackdrop1">
+                                Add Address
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- Display Saved Addresses -->
+                    <% if (addresses && addresses.length> 0) { %>
+                        <div class="address-list">
+                            <br>
+                            <ul>
+                                <% addresses.forEach((addr, index)=> { %>
+                                    <div class="address-div" address-id="<%= addr._id %>"
+                                        address-name="<%= addr.FullName %>" address-contactno="<%= addr.ContactNo %>"
+                                        address-buildingname="<%= addr.BuildingName %>"
+                                        address-place="<%= addr.place %>" address-city="<%= addr.City%>"
+                                        address-postOffice="<%= addr.PostOffice %>" address-PIN="<%= addr.PIN %>"
+                                        address-Country="<%= addr.Country %>" address-state="<%= addr.State %>">
+
+                                        <div class="row">
+                                            <div class="col">
+                                                <h6 style="text-decoration: underline;">Address <%= index + 1 %>:</h6>
+
+                                            </div>
+
+
+                                        </div>
+
+                                        <p address-id="<%= addr._id %>" class="address-fullname"
+                                            style="font-size: 1.2em; font-weight: bolder;">
+                                            <%= addr.FullName %>
+                                        </p>
+                                        <p style="font-size: 1.2em; font-weight: bolder;">
+                                            <%= addr.ContactNo %>
+                                        </p>
+                                        <p>
+                                            <%= addr.BuildingName %>, <%= addr.PostOffice %>, <%= addr.place %>, <%=
+                                                            addr.City %>, <%= addr.State %>,
+                                                                <%= addr.PIN %>, <%= addr.Country %>
+                                        </p>
+
+                                        <div class="row" style="padding-left: 30px;">
+                                            <div class="col">
+                                                <button address-id="<%= addr._id %>" type="button"
+                                                    class="btn addressEditDelete editAddress" data-bs-toggle="modal"
+                                                    data-bs-target="#staticBackdrop2" data-address-index="<%= index %>">
+                                                    Edit
+                                                </button>
+                                                <button class="btn addressEditDelete deleteAddress" address-id="<%= addr._id %>">Delete</button>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                    <br>
+                                    <% }); %>
+                            </ul>
+                        </div>
+                        <% } else { %>
+                            <p>No addresses saved yet.</p>
+                            <% } %>
+
+
+                </div>
+
+            </div>
+
+
+    </div>
+
+    <!-- Modal for basic user edit -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title fs-5" id="staticBackdropLabel">Edit User</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editProfileForm" action="/profile/edit-profile" method="POST">
+                        <div class="mb-3">
+                            <label for="editFirstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="editFirstName" name="firstName"
+                                value="<%= user.firstName %>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editLastName" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="editLastName" name="lastName"
+                                value="<%= user.lastName %>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editMobile" class="form-label">Mobile</label>
+                            <input type="text" class="form-control" id="editMobile" name="mobile"
+                                value="<%= user.mobile %>" required>
+                        </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal for add address -->
+    <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Address</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/profile/addaddress" method="post" id="editProfileForm">
+
+                        <div class="row">
+                            <!-- Full Name -->
+                            <div class="col mb-3">
+                                <label for="FullName" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="FullName" name="FullName" required>
+                            </div>
+
+                            <!-- Contact Number -->
+                            <div class="col mb-3">
+                                <label for="ContactNo" class="form-label">Contact Number</label>
+                                <input type="text" class="form-control" id="ContactNo" name="ContactNo" required>
+                            </div>
+                        </div>
+
+
+                        <!-- Building Name -->
+                        <div class="mb-3">
+                            <label for="BuildingName" class="form-label">Building Name</label>
+                            <input type="text" class="form-control" id="BuildingName" name="BuildingName" required>
+                        </div>
+
+                        <div class="row">
+                            <!-- Post Office -->
+                            <div class="col mb-3">
+                                <label for="PostOffice" class="form-label">Post Office</label>
+                                <input type="text" class="form-control" id="PostOffice" name="PostOffice" required>
+                            </div>
+
+                            <!-- Place -->
+                            <div class="col mb-3">
+                                <label for="Place" class="form-label">Place</label>
+                                <input type="text" class="form-control" id="place" name="place" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- City -->
+                            <div class=" col mb-3">
+                                <label for="City" class="form-label">City</label>
+                                <input type="text" class="form-control" id="City" name="City" required>
+                            </div>
+
+                            <!-- State -->
+                            <div class="col mb-3">
+                                <label for="State" class="form-label">State</label>
+                                <input type="text" class="form-control" id="State" name="State" required>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <!-- PIN Code -->
+                            <div class="col mb-3">
+                                <label for="PIN" class="form-label">PIN Code</label>
+                                <input type="text" class="form-control" id="PIN" name="PIN" required>
+                            </div>
+                            <!-- Country -->
+                            <div class="col mb-3">
+                                <label for="Country" class="form-label">Country</label>
+                                <input type="text" class="form-control" id="Country" name="Country" required>
+                            </div>
+                        </div>
+
+
+
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Address</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for edit address-->
+    <div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel2" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Address</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/profile/editaddress" method="post" >
+                        <input type="hidden" id="AddressIDEdit" name="AddressID" value="">
+
+                        <!-- Full Name -->
+                        <div class="mb-3">
+                            <label for="FullName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="FullNameEdit" name="FullName" required>
+                        </div>
+
+                        <div class="row">
+                            <!-- Contact Number -->
+                            <div class="col mb-3">
+                                <label for="ContactNo" class="form-label">Contact Number</label>
+                                <input type="text" class="form-control" id="ContactNoEdit" name="ContactNo" required>
+                            </div>
+
+                            <!-- Building Name -->
+                            <div class="col mb-3">
+                                <label for="BuildingName" class="form-label">Building Name</label>
+                                <input type="text" class="form-control" id="BuildingNameEdit" name="BuildingName"
+                                    required>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <!-- Post Office -->
+                            <div class="col mb-3">
+                                <label for="PostOffice" class="form-label">Post Office</label>
+                                <input type="text" class="form-control" id="PostOfficeEdit" name="PostOffice" required>
+                            </div>
+
+                            <!-- Place -->
+                            <div class="col mb-3">
+                                <label for="Place" class="form-label">Place</label>
+                                <input type="text" class="form-control" id="placeEdit" name="place" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- City -->
+                            <div class="col mb-3">
+                                <label for="City" class="form-label">City</label>
+                                <input type="text" class="form-control" id="CityEdit" name="City" required>
+                            </div>
+
+                            <!-- State -->
+                            <div class="col mb-3">
+                                <label for="State" class="form-label">State</label>
+                                <input type="text" class="form-control" id="StateEdit" name="State" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- PIN Code -->
+                            <div class="col mb-3">
+                                <label for="PIN" class="form-label">PIN Code</label>
+                                <input type="text" class="form-control" id="PINEdit" name="PIN" required>
+                            </div>
+
+                            <!-- Country -->
+                            <div class="col mb-3">
+                                <label for="Country" class="form-label">Country</label>
+                                <input type="text" class="form-control" id="CountryEdit" name="Country" required>
+                            </div>
+                        </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+
+        const editButtons = document.querySelectorAll('.editAddress');
+
+        editButtons.forEach((button) => {
+            button.addEventListener('click', function () {
+                const addressID = button.getAttribute("address-id");
+                //`[data-product="${productId}"].total-price`
+                const addressDiv = document.querySelector(`[address-id="${addressID}"].address-div`);
+
+                console.log(addressID);
+                console.log(addressDiv.getAttribute("address-name"));
+                console.log(addressDiv.getAttribute("address-contactno"));
+
+                const addFullName = addressDiv.getAttribute("address-name");
+                const addContact = addressDiv.getAttribute('address-contactno')
+                const addbuilding = addressDiv.getAttribute('address-buildingname')
+                const addpostOffice = addressDiv.getAttribute('address-postOffice')
+                const addplace = addressDiv.getAttribute('address-place')
+                const addcity = addressDiv.getAttribute('address-city')
+                const addstate = addressDiv.getAttribute('address-state')
+                const addpin = addressDiv.getAttribute('address-PIN')
+                const addcountry = addressDiv.getAttribute('address-Country')
+
+                document.getElementById('AddressIDEdit').value = addressID
+                document.getElementById('FullNameEdit').value = addFullName;
+                document.getElementById('ContactNoEdit').value = addContact;
+                document.getElementById('BuildingNameEdit').value = addbuilding;
+                document.getElementById('PostOfficeEdit').value = addpostOffice;
+                document.getElementById('placeEdit').value = addplace;
+                document.getElementById('CityEdit').value = addcity;
+                document.getElementById('StateEdit').value = addstate;
+                document.getElementById('PINEdit').value = addpin;
+                document.getElementById('CountryEdit').value = addcountry;
+
+            });
+        });
+
+
+       const deleteButtons = document.querySelectorAll('.deleteAddress')
+       
+       deleteButtons.forEach(button => {
+        button.addEventListener('click',() => {
+            const addressID = button.getAttribute("address-id");
+
+            console.log('address id from delete DOM', addressID);
+
+            // Show a confirmation dialog
+        const confirmDelete = window.confirm('Are you sure you want to delete this address?');
+
+        if(confirmDelete){
+            fetch('/profile/delete/'+addressID,{
+                method: 'DELETE',
+                headers: {
+                    'content-Type' : 'application/json'
+                }
+            })
+            .then(response =>{
+                if(response.ok){
+                    console.log('response is ok, from the controller also');
+                }
+                return response.json()
+            })
+            .then(data => {
+                console.log("data from the controller is fetched", data)
+                location.reload();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Address deleted succesfully',
+                    showConfirmation: true,
+                    // timer : 2000
+
+                });
+            })
+        }
+           
+        })
+
+    })
+    
+    </script>
+
+    <!-- <button class="editprofileLink col-sm-3">Edit</button> -->
+    <%- include ('footer')%>

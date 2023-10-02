@@ -1,0 +1,65 @@
+<%- include('header') %>
+
+
+  <br>
+
+  <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img class="d-block w-100 " src="/banner/Banner-2.png" alt="First slide">
+      </div>
+      <div class="carousel-item">
+        <img class="d-block w-100" src="/banner/Hezire-banner4571-bnner.png" alt="Second slide">
+      </div>
+      <div class="carousel-item">
+        <img class="d-block w-100" src="/banner/hezire-banner5357.jpg" alt="Third slide">
+      </div>
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+
+  <br><br>
+  <div class="category-section responsive-div"
+    style="background-image: url(/images/category-BG.jpg); background-size: cover;">
+    <h2 style="text-align: center; font-family: 'Exo 2', sans-serif; font-weight: bold;">CATEGORIES</h2>
+    <br>
+    <div class="row">
+      <% categories.forEach(category=> { %>
+        <div class="col-md-4 mb-4">
+          <div class="card category-card">
+            <div class="card-body text-center"> <!-- Added 'text-center' class here -->
+              <h5 class="card-title" style="font-weight: bold;"><i class=""></i></i>
+                <%= category.categoryName %>
+              </h5>
+              <!-- Replace "fa-icon-name" with the actual class for your desired icon -->
+              <p class="card-text">Explore the wide range of <%= category.categoryName %> here.</p>
+              <a href="/category/<%= category._id %>" class="btn btn-primary"
+                style="background-color: #003F62;">Explore</a>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+    </div>
+  </div>
+
+
+
+
+  <br>
+
+
+
+
+
+
+
+
+
+  <%- include('footer') %>

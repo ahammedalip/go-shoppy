@@ -1,0 +1,85 @@
+<%- include('partials') %>
+
+    <div class="" style=" margin-left: 240px; width:auto; padding-top: 30px; padding-left: 20px;">
+
+        <h1>User List</h1>
+
+        <div class="col-md-4">
+            <!-- Search bar for username search -->
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search by email" id="searchInput">
+                <button class="btn btn-outline-secondary" type="button" id="searchButton" style="background-color: #88acc2;">
+                    Search
+                </button>
+            </div>
+        </div>
+
+        <table class="table table-hover">
+            <thead style="text-align: center; background-color: #003F62; color: #fff;">
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>Status</th>
+                    <th>Block/Unblock</th>
+
+                </tr>
+            </thead>
+            <tbody style="text-align: center;">
+                <% userList.forEach(user=> { %>
+                    <tr class="user-row">
+                        <td>
+                            <%= user.firstName %>
+                        </td>
+                        <td>
+                            <%= user.lastName %>
+                        </td>
+                        <td>
+                            <%= user.email %>
+                        </td>
+                        <td>
+                            <%= user.mobile %>
+                        </td>
+                        <td>
+                            <% if (user.isBlocked) { %>
+                                Blocked
+                                <% } else { %>
+                                    Not Blocked
+                                    <% } %>
+                        </td>
+                        <td>
+                            <form action="/admin/toggle-block/<%= user._id %>" method="post">
+                                <button type="submit" class="btn btn-outline-danger">
+                                    <%= user.isBlocked ? 'Unblock' : 'Block' %>
+                                </button>
+                            </form>
+                        </td>
+
+                    </tr>
+                    <% }); %>
+            </tbody>
+                    
+            <style>
+                .btn-outline-danger {
+                    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+
+                }
+            </style>
+        </table>
+
+
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $("#searchButton").click(function() {
+                    const searchText = $("#searchInput").val().toLowerCase();
+                    $(".user-row").hide();
+                    $(`.user-row:contains('${searchText}')`).show();
+                });
+            });
+        </script>
+        
+    </div>
+    <%- include('footer') %>
