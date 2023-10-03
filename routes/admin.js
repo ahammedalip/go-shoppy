@@ -41,7 +41,10 @@ router.get('/editproduct/:productId', adminController.getEditProduct)
 router.post ('/updateproduct/:productId', adminController.UpdateProduct)
 
 router.get('/order', adminController.getTotalOrderList)
-router.post ('/orders/update-status/:orderId', adminController.getStatusUpdate)
+router.post ('/orders/update-status/:orderId', adminController.postStatusUpdate)
+
+router.get('/coupon', adminController.getCoupon)
+router.post('/create-coupon', adminController.postCoupon)
 
 router.get('/logout', adminController.adminLogout)
 

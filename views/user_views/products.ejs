@@ -63,6 +63,22 @@
                         </div>
                         <% }); %>
                 </div>
+
+                <!-- Pagination Links -->
+<div class="pagination d-flex justify-content-center" >
+    <% if (currentPage > 1) { %>
+        <a href="?page=<%= currentPage - 1 %>" class="btn prev-next">Previous</a>
+    <% } %>
+    
+    <div class="page-info" style="padding-left: 10px; padding-right: 10px;">
+        <span>Page <%= currentPage %> of <%= totalPages %></span>
+    </div>  
+    
+    <% if (currentPage < totalPages) { %>
+        <a href="?page=<%= currentPage + 1 %>" class="btn prev-next">Next</a>
+    <% } %>
+</div>
+
             </div>
     </div>
 

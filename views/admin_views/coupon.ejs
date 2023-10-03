@@ -1,0 +1,105 @@
+<%- include('partials') %>
+    <div class="" style="margin-left: 240px; width:auto; padding-top: 30px; padding-left: 20px;">
+
+        <div class="row">
+            <div id="messageDiv" class="alert alert-success" style="display: none;">
+               <p style="color: green;"><%= message %></p> 
+             
+            </div>
+            <div class="col-md-7">
+
+                <h2>Coupon List</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Percent</th>
+                            <th>Min Price</th>
+                            <th>Expiry</th>
+                            <th>Is Active</th>
+                            <th>Edit/Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% coupons.sort((a,b) => b.expirationDate - a.expirationDate); %>
+                        <% coupons.forEach(coupon =>{ %>
+                        <tr>
+                            <td><%= coupon.code %></td>
+                            <td><%= coupon.discountPercent %></td>
+                            <td>₹ <%= coupon.minimumPrice %></td>
+                            <td><%= coupon.expirationDate.toDateString() %></td>
+                            <td><%= coupon.isActive %></td>
+                            <td>
+                                <button class="btn btn-primary">Edit</button>
+                                <button class="btn btn-danger">Delete</button>
+                            </td>
+
+                          </tr>
+                        <% }) %>
+                    </tbody>
+                 
+                </table>
+
+
+            </div>
+
+            <div class="col-md-4">
+                <br><br>
+                <div class="col Coupon-create">
+                    <h2>Create Coupon</h2>
+                    <form action="/admin/create-coupon" method="POST">
+                        <div class="form-group">
+                            <label for="code">Coupon Code:</label>
+                            <input type="text" class="form-control" id="code" name="code" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="discountPercent">Discount Percent:</label>
+                            <input type="number" class="form-control" id="discountPercent" name="discountPercent"
+                                required>
+                        </div>
+                        <div class="form-group">
+                            <label for="minimumPrice">Minimum Price:</label>
+                            <input type="number" class="form-control" id="minimumPrice" name="minimumPrice" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="expirationDate">Expiration Date:</label>
+                            <input type="date" class="form-control" id="expirationDate" name="expirationDate" required>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="isActive" name="isActive" checked>
+                            <label class="form-check-label" for="isActive">
+                                Active
+                            </label>
+                        </div>
+                        <div class="">
+                            <button type="submit" class="btn btn-add mx-auto d-block"
+                                style="background-color: #003F62; color: white;">Create Coupon</button>
+
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+            
+
+        </div>
+
+    </div>
+
+    <script>
+            var message = '<%= message %>';
+        
+        // Get the messageDiv element by its ID
+        var messageDiv = document.getElementById('messageDiv');
+    
+        // Check if the message exists and is not empty
+        if (message && message.trim() !== '') {
+            // Set the message text
+            messageDiv.innerHTML = message;
+    
+            // Display the message div
+            messageDiv.style.display = 'block';
+        }
+    </script>
+
+    <%- include('footer') %>

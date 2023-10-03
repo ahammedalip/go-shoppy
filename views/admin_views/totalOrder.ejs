@@ -46,16 +46,24 @@
     </td>
 
                         <td><%= order.totalprice %></td>
-                        <td>
-                            <select class="form-select order-status-select" aria-label="Order Status" data-order-id = "<%= order._id %>">
-                                console.log('hjfkjshd', <%= order._id %>) 
-                              <option value="shipped" <%= order.orderStatus === 'shipped' ? 'selected' : '' %>>Shipped</option>
-                              <option value="cancel_req" <%= order.orderStatus === 'cancel_req' ? 'selected' : '' %>>Requested for cancel</option>
-                              <option value="pending" <%= order.orderStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
-                              <option value="cancelled" <%= order.orderStatus === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
-                              <option value="delivered" <%= order.orderStatus === 'delivered' ? 'selected' : '' %>>Delivered</option>
-                            </select>
+                        <% if(order.orderStatus === 'cancelled' ){ %>
+                          <td>
+                            <%= order.orderStatus %>
                           </td>
+                            <% }else { %>
+                              <td>
+                              <select class="form-select order-status-select" aria-label="Order Status" data-order-id = "<%= order._id %>">
+                                
+                                <option value="shipped" <%= order.orderStatus === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                                <option value="cancel_req" <%= order.orderStatus === 'cancel_req' ? 'selected' : '' %>>Requested for cancel</option>
+                                <option value="pending" <%= order.orderStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                <option value="cancelled" <%= order.orderStatus === 'cancelled' ? 'selected' : '' %>>cancelled</option>
+                                <option value="delivered" <%= order.orderStatus === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                              </select>
+                            </td>
+                            <% } %>
+  
+  
                           
                         <td><%= order.paymentMethod %></td> 
                     </tr>
@@ -88,7 +96,9 @@
           .then(data => {
             // Update the displayed order status without refreshing the page
             this.closest('tr').querySelector('td:nth-child(5)').textContent = newStatus;
+            location.reload()
             alert('Order status updated successfully.');
+
           })
           .catch(error => {
             console.error('Error updating order status:', error);

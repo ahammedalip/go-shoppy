@@ -12,7 +12,9 @@ const adminSignup = require('../model/adminModel')
 const ProductCategory = require('../model/categorymodel')
 const Product = require('../model/productmodel');
 const userModel = require('../model/usermodel')
-const order = require('../model/orderModel')
+const order = require('../model/orderModel');
+const userSignup = require('../model/usermodel');
+const coupon = require('../model/couponModel');
 
 
 
@@ -86,6 +88,7 @@ adminController.toggleBlockStatus = async (req, res) => {
 };
 
 adminController.getAdminDash = (req, res) => {
+  
     res.render('../views/admin_views/admindash')
 
 }
@@ -121,11 +124,11 @@ adminController.postAddCategory = async (req, res) => {
     try {
         const { category } = req.body;
 
-         // Create a regular expression to match the category name case-insensitively
-         const categoryRegex = new RegExp(`^${category}$`, 'i');
+        // Create a regular expression to match the category name case-insensitively
+        const categoryRegex = new RegExp(`^${category}$`, 'i');
 
-         // Check if the category already exists in the database (case-insensitive check)
-         const existingCategory = await ProductCategory.findOne({ categoryName: categoryRegex });
+        // Check if the category already exists in the database (case-insensitive check)
+        const existingCategory = await ProductCategory.findOne({ categoryName: categoryRegex });
 
         if (existingCategory) {
             const categoryList = await ProductCategory.find();
@@ -317,7 +320,7 @@ adminController.UpdateProduct = async (req, res) => {
         const productId = req.params.productId;
 
         // console.log('prduct id from updateproduct',productId);
-        
+
         const {
             productName,
             purchaseRate,
@@ -346,7 +349,7 @@ adminController.UpdateProduct = async (req, res) => {
                 }
             }
         );
-        
+
         res.redirect('/admin/product');
     } catch (error) {
         console.log('error at updateProduct', error);
@@ -354,40 +357,125 @@ adminController.UpdateProduct = async (req, res) => {
     }
 };
 
-adminController.getTotalOrderList = async(req, res) => {
-    try{
+adminController.getTotalOrderList = async (req, res) => {
+    try {
         const orderList = await order.find().populate('userId').populate('products.productId')
-   const user = await userModel.find()
-//    console.log('users', user);
+        const user = await userModel.find()
+        //    console.log('users', user);
 
-    res.render('../views/admin_views/totalOrder',{orderList})
+        res.render('../views/admin_views/totalOrder', { orderList })
     }
-    catch(error){
+    catch (error) {
         console.log('Error at get total orders list ');
         res.status(500).send('Error at getTotalOrderList')
     }
-   
+
 }
 
-adminController.getStatusUpdate = async (req, res)=>{
+adminController.postStatusUpdate = async (req, res) => {
     const { orderId } = req.params;
     const { status } = req.body;
-  
+    console.log('status----------', req.body);
     try {
-      const updatedOrder = await order.findByIdAndUpdate(orderId, { orderStatus: status }, { new: true });
-  
-      if (!updatedOrder) {
-        return res.status(404).json({ message: 'Order not found' });
-      }
-  
-      // Send a success response
-      res.json({ message: 'Order status updated successfully', updatedOrder });
+        const updatedOrder = await order.findByIdAndUpdate(orderId, { orderStatus: status }, { new: true });
+
+        if (!updatedOrder) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+        
+        async function returnPaymentToWallet(orderId) {
+            try {
+              const payuser = await order.findById(orderId).populate('userId');
+              const currentWallet = payuser.userId.wallet;
+              const returnToWallet = payuser.totalprice;
+              const updateWallet = currentWallet + returnToWallet;
+          
+              await userSignup.findOneAndUpdate(
+                { _id: payuser.userId },
+                { $set: { wallet: updateWallet } }
+              );
+          
+              // Log the updated wallet amount
+              console.log('Updated Wallet Amount:', updateWallet);
+            } catch (error) {
+              console.error('Error returning payment to wallet:', error);
+              throw error; // You can choose to rethrow the error or handle it as needed.
+            }
+          }
+
+        if (updatedOrder.paymentMethod === 'WalletPay' && status === 'cancelled') {
+            try {
+                await returnPaymentToWallet(orderId)
+               
+            }
+            catch (error) {
+                console.log('Error at payment return in cancelling order at postStatusUpdate', error);
+                res.send('Error at cancelling order')
+            }
+        }
+
+        // Send a success response
+        res.json({ message: 'Order status updated successfully', updatedOrder });
     } catch (error) {
-      console.error('Error updating order status:', error);
-      res.status(500).json({ message: 'Error updating order status' });
+        console.error('Error updating order status:', error);
+        res.status(500).json({ message: 'Error updating order status' });
     }
 }
 
+
+adminController.getCoupon = async(req, res) =>{
+
+    
+    const mess = req.query.message;
+    if(mess){
+        var message = 'Succesfully added coupon!';
+    }
+//    console.log('mess and message', mess,message);
+try{
+    const coupons = await coupon.find();
+
+     // Get the current date
+     const currentDate = new Date();
+
+     // Update isActive based on expirationDate
+     for (const couponItem of coupons) {
+         if (couponItem.expirationDate < currentDate) {
+             couponItem.isActive = false;
+             await couponItem.save(); // Save the updated coupon
+         }
+     }
+
+    res.render('../views/admin_views/coupon.ejs',{message, coupons})
+}catch(error){
+    console.log('error at coupons listing', error);
+    res.send('Error')
+}  
+}
+
+adminController.postCoupon = async (req, res) =>{
+    try {
+        // Extract data from the form submission
+        const { code, discountPercent,minimumPrice, expirationDate, isActive } = req.body;
+
+    
+        const newCoupon = new coupon({
+            code,
+            discountPercent,
+            minimumPrice,
+            expirationDate,
+            isActive: isActive === 'on',
+        });
+
+       
+        await newCoupon.save();
+       
+        res.redirect('/admin/coupon?message=c-succes'); // Redirect to a page showing the list of coupons, adjust the route as needed
+    } catch (error) {
+        // Handle errors, e.g., show an error message to the user
+        console.error('Error creating coupon:', error);
+        res.status(500).send('Error creating coupon');
+    }
+}
 
 
 

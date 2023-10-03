@@ -74,7 +74,11 @@ const SignupSchema = new mongoose.Schema({
         Country: {
             type: String
         }
-    }]
+    }],
+    wallet:{
+        type: Number,
+        default: 0
+    }
 })
 
 const userSignup = new mongoose.model("userSignupColllection", SignupSchema);

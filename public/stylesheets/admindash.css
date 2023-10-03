@@ -195,6 +195,24 @@ nav .profile-details img{
 }
 
 
+/* coupon page */
+
+.Coupon-create{
+  border: 1px solid rgb(200, 200, 200);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.coupon-button{
+
+  background-color: #003F62;
+  color: #711e1e;
+}
+
+.btn-add{
+  background-color: #003F62;
+}
 
 .home-section .home-content{
   position: relative;

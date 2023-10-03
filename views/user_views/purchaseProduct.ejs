@@ -26,8 +26,9 @@
                         <br>
                         <div class="w-100"
                             style=" border: 1px solid rgb(198, 198, 198); border-radius: 10px; padding: 20px; background-color: white;">
-                            <h4>Payment Options</h4>
-
+                            <h4 style="border-bottom: 1px solid grey;">Payment Options</h4>
+                            <h5>Wallet Bal: ₹<%= user.wallet %></h5>
+<br>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="paymentOption" id="cashOnDelivery"
                                     value="cash" onclick="updateSelectedPaymentOption('Cash on Delivery')">
@@ -41,9 +42,18 @@
                                 <label class="form-check-label" for="onlinePay">
                                     Online Payment
                                 </label>
-
-                                
                             </div>
+
+                            <% if(user.wallet > totalPrice){ %>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="paymentOption" id="walletPay"
+                                        value="wallet" onclick="updateSelectedPaymentOption('WalletPay')">
+                                    <label class="form-check-label" for="walletPay">
+                                        Wallet Payment
+                                    </label>
+                                </div>
+                                <% } %>
+                            
                             <input type="hidden" name="selectedPaymentOption" id="selectedPaymentOptionInput" value="">
 
 

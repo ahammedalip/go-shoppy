@@ -337,41 +337,61 @@ usercontroller.gethome = async (req, res) => {
 };
 
 usercontroller.getProducts = async (req, res) => {
-
     try {
-        const categories = await ProductCategory.find({ isUnlisted: false })
-        const products = await productList.find({ unlisted: false })
-        // fullImages = images.map(image => '/uploads/' + image); // Update the path as per your image storage
-        res.render('../views/user_views/products', { categories, products });
-    }
-    catch (error) {
-        console.log('error in product page', error);
-        res.send('error in product list')
-    }
-    // // Handle the case when the 'user' cookie is not set, for example, by redirecting to the login page.
-    // res.redirect('/login'); // Adjust the route accordingly
+        const categories = await ProductCategory.find({ isUnlisted: false });
+        const productsPerPage = 6; // Define the number of products per page
 
+        // Get the current page number from the query parameter or default to 1
+        const currentPage = parseInt(req.query.page) || 1;
+
+        // Calculate the starting index and ending index for the products to display on the current page
+        const startIndex = (currentPage - 1) * productsPerPage;
+        const endIndex = startIndex + productsPerPage;
+
+        // Fetch the products for the current page
+        const products = await productList.find({ unlisted: false }).skip(startIndex).limit(productsPerPage);
+
+        // Calculate the total number of pages based on the total number of products
+        const totalProducts = await productList.countDocuments({ unlisted: false });
+        const totalPages = Math.ceil(totalProducts / productsPerPage);
+
+        res.render('../views/user_views/products', { categories, products, currentPage, totalPages });
+    } catch (error) {
+        console.log('error in product page', error);
+        res.send('error in product list');
+    }
 };
 
 usercontroller.getCategoryFilter = async (req, res) => {
     const categoryId = req.params.categoryId;
-    console.log("dfgfgdfgdf", categoryId);
-    //    console.log("This is the category id: ",categoryId);
-    //    console.log("This is the params id: ",req.params);
-    //    console.log("This is the params id: ",req);
 
     try {
         const categories = await ProductCategory.find({ isUnlisted: false });
-        const cat = await ProductCategory.findById(categoryId)
-        console.log("catt", cat);
-        const products = await productList.find({ category: cat.categoryName, unlisted: false });
+        const cat = await ProductCategory.findById(categoryId);
+        const productsPerPage = 6; // Define the number of products per page
 
-        res.render('../views/user_views/products', { categories, products });
+        // Get the current page number from the query parameter or default to 1
+        const currentPage = parseInt(req.query.page) || 1;
+
+        // Calculate the starting index and ending index for the products to display on the current page
+        const startIndex = (currentPage - 1) * productsPerPage;
+        const endIndex = startIndex + productsPerPage;
+
+        const products = await productList.find({ category: cat.categoryName, unlisted: false })
+            .skip(startIndex)
+            .limit(productsPerPage);
+
+        // Calculate the total number of pages based on the total number of products
+        const totalProducts = await productList.countDocuments({ category: cat.categoryName, unlisted: false });
+        const totalPages = Math.ceil(totalProducts / productsPerPage);
+
+        res.render('../views/user_views/products', { categories, products, currentPage, totalPages });
     } catch (error) {
         console.log('Error in category filter page', error);
         res.send('Error in category filter product list');
     }
 };
+
 
 usercontroller.getIndividualProduct = async (req, res) => {
 
@@ -725,9 +745,14 @@ usercontroller.getprofile = async (req, res) => {
         const mobile = user.mobile
         // console.log('user details fetched from get profile', firstName, lastName);
 
+
         const addresses = user.address
         // console.log('user adress 0',user.address[1]);
-        res.render('../views/user_views/profile.ejs', { user, addresses })
+        console.log('mesage;;;;;;;', req.query.message);
+        if (req.query.message) {
+            var message = 'Password changed succesfully'
+        }
+        res.render('../views/user_views/profile.ejs', { user, addresses, message })
     }
     catch (error) {
         console.log('Error at get userprofile', error);
@@ -862,12 +887,13 @@ usercontroller.getPlaceOrder = async (req, res) => {
             res.redirect('/login')
         }
 
+
         const totalPrice = req.session.totalPrice;
 
         const addresses = await user.address
 
         // console.log('total address',addresses);
-        res.render('../views/user_views/purchaseProduct', { totalPrice, addresses })
+        res.render('../views/user_views/purchaseProduct', { user, totalPrice, addresses })
 
     }
     catch (error) {
@@ -898,6 +924,7 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
 
         const totalprice = req.session.totalPrice
         console.log('total price', totalprice);
+        console.log('payment method', selectedPaymentOption);
 
         const orderProducts = [];
 
@@ -921,6 +948,23 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
         })
 
         await newOrder.save()
+        let updateWallet;
+        if (selectedPaymentOption === 'WalletPay') {
+            try {
+                updateWallet = user.wallet - totalprice
+                // console.log('user._id', user._id);
+                await userSignup.findOneAndUpdate(
+                    { _id: user._id },
+                    { $set: { wallet: updateWallet } }
+                );
+
+            }
+            catch (error) {
+                console.log('Error at walletpayment ', error);
+                res.status(500).send('Error in payment')
+            }
+        }
+        console.log(updateWallet);
 
         // Reduce the product quantities in the products collection
         for (const orderProduct of orderProducts) {
@@ -976,39 +1020,39 @@ usercontroller.getOrders = async (req, res) => {
     }
 }
 
-usercontroller.getOrderDetails =async(req, res) =>{
-    try{
+usercontroller.getOrderDetails = async (req, res) => {
+    try {
         const orderId = req.params.orderId
 
         // const orders = await order.find()
 
-        const orderDetails = await order.find({_id:orderId}).populate('products.productId');
+        const orderDetails = await order.find({ _id: orderId }).populate('products.productId');
 
         // console.log('order details of particular order id:', orderDetails);
-        
 
-        if(!order){
+
+        if (!order) {
             res.send('Order not found')
         }
 
-       
-        res.render('../views/user_views/orderDetails',{orderDetails, orderId})
+
+        res.render('../views/user_views/orderDetails', { orderDetails, orderId })
 
     }
-    catch(error){
+    catch (error) {
         console.log('Error at get order details', error);
         res.status(500).send('Error at Get order details')
     }
 }
 
-usercontroller.cancelOrder = async (req,res) => {
-    try{
+usercontroller.cancelOrder = async (req, res) => {
+    try {
         const orderId = req.params.orderId;
 
         const updateOrder = await order.findByIdAndUpdate(
             orderId,
-            {orderStatus: 'cancel_req'},
-            {new: true}
+            { orderStatus: 'cancel_req' },
+            { new: true }
         )
 
 
@@ -1023,7 +1067,7 @@ usercontroller.cancelOrder = async (req,res) => {
         res.json(successResponse);
 
     }
-    catch(error){
+    catch (error) {
         console.log('Error at cancelling order, method post ', error);
         res.status(500).send('Error at canceling order')
     }
@@ -1054,6 +1098,10 @@ usercontroller.postProfileChangePass = async (req, res) => {
         }
 
         const currentpass = req.body.currentPassword
+        const newPass = req.body.newPassword
+
+        console.log('new pass', newPass);
+
         console.log('typed password', currentpass);
         const isValidPass = await bcrypt.compare(currentpass, user.password)
 
@@ -1062,13 +1110,14 @@ usercontroller.postProfileChangePass = async (req, res) => {
 
 
         if (!isValidPass) {
+            console.log('coming to incorrect');
             res.render('../views/user_views/profilechangepass', { errorMessage: 'Entered password is wrong!' })
         } else {
-            user.password = bcrypt.hashSync(currentpass, 2);
+            user.password = bcrypt.hashSync(newPass, 2);
             const save = await user.save();
             console.log('saved the password', save)
 
-            res.render('../views/user_views/profile', { message: 'Password changed succesfully' })
+            res.redirect('/profile?message=pass_change')
         }
     }
     catch (error) {
