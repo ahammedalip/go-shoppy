@@ -14,6 +14,10 @@ const couponSchema = new mongoose.Schema({
       type:Number,
       required: true
     },
+    maximumDiscount:{
+      type: Number,
+      required: true
+    },
     expirationDate: {
       type: Date,
       required: true,
@@ -22,6 +26,9 @@ const couponSchema = new mongoose.Schema({
       type: Boolean,
       default: true,
     },
+    description:{
+      type: String
+    }
   });
   
   const coupon = mongoose.model('Coupon', couponSchema);

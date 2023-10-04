@@ -455,14 +455,16 @@ try{
 adminController.postCoupon = async (req, res) =>{
     try {
         // Extract data from the form submission
-        const { code, discountPercent,minimumPrice, expirationDate, isActive } = req.body;
+        const { code, discountPercent,minimumPrice, maximumDiscount, expirationDate,description, isActive } = req.body;
 
     
         const newCoupon = new coupon({
             code,
             discountPercent,
             minimumPrice,
+            maximumDiscount,
             expirationDate,
+            description,
             isActive: isActive === 'on',
         });
 

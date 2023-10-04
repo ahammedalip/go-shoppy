@@ -1,122 +1,151 @@
 <%- include('header') %>
 
     <% if (cartProducts.length===0) { %>
-     
-            <div class="col-md-12">
-                <img class="cart-empty d-flex justify-content-center align-items-center" id="emptyCartImage" src="/uploads/cart empty2.jpg" alt="Your cart is empty">
-       <h4 style="text-align: center;">Oops! Your cart is empty</h4>
 
-            </div>
-            <br><br><br>
+        <div class="col-md-12">
+            <img class="cart-empty d-flex justify-content-center align-items-center" id="emptyCartImage"
+                src="/uploads/cart empty2.jpg" alt="Your cart is empty">
+            <h4 style="text-align: center;">Oops! Your cart is empty</h4>
+
+        </div>
+        <br><br><br>
         <% } else { %>
 
             <div class="cart col-md-12" style="padding: 40px; background-color: rgb(241, 241, 241);">
                 <!-- cart.ejs (or your cart view template) -->
 
                 <div class="row" style="padding-left: 10px; padding-right: 10px;">
-                    <div class="simple col-md-8"
-                        style="padding: 0 20px 0 20px; border: 1px solid rgb(221, 211, 211); border-radius: 10px; background-color: white; box-shadow: 1px 1px 5px rgba(133, 133, 133, 0.5);">
-                        <table class="table tablecart">
-                            <tbody>
+                    <div class="col-md-8">
+                        <div class="simple"
+                            style="padding: 0 20px 0 20px; border: 1px solid rgb(221, 211, 211); border-radius: 10px; background-color: white; box-shadow: 1px 1px 5px rgba(133, 133, 133, 0.5);">
+                            <table class="table tablecart">
+                                <tbody>
 
 
-                                <% cartProducts.forEach((item, index)=> { %>
-                                    <!-- <%- console.log('result from tag', item.total, item._id) %> -->
-                                    <tr>
-                                        <div>
+                                    <% cartProducts.forEach((item, index)=> { %>
+                                        <!-- <%- console.log('result from tag', item.total, item._id) %> -->
+                                        <tr>
+                                            <div>
 
 
-                                            <td class="product-info" style="vertical-align: middle;"><img
-                                                    style="width: 80px; height: 80px; border: 1px solid rgb(223, 219, 219); border-radius: 5px;"
-                                                    src="/uploads/<%= item.productId.images[0] %>"
-                                                    alt="<%= item.productId.productName %>">
-                                                <%= item.productId.productName %>
-                                            </td>
-                                            <td style="color: rgb(125, 125, 125); vertical-align: middle;">₹ <span
-                                                    class="unit-price">
-                                                    <%= item.productId.price %>
-                                                </span>/per unit</td>
-                                            <td class="quantity" style="vertical-align: middle;">
-                                                <button class="btn btn-warning btn-sm decrement"
-                                                    data-index="<%= index %>" data-product="<%= item._id %>">-</button>
-                                                <input type="hidden" class="cart-quantity" data-index="<%= index %>"
-                                                    data-product="<%= item._id %>" value="<%= item.quantity %>">
-                                                <span data-index="<%= index %>" data-product="<%= item._id %>">
-                                                    <%= item.quantity %>
-                                                </span>
-                                                <button class="btn btn-warning btn-sm increment"
-                                                    data-index="<%= index %>" data-product="<%= item._id %>">+</button>
-                                            </td>
-                                            <td style="vertical-align: middle;" data-total="<%= item.total %>"
-                                                data-product="<%= item._id %>" class="total-price">
-                                                <span>Total Price: ₹ <%= item.total %></span>
-                                            </td>
-                                            <td style="vertical-align: middle;">
-                                                <div>
-                                                    <button class="btn btn-sm remove-item"
-                                                        data-product="<%= item._id %>">Remove</button>
-                                                </div>
-                                                <!-- <div>
+                                                <td class="product-info" style="vertical-align: middle;"><img
+                                                        style="width: 80px; height: 80px; border: 1px solid rgb(223, 219, 219); border-radius: 5px;"
+                                                        src="/uploads/<%= item.productId.images[0] %>"
+                                                        alt="<%= item.productId.productName %>">
+                                                    <%= item.productId.productName %>
+                                                </td>
+                                                <td style="color: rgb(125, 125, 125); vertical-align: middle;">₹ <span
+                                                        class="unit-price">
+                                                        <%= item.productId.price %>
+                                                    </span>/per unit</td>
+                                                <td class="quantity" style="vertical-align: middle;">
+                                                    <button class="btn btn-warning btn-sm decrement"
+                                                        data-index="<%= index %>"
+                                                        data-product="<%= item._id %>">-</button>
+                                                    <input type="hidden" class="cart-quantity" data-index="<%= index %>"
+                                                        data-product="<%= item._id %>" value="<%= item.quantity %>">
+                                                    <span data-index="<%= index %>" data-product="<%= item._id %>">
+                                                        <%= item.quantity %>
+                                                    </span>
+                                                    <button class="btn btn-warning btn-sm increment"
+                                                        data-index="<%= index %>"
+                                                        data-product="<%= item._id %>">+</button>
+                                                </td>
+                                                <td style="vertical-align: middle;" data-total="<%= item.total %>"
+                                                    data-product="<%= item._id %>" class="total-price">
+                                                    <span>Total Price: ₹ <%= item.total %></span>
+                                                </td>
+                                                <td style="vertical-align: middle;">
+                                                    <div>
+                                                        <button class="btn btn-sm remove-item"
+                                                            data-product="<%= item._id %>">Remove</button>
+                                                    </div>
+                                                    <!-- <div>
                                         <a href="#"><i class='bx bx-heart' style="font-size: 30px; color: rgb(188, 80, 80);"></i></a>
                                     </div> -->
 
-                                            </td>
+                                                </td>
 
 
-                                    </tr>
-                                    <% }); %>
+                                        </tr>
+                                        <% }); %>
 
-                        </table>
+                            </table>
+                        </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="grandTotaldiv">
+                        <div class="coupon-display">
+                            <h5 style="padding: 10px; border-bottom: 1px solid gray;">Coupons</h5>
+                            <form id="couponForm" action="/cart/apply_coupon" method="POST">
+                                <div id="messageDiv" class="alert alert-danger" style="display: none;">
+                                    <%= couponErrorMessage %>
+                                </div>
+                                <!-- <label for="couponCode">Coupon Code:</label> -->
+                                <div class="form-group d-flex " style="padding: 20px;">
 
-                            <div
-                                style=" border: 1px solid rgb(221, 211, 211); border-radius: 10px; padding-left: 20px; background-color: white; box-shadow: 1px 1px 5px rgba(133, 133, 133, 0.5);">
-                                <div class="row">
-                                    <div class="col"
-                                        style=" padding: 40px 40px 0 20px; border-bottom: 1px solid grey   ;">
-                                        <p>Total Items :</p>
-                                        <p>Total Price : </p>
-                                        <p>Delivery Charges : </p>
-                                    </div>
+                                    <input style="width: 200px; padding: 10px;" type="text" class="form-control"
+                                        id="couponCode" name="couponCode" required>
+                                    <button type="submit" class="btn btn-primary">Apply Coupon</button>
+                            </form>
+                        </div>
 
-                                    <div class="col"
-                                        style="padding: 40px 10px 0 20px; border-bottom: 1px solid grey; margin-right: 20px;">
-                                        <p class="total-quantity-class" data-product="total-quantity-product"
-                                            style="text-align: end;">
-                                            <%= totalQuantity %>
-                                        </p>
-                                        <p style="text-align: end;" class="total-price"
-                                            data-product="total-added-price">₹ <%= totalPrice %>
-                                        </p>
-                                        <p style="text-align: end;">₹ 0</p>
+                    </div>
+                    <br>
+                    <div class="grandTotaldiv">
 
-                                    </div>
+                        <div
+                            style=" border: 1px solid rgb(221, 211, 211); border-radius: 10px; padding-left: 20px; background-color: white; box-shadow: 1px 1px 5px rgba(133, 133, 133, 0.5);">
+                            <div class="row">
+                                <div class="col" style=" padding: 40px 40px 0 20px; border-bottom: 1px solid grey   ;">
+                                    <p>Total Items :</p>
+                                    <p>Total Price : </p>
+                                    <p>Discount:</p>
+                                    <p>Delivery Charges : </p>
 
                                 </div>
-                                <div class="row">
-                                    <div class="col" style="padding: 5px 40px 0 20px;">
-                                        <p style="font-weight: bold;">Grand Total :</p>
-                                    </div>
-                                    <div class="col" style="padding: 5px 10px 0 0; margin-right: 20px;">
-                                        <p class="grand-total" data-product="grand-data"
-                                            style="font-weight: bold;text-align: end;">
-                                            ₹ <%= totalPrice %>
-                                        </p>
-                                    </div>
+
+                                <div class="col"
+                                    style="padding: 40px 10px 0 20px; border-bottom: 1px solid grey; margin-right: 20px;">
+                                    <p class="total-quantity-class" data-product="total-quantity-product"
+                                        style="text-align: end;">
+                                        <%= totalQuantity %>
+                                    </p>
+                                    <p style="text-align: end;" class="total-price" data-product="total-added-price">₹
+                                        <%= wholeTotal %>
+                                    </p>
+
+
+                                    <p style="text-align: end;">₹ <span id="discountedTotal">
+
+                                        </span>
+                                    </p>
+
+
+                                    <p style="text-align: end;">₹ 0</p>
 
                                 </div>
-                                <div class="row d-flex justify-content-center align-items-center">
-                                    <form action="/cart/placeorder">
 
-                                        <button type="submit" class="btn placeOrderDiv">Place Order</button>
-                                    </form>
-                                </div>
-                                <br>
                             </div>
+                            <div class="row">
+                                <div class="col" style="padding: 5px 40px 0 20px;">
+                                    <p style="font-weight: bold;">Grand Total :</p>
+                                </div>
+                                <div class="col" style="padding: 5px 10px 0 0; margin-right: 20px;">
+                                    <p class="grand-total" id="couponGrandTotal" data-product="grand-data"
+                                        style="font-weight: bold;text-align: end;">
+                                        ₹ <%= grandTotal %>
+                                    </p>
+                                </div>
 
+                            </div>
+                            <div class="row d-flex justify-content-center align-items-center">
+                                <form action="/cart/placeorder">
 
+                                    <% console.log('coming here at form',grandTotal) %>
+                                    <button type="submit" class="btn placeOrderDiv">Place Order</button>
+                                </form>
+                            </div>
+                            <br>
                         </div>
 
 
@@ -124,93 +153,32 @@
 
 
                 </div>
-                <% } %>
-                    </tbody>
+
+
             </div>
+            <% } %>
+                </tbody>
+                </div>
 
-            <script>
+                <script>
 
-                const incrementButtons = document.querySelectorAll('.quantity .increment');
-                const decrementButtons = document.querySelectorAll('.quantity .decrement');
-                const quantityElements = document.querySelectorAll('.quantity span');
-                const quantityInputs = document.querySelectorAll('.cart-quantity');
-                const totalAmountElement = document.getElementById('totalAmount')
-
-
-
-                incrementButtons.forEach((button, index) => {
-                    button.addEventListener('click', () => {
-                        const productId = button.getAttribute('data-product');
-                        const quantityInput = quantityInputs[index];
-                        let quantity = parseInt(quantityInput.value);
-                        quantity++;
-
-                        // console.log('increment product id:', productId);
-                        quantityInput.value = quantity;
-                        quantityElements[index].textContent = quantity;
-
-                        fetch('/cart/update/' + productId, {
-                            method: 'put',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ quantity }),
-                        })
-                            .then(response => {
-                                if (response.ok) {
-                                    return response.json(); // Parse the response as JSON
-                                }
-                                throw new Error('Network response was not ok');
-                            })
-                            .then(data => {
-                                console.log('data.json', data);
-                                // This will log the response from your controller, which should include totalPrice
-                                console.log('data.total', data.totalPrice);
-                                const totalPrice = data.totalPrice; // Get the totalPrice from the response
-                                const grandtotal = data.grandtotal;
-                                const totalquantity = data.totalQuantity;
-
-                                const productId = button.getAttribute('data-product')
-
-                                console.log('this is the product id', productId);
+                    const incrementButtons = document.querySelectorAll('.quantity .increment');
+                    const decrementButtons = document.querySelectorAll('.quantity .decrement');
+                    const quantityElements = document.querySelectorAll('.quantity span');
+                    const quantityInputs = document.querySelectorAll('.cart-quantity');
+                    const totalAmountElement = document.getElementById('totalAmount')
 
 
-                                const totalElement = document.querySelector(`[data-product="${productId}"].total-price`);
-                                // console.log(totalElement);
-                                totalElement.textContent = `Total Price: ₹ ${totalPrice.toFixed(2)}`;
+                    incrementButtons.forEach((button, index) => {
+                        button.addEventListener('click', () => {
+                            const productId = button.getAttribute('data-product');
+                            const quantityInput = quantityInputs[index];
+                            let quantity = parseInt(quantityInput.value);
+                            quantity++;
 
-                                const totalQuantity = document.querySelector(`[data-product="total-quantity-product"].total-quantity-class`);
-                                totalQuantity.textContent = `${totalquantity.toFixed(2)}`;
-
-                                const totalSum = document.querySelector(`[data-product="total-added-price"].total-price`)
-                                totalSum.textContent = ` ₹ ${grandtotal.toFixed(2)}`;
-
-                                const grandTotal = document.querySelector(`[data-product="grand-data"].grand-total`);
-                                grandTotal.textContent = ` ₹ ${grandtotal.toFixed(2)}`;
-
-
-
-
-                            })
-                            .catch(error => {
-                                console.error('There was a problem with the fetch operation:', error);
-                            });
-                    });
-                });
-
-
-                // Add event listeners to all decrement buttons
-                decrementButtons.forEach((button, index) => {
-                    button.addEventListener('click', () => {
-                        const productId = button.getAttribute('data-product');
-                        const quantityInput = quantityInputs[index];
-                        let quantity = parseInt(quantityInput.value);
-                        if (quantity > 1) {
-                            quantity--;
+                            // console.log('increment product id:', productId);
                             quantityInput.value = quantity;
                             quantityElements[index].textContent = quantity;
-
-
 
                             fetch('/cart/update/' + productId, {
                                 method: 'put',
@@ -220,25 +188,26 @@
                                 body: JSON.stringify({ quantity }),
                             })
                                 .then(response => {
-                                    console.log('response in decrenment first data response', response);
                                     if (response.ok) {
-                                        return response.json();
+                                        return response.json(); // Parse the response as JSON
                                     }
                                     throw new Error('Network response was not ok');
                                 })
                                 .then(data => {
-                                    // console.log('jeee');
-                                    console.log('response in decrenment first data', data);
-                                    // console.log('data.total price decrement', data.totalPrice);
-
-                                    const totalPrice = data.totalPrice;
-
-                                    const grandtotal = data.grandtotal;
-                                    // console.log('grand total from data.', grandtotal);
+                                    console.log('data.json', data);
+                                    // This will log the response from your controller, which should include totalPrice
+                                    console.log('data.total', data.totalPrice);
+                                    const totalPrice = data.totalPrice; // Get the totalPrice from the response
+                                    const grandtotal = data.wholeTotal;
                                     const totalquantity = data.totalQuantity;
+
+                                    // const productId = button.getAttribute('data-product')
+
+                                    console.log('grandtotal----------', grandtotal);
 
 
                                     const totalElement = document.querySelector(`[data-product="${productId}"].total-price`);
+                                    // console.log(totalElement);
                                     totalElement.textContent = `Total Price: ₹ ${totalPrice.toFixed(2)}`;
 
                                     const totalQuantity = document.querySelector(`[data-product="total-quantity-product"].total-quantity-class`);
@@ -250,40 +219,168 @@
                                     const grandTotal = document.querySelector(`[data-product="grand-data"].grand-total`);
                                     grandTotal.textContent = ` ₹ ${grandtotal.toFixed(2)}`;
 
+                                    location.reload();
 
 
                                 })
                                 .catch(error => {
                                     console.error('There was a problem with the fetch operation:', error);
                                 });
-                        }
+                        });
                     });
-                });
 
-                const removeButtons = document.querySelectorAll('.remove-item')
 
-                removeButtons.forEach(button => {
-                    button.addEventListener('click', () => {
-                        const productId = button.getAttribute('data-product');
+                    // Add event listeners to all decrement buttons
+                    decrementButtons.forEach((button, index) => {
+                        button.addEventListener('click', () => {
+                            const productId = button.getAttribute('data-product');
+                            const quantityInput = quantityInputs[index];
+                            let quantity = parseInt(quantityInput.value);
+                            if (quantity > 1) {
+                                quantity--;
+                                quantityInput.value = quantity;
+                                quantityElements[index].textContent = quantity;
 
-                        fetch('/cart/remove/' + productId, {
-                            method: 'DELETE',
+
+
+                                fetch('/cart/update/' + productId, {
+                                    method: 'put',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ quantity }),
+                                })
+                                    .then(response => {
+                                        console.log('response in decrenment first data response', response);
+                                        if (response.ok) {
+                                            return response.json();
+                                        }
+                                        throw new Error('Network response was not ok');
+                                    })
+                                    .then(data => {
+                                        // console.log('jeee');
+                                        console.log('response in decrenment first data', data);
+                                        // console.log('data.total price decrement', data.totalPrice);
+
+                                        const totalPrice = data.totalPrice;
+
+                                        const grandtotal = data.wholeTotal;
+                                        // console.log('grand total from data.', grandtotal);
+                                        const totalquantity = data.totalQuantity;
+
+
+                                        const totalElement = document.querySelector(`[data-product="${productId}"].total-price`);
+                                        totalElement.textContent = `Total Price: ₹ ${totalPrice.toFixed(2)}`;
+
+                                        const totalQuantity = document.querySelector(`[data-product="total-quantity-product"].total-quantity-class`);
+                                        totalQuantity.textContent = `${totalquantity.toFixed(2)}`;
+
+                                        const totalSum = document.querySelector(`[data-product="total-added-price"].total-price`)
+                                        totalSum.textContent = ` ₹ ${grandtotal.toFixed(2)}`;
+
+                                        const grandTotal = document.querySelector(`[data-product="grand-data"].grand-total`);
+                                        grandTotal.textContent = ` ₹ ${grandtotal.toFixed(2)}`;
+
+                                        location.reload();
+
+
+                                    })
+                                    .catch(error => {
+                                        console.error('There was a problem with the fetch operation:', error);
+                                    });
+                            }
+                        });
+                    });
+
+                    const removeButtons = document.querySelectorAll('.remove-item')
+
+                    removeButtons.forEach(button => {
+                        button.addEventListener('click', () => {
+                            const productId = button.getAttribute('data-product');
+
+                            fetch('/cart/remove/' + productId, {
+                                method: 'DELETE',
+                                headers: {
+                                    'content-Type': 'application/json'
+                                },
+                            })
+                                .then(response => {
+                                    if (response.ok) {
+                                        console.log('sure printed from cart');
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    console.log('after responsre from delete', data);
+                                    location.reload();
+                                })
+                        })
+                    })
+
+
+                    function applyCoupon() {
+                        // Get the coupon code from the input field
+                        const couponCode = document.getElementById('couponCode').value;
+
+                        fetch('/cart/apply_coupon', {
+                            method: 'POST',
                             headers: {
-                                'content-Type': 'application/json'
+                                'Content-Type': 'application/json',
                             },
+                            body: JSON.stringify({ couponCode }),
                         })
                             .then(response => {
-                                if (response.ok) {
-                                    console.log('sure printed from cart');
-                                }
-                                return response.json();
+
+                                // console.log('consoling , response', response);
+                                return response.json()
                             })
                             .then(data => {
-                                console.log('after responsre from delete', data);
-                                location.reload();
-                            })
-                    })
-                })
-            </script>
 
-            <%- include('footer') %>
+                                if (data.success) {
+                                    console.log('then.data', data);
+
+                                    const disco = data.discountedTotal;
+                                    const couponGrandtotal = data.couponGrandTotal;
+                                    console.log('disco, coupon grand total', disco, couponGrandtotal);
+                                    const messageDiv = document.getElementById('messageDiv');
+
+                                    messageDiv.innerHTML = data.message;
+                                    messageDiv.style.display = 'block';
+
+                                    document.getElementById('discountedTotal').textContent = ` ${disco.toFixed(2)}`;
+                                    document.getElementById('couponGrandTotal').textContent = ` ${couponGrandtotal.toFixed(2)}`;
+
+                                } else {
+                                    // Handle errors here if needed
+                                    console.log(data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.log('Error applying coupon:', error);
+                            });
+                    }
+
+                    // Attach the applyCoupon function to the form submission
+                    document.getElementById('couponForm').addEventListener('submit', function (event) {
+                        event.preventDefault(); // Prevent the form from submitting traditionally
+                        applyCoupon(); // Apply the coupon code via fetch
+                    });
+
+
+
+                    var message = '<%= couponErrorMessage %>';
+
+                    // Get the messageDiv element by its ID
+                    var messageDiv = document.getElementById('messageDiv');
+
+                    // Check if the message exists and is not empty
+                    if (message && message.trim() !== '') {
+                        // Set the message text
+                        messageDiv.innerHTML = message;
+
+                        // Display the message div
+                        messageDiv.style.display = 'block';
+                    }
+                </script>
+
+                <%- include('footer') %>

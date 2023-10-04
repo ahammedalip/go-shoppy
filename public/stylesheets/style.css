@@ -187,6 +187,7 @@ body {
   color: white;
 }
 
+
 /* individual page*/
 .product-images-individual {
   width: 30px;
@@ -209,11 +210,7 @@ body {
 
 /* cart  */
 
-.tablecart {
-  /* padding: 50px; */
-  /* border: 1px solid rgb(194, 194, 194);
-  border-radius: 1em; */
-}
+
 
 .cart-empty {
   width: 300px;
@@ -258,6 +255,14 @@ body {
   background-color: #FBBC05;
   color: #000000;
   transition: 0.5s;
+}
+
+.coupon-display{
+  border: 1px solid rgb(221, 211, 211);
+  border-radius: 10px;
+  background-color: white;
+  /* padding-left: 20px; */
+  box-shadow: 1px 1px 5px rgba(133, 133, 133, 0.5);
 }
 
 /* Wishlist */

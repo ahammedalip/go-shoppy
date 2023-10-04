@@ -15,7 +15,7 @@
                                     <p>Total Price:</p>
                                 </div>
                                 <div class="col">
-                                    <p style="font-weight: bold;">₹ <%= totalPrice %>
+                                    <p style="font-weight: bold;">₹ <%= grandTotal %>
                                     </p>
                                 </div>
                             </div>
@@ -44,7 +44,7 @@
                                 </label>
                             </div>
 
-                            <% if(user.wallet > totalPrice){ %>
+                            <% if(user.wallet > grandTotal ){ %>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="paymentOption" id="walletPay"
                                         value="wallet" onclick="updateSelectedPaymentOption('WalletPay')">

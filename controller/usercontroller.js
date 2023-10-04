@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt')
 const path = require('path');
 const fs = require('fs');
+const coupon = require('../model/couponModel');
 
 
 const usercontroller = {}
@@ -456,18 +457,45 @@ usercontroller.getCart = async (req, res) => {
                 totalQuantity += item.quantity;
             });
 
-            let totalPrice = 0
+            let wholeTotal = 0
 
             user.cart.forEach(item => {
-                totalPrice += item.total;
+                wholeTotal += item.total;
             })
 
             req.session.userEmail = user.email
-            req.session.totalPrice = totalPrice
+            req.session.totalPrice = wholeTotal
+            
 
-            console.log('total quantity , total price', totalQuantity, totalPrice);
+            const message = req.query.message;
+            
 
-            res.render('../views/user_views/cart', { cartProducts, totalQuantity, totalPrice });
+            const discountedTotal = req.session.discountedTotal
+            const grandTotal= wholeTotal;
+            // if(discountedTotal){
+            //     var grandTotal = wholeTotal -discountedTotal
+            // }else{
+            //     var grandTotal = wholeTotal
+            // }
+            req.session.grandTotal = wholeTotal;
+
+            console.log('discounted total from get cart session', discountedTotal);
+
+            console.log('message passed as query', message);
+            let couponErrorMessage;
+
+            if (message === 'cp_nt_exist') {
+                couponErrorMessage = 'Coupon not exists!';
+            } else if (message === 'cp_expd') {
+                couponErrorMessage = 'Coupon expired'
+            } else if (message === 'min_prc_nt') {
+                couponErrorMessage = 'Minimum purchase not met'
+            } else if (message === 'cp_success') {
+                couponErrorMessage = 'Coupon succesfully applied!'
+            }
+            console.log('total quantity , total price', totalQuantity, wholeTotal);
+
+            res.render('../views/user_views/cart', { cartProducts, totalQuantity, wholeTotal, couponErrorMessage, grandTotal });
         } catch (error) {
             console.log('error at get cart', error);
             res.send('Error fetching cart');
@@ -511,15 +539,19 @@ usercontroller.updateCartItem = async (req, res) => {
                     totalQuantity += item.quantity;
                 })
 
-                let grandTotal = 0
+                let wholeTotal = 0;
+                let totalIncDiscount = 0;
+                const disc = req.session.discountedTotal;
+                console.log('disc from dom loading', disc);
 
                 user.cart.forEach(item => {
-                    grandTotal += item.total
+                    wholeTotal += item.total
+                    totalIncDiscount = wholeTotal-disc
                 })
+                console.log('grand total after discount', totalIncDiscount);
+                req.session.totalPrice = wholeTotal
 
-                req.session.totalPrice = grandTotal
-
-                res.json({ success: true, totalPrice: cartItem.total, grandtotal: grandTotal, totalQuantity: totalQuantity });
+                res.json({ success: true, totalPrice: cartItem.total, wholeTotal: wholeTotal, totalQuantity: totalQuantity });
             } else {
                 res.json({ success: false, message: 'Cart item not found' });
             }
@@ -565,6 +597,50 @@ usercontroller.deleteItemsCart = async (req, res) => {
 
     }
 
+}
+
+usercontroller.postApplyCoupon = async (req, res) => {
+    const couponCode = req.body.couponCode;
+
+    try {
+        const couponGiven = await coupon.findOne({ code: couponCode });
+        // console.log('coupon details', couponGiven.isActive);
+        if (!couponGiven) {
+            console.log('coming here if coupon doesnt exist');
+            return res.json({ success: true, message: 'Coupon does not exist' });
+        }else{
+            if (couponGiven.isActive === false) {
+                return res.json({ success: true, message: 'Coupon expired!' });
+            } 
+            if (req.session.totalPrice < couponGiven.minimumPrice) {
+                res.redirect('/cart?message=min_prc_nt')
+            }
+
+            // Apply the coupon discount to the cart total price
+        var discountedTotal = req.session.totalPrice * (1 - couponGiven.discountPercent / 100);
+
+        if (discountedTotal > couponGiven.maximumDiscount) {
+            discountedTotal = couponGiven.maximumDiscount
+        }
+        console.log('discounted total', discountedTotal);
+        // Update the session with the discounted total
+        req.session.discountedTotal = discountedTotal;
+        
+        const couponGrandTotal = req.session.grandTotal- discountedTotal
+        console.log('grand total after discount', couponGrandTotal);
+        
+        req.session.grandTotal =  couponGrandTotal;
+        return res.json({success: true, discountedTotal, couponGrandTotal, message: 'Coupon is succesfully applied!'})
+        // res.redirect('/cart?message=cp_success')
+        }
+       
+
+        
+    }
+    catch (error) {
+        console.log('Error at coupon applying', error);
+        res.status(500).send('Error while applying coupon')
+    }
 }
 
 
@@ -888,12 +964,14 @@ usercontroller.getPlaceOrder = async (req, res) => {
         }
 
 
-        const totalPrice = req.session.totalPrice;
+        // const totalPrice = req.session.totalPrice;
+        const grandTotal = req.session.grandTotal;
+        console.log('grand total in session ', grandTotal);
 
         const addresses = await user.address
 
         // console.log('total address',addresses);
-        res.render('../views/user_views/purchaseProduct', { user, totalPrice, addresses })
+        res.render('../views/user_views/purchaseProduct', { user, grandTotal, addresses })
 
     }
     catch (error) {
