@@ -479,6 +479,19 @@ adminController.postCoupon = async (req, res) =>{
     }
 }
 
+adminController.deleteCoupon = async(req,res) => {
+    try{
+        const couponId =req.params.couponId
+        console.log('coupon id ', couponId);
+
+        await coupon.findByIdAndDelete(couponId)
+        return res.json({succes: true})
+    }
+    catch(error){
+        console.log('Error at deleting the coupon', error);
+        res.send('Error at coupon delete')
+    }
+}
 
 
 

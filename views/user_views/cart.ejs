@@ -78,16 +78,22 @@
                             <h5 style="padding: 10px; border-bottom: 1px solid gray;">Coupons</h5>
                             <form id="couponForm" action="/cart/apply_coupon" method="POST">
                                 <div id="messageDiv" class="alert alert-danger" style="display: none;">
-                                    <%= couponErrorMessage %>
+
                                 </div>
                                 <!-- <label for="couponCode">Coupon Code:</label> -->
+                                <!-- Button trigger modal -->
+                                <a class="" data-toggle="modal" data-target="#exampleModal">
+                                    Show available coupons
+                                </a>
                                 <div class="form-group d-flex " style="padding: 20px;">
 
                                     <input style="width: 200px; padding: 10px;" type="text" class="form-control"
                                         id="couponCode" name="couponCode" required>
-                                    <button type="submit" class="btn btn-primary">Apply Coupon</button>
+                                    <button type="submit" class="btn btn-primary">Apply</button>
                             </form>
+                            
                         </div>
+                        
 
                     </div>
                     <br>
@@ -142,7 +148,7 @@
                                 <form action="/cart/placeorder">
 
                                     <% console.log('coming here at form',grandTotal) %>
-                                    <button type="submit" class="btn placeOrderDiv">Place Order</button>
+                                        <button type="submit" class="btn placeOrderDiv">Place Order</button>
                                 </form>
                             </div>
                             <br>
@@ -158,6 +164,48 @@
             </div>
             <% } %>
                 </tbody>
+
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Available Cuopons</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="coupon-modal">
+                                    <% availableCoupons.forEach(coupons=>{ %>
+                                        <div
+                                            style="border: 1px solid rgb(213, 211, 211); border-radius: 10px; padding: 10px; box-shadow: 1px 1px 5px rgba(133, 133, 133, 0.5);">
+                                            <div class="d-flex justify-content-center"
+                                                style="background-color: antiquewhite; border-radius: 15px; padding: 0 10px 0 10px;">
+                                                <p style="font-weight: 600;">
+                                                    Code: <%= coupons.code %>
+                                                </p>
+                                            </div>
+
+                                            <p>
+                                                <%= coupons.description %>
+                                            </p>
+                                        </div>
+                                        <br>
+
+                                        <% }) %>
+
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 </div>
 
                 <script>
@@ -368,7 +416,7 @@
 
 
 
-                    var message = '<%= couponErrorMessage %>';
+                    var message = '';
 
                     // Get the messageDiv element by its ID
                     var messageDiv = document.getElementById('messageDiv');

@@ -3,8 +3,10 @@
 
         <div class="row">
             <div id="messageDiv" class="alert alert-success" style="display: none;">
-               <p style="color: green;"><%= message %></p> 
-             
+                <p style="color: green;">
+                    <%= message %>
+                </p>
+
             </div>
             <div class="col-md-8">
 
@@ -20,32 +22,42 @@
                             <th>Is Active</th>
                             <th>Description</th>
                             <th>Edit/Delete</th>
-                            
+
                         </tr>
                     </thead>
                     <tbody>
-                        <% coupons.sort((a,b) => b.expirationDate - a.expirationDate); %>
-                        <% coupons.forEach(coupon =>{ %>
-                        <tr>
-                            <td><%= coupon.code %></td>
-                            <td><%= coupon.discountPercent %></td>
-                            <td>₹ <%= coupon.minimumPrice %></td>
-                            <td>₹ <%= coupon.maximumDiscount %></td>
-                            <td><%= coupon.expirationDate.toDateString() %></td>
-                            <td><%= coupon.isActive %></td>
-                            <td><%= coupon.description %></td>
-                            <td>
-                                <button class="btn btn-primary">Edit</button>
-                                <button class="btn btn-danger">Delete</button>
-                            </td>
-
-                          </tr>
-                        <% }) %>
+                        <% coupons.sort((a,b)=> b.expirationDate - a.expirationDate); %>
+                            <% coupons.forEach(coupon=>{ %>
+                                <tr>
+                                    <td>
+                                        <%= coupon.code %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.discountPercent %>
+                                    </td>
+                                    <td>₹ <%= coupon.minimumPrice %>
+                                    </td>
+                                    <td>₹ <%= coupon.maximumDiscount %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.expirationDate.toDateString() %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.isActive %>
+                                    </td>
+                                    <td>
+                                        <%= coupon.description %>
+                                    </td>
+                                    <td>
+                                        <!-- <button class="btn btn-primary" data-coupon-id="<%= coupon._id %>">Edit</button> -->
+                                        <button class="btn btn-danger delete-coupon"
+                                            data-coupon-id="<%= coupon._id %>">Delete</button>
+                                    </td>
+                                </tr>
+                                <% }) %>
                     </tbody>
-                 
+
                 </table>
-
-
             </div>
 
             <div class="col-md-4">
@@ -53,23 +65,41 @@
                 <div class="col Coupon-create">
                     <h2>Create Coupon</h2>
                     <form action="/admin/create-coupon" method="POST">
-                        <div class="form-group">
-                            <label for="code">Coupon Code:</label>
-                            <input type="text" class="form-control" id="code" name="code" required>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="code">Coupon Code:</label>
+                                    <input type="text" class="form-control" id="code" name="code" required>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="discountPercent">Discount Percent:</label>
+                                    <input type="number" class="form-control" id="discountPercent"
+                                        name="discountPercent" required>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="discountPercent">Discount Percent:</label>
-                            <input type="number" class="form-control" id="discountPercent" name="discountPercent"
-                                required>
+
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="minimumPrice">Minimum Price:</label>
+                                    <input type="number" class="form-control" id="minimumPrice" name="minimumPrice"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="maximumDiscount">Max Discount:</label>
+                                    <input type="number" class="form-control" id="maximumDiscount"
+                                        name="maximumDiscount" required>
+                                </div>
+                            </div>
+
                         </div>
-                        <div class="form-group">
-                            <label for="minimumPrice">Minimum Price:</label>
-                            <input type="number" class="form-control" id="minimumPrice" name="minimumPrice" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="maximumDiscount">Max Discount:</label>
-                            <input type="number" class="form-control" id="maximumDiscount" name="maximumDiscount" required>
-                        </div>
+
                         <div class="form-group">
                             <label for="expirationDate">Expiration Date:</label>
                             <input type="date" class="form-control" id="expirationDate" name="expirationDate" required>
@@ -93,23 +123,54 @@
                 </div>
 
             </div>
-            
-
         </div>
 
     </div>
 
     <script>
-            var message = '<%= message %>';
-        
+
+        document.addEventListener('click', async function (event) {
+            // Check if the clicked element is a delete button with the class 'delete-coupon'
+            if (event.target.classList.contains('delete-coupon')) {
+
+                event.preventDefault();
+
+                // Get the coupon ID from the data attribute
+                const couponId = event.target.getAttribute('data-coupon-id');
+                console.log('coupon id at script', couponId);
+            
+                try {
+                    const response = await fetch(`/admin/delete_coupon/${couponId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    if (response.ok) {
+                        console.log('response.ok', response);
+                        location.reload();
+                    } else {
+                        console.error('Failed to delete the coupon');
+                    }
+                } catch (error) {
+                    console.error('Error deleting the coupon:', error);
+                }
+            }
+        });
+
+
+
+        var message = '<%= message %>';
+
         // Get the messageDiv element by its ID
         var messageDiv = document.getElementById('messageDiv');
-    
+
         // Check if the message exists and is not empty
         if (message && message.trim() !== '') {
             // Set the message text
             messageDiv.innerHTML = message;
-    
+
             // Display the message div
             messageDiv.style.display = 'block';
         }

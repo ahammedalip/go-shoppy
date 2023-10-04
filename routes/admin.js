@@ -45,6 +45,7 @@ router.post ('/orders/update-status/:orderId', adminController.postStatusUpdate)
 
 router.get('/coupon', adminController.getCoupon)
 router.post('/create-coupon', adminController.postCoupon)
+router.delete ('/delete_coupon/:couponId', adminController.deleteCoupon)
 
 router.get('/logout', adminController.adminLogout)
 

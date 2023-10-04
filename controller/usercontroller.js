@@ -444,13 +444,11 @@ usercontroller.getCart = async (req, res) => {
                     model: 'products' // This should match the model name of your Product
                 });
 
-            if (!user) {
-                return res.send('User not found');
-            }
-
+           
+                const availableCoupons = await coupon.find({isActive:true})
+                // console.log('Active coupons', availableCoupons);
             // Now, user.cart will contain the populated product details
             const cartProducts = user.cart;
-
             let totalQuantity = 0;
 
             user.cart.forEach(item => {
@@ -467,35 +465,19 @@ usercontroller.getCart = async (req, res) => {
             req.session.totalPrice = wholeTotal
             
 
-            const message = req.query.message;
+            
             
 
             const discountedTotal = req.session.discountedTotal
             const grandTotal= wholeTotal;
-            // if(discountedTotal){
-            //     var grandTotal = wholeTotal -discountedTotal
-            // }else{
-            //     var grandTotal = wholeTotal
-            // }
+            
             req.session.grandTotal = wholeTotal;
 
-            console.log('discounted total from get cart session', discountedTotal);
+            // console.log('discounted total from get cart session', discountedTotal);
 
-            console.log('message passed as query', message);
-            let couponErrorMessage;
+          
 
-            if (message === 'cp_nt_exist') {
-                couponErrorMessage = 'Coupon not exists!';
-            } else if (message === 'cp_expd') {
-                couponErrorMessage = 'Coupon expired'
-            } else if (message === 'min_prc_nt') {
-                couponErrorMessage = 'Minimum purchase not met'
-            } else if (message === 'cp_success') {
-                couponErrorMessage = 'Coupon succesfully applied!'
-            }
-            console.log('total quantity , total price', totalQuantity, wholeTotal);
-
-            res.render('../views/user_views/cart', { cartProducts, totalQuantity, wholeTotal, couponErrorMessage, grandTotal });
+            res.render('../views/user_views/cart', { cartProducts, totalQuantity, wholeTotal,  grandTotal, availableCoupons });
         } catch (error) {
             console.log('error at get cart', error);
             res.send('Error fetching cart');
