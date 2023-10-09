@@ -25,8 +25,15 @@
                 </h3>
                 <p>Brand: <%= individualProduct.brand %>
                 </p>
-                <p style="font-weight: bold; font-size: 1.2em;">Price: ₹ <%= individualProduct.price %>
-                </p>
+                <% if(individualProduct.offer){ %>
+                    <h6 style=" font-size: 1.2em;"><span style="text-decoration: line-through;">MRP: ₹<%= individualProduct.price %></span> 
+                    </h6>
+                    <h6>discount: <%= individualProduct.offer %>%</h6>
+                    <h6 style="font-size: 1.2rem;color: red;">Offer Price: ₹<%=offerPrice %></h6>
+                <% }else{ %>
+
+                <%}%>
+                
                 <p>Colour: <%= individualProduct.colour %>
                 </p>
                 <p>Additional Details: <%= individualProduct.additionalInfo %>

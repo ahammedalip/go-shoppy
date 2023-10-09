@@ -1,0 +1,78 @@
+<%- include('partials') %>
+
+
+
+    <div class="" style="margin-left: 240px; width:auto; padding-top: 30px; padding-left: 20px;">
+        <h4>Order Details</h4>
+        <div class="col-md-10 order-div">
+
+
+            <div class="col heading-div" style="padding: 10px;">
+                <div class="row">
+                    <div class="col">
+
+                        Order Status: <%= ordered.orderStatus %>
+                            <p>Order Date: <%= ordered.orderDate.toDateString() %>
+                            </p>
+
+                    </div>
+                    <div class="col">
+                        <p>Order Id: <%= ordered._id %>
+                        </p>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="col">
+                <h5 style="border-bottom: 1px solid rgb(219, 219, 219);">Order Details</h5>
+                <div class="container">
+                    <table class="table">
+                        <% ordered.products.forEach(product=>{ %>
+                            
+
+                                <tr>
+                                    <td style="vertical-align: middle;"><img
+                                            src="/uploads/<%= product.productId.images[0] %>"
+                                            alt="<%= product.productId.productName %>"
+                                            style="width: 80px; height: 80px; border: 1px solid rgb(223, 219, 219); border-radius: 5px;">
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <%= product.productId.productName %>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <%= product.quantity %>
+                                    </td>
+                                    <td style="vertical-align: middle;">
+                                        <%= product.productId.brand %>
+                                    </td>
+                                    <td style="vertical-align: middle;">₹ <%= product.productId.price %>
+                                    </td>
+                                </tr>
+
+                            
+                            <% }) %>
+
+                    </table>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <h6 style="border-bottom: 1px solid grey;">Shipping Address</h6>
+                    <h6 style="font-weight: 600;">Name:<%=ordered.address.FullName %></h6>
+                    <h6><%=ordered.address.ContactNo %></h6>
+                    <h6><%=ordered.address.BuildingName %></h6>
+                    <h6><%=ordered.address.PostOffice %>, <%= ordered.address.PIN %></h6>
+                    <h6><%= ordered.address.place%>, <%= ordered.address.City%>, <%= ordered.address.State%></h6>
+                </div>
+                <div class="col d-flex justify-content-center">
+                    
+                    <p style="font-weight: 600;">Sub Total: ₹ <%= ordered.totalprice %></p>
+                    
+                </div>
+
+                
+            </div>
+        </div>
+    </div>

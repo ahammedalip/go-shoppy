@@ -1,28 +1,11 @@
-<!-- <%- include('header') %> 
+<%- include('header') %>
 
- <h2>signup</h2> 
-
-
-
-
-
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up - Go Shoppy</title>
-  <!-- Include Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body style="background-image: url(/images/2202_w039_n003_110b_p1_110.jpg); background-size: cover;">
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-5">
-        <div class="card" style="background-color: rgb(165, 162, 159); border-radius: 20px;">
+        <div class="card" style="box-shadow: 1px 6px 10px rgba(0, 0, 0, 0.1);border-radius: 10px;background: transparent; backdrop-filter: blur(15px);">
           <div >
             <br>
             <h4 class="text-center">Sign Up for Go Shoppy</h4>
@@ -30,8 +13,9 @@
           <style>
             .card {
             margin-top: 0px;
-            border-radius: 20px;
-            box-shadow: 1px 6px 10px rgba(0, 0, 0, 0.1);
+            
+            
+            
         }
           </style>
           <div class="card-body">
@@ -42,15 +26,17 @@
                     <%= errorMessage %>
                 </div>
                 <% } %>
-
-              <div class="form-group">
-                <!-- <label for="firstName">First Name</label> -->
-                <input type="text" class="form-control" placeholder="First Name" id="firstName" name="firstName" required>
-              </div>
-              <div class="form-group">
-                <!-- <label for="lastName">Last Name</label> -->
-                <input type="text" class="form-control" placeholder="Last Name" id="lastName" name="lastName" required>
-              </div>
+                <div class="row">
+                  <div class="col form-group">
+                    <!-- <label for="firstName">First Name</label> -->
+                    <input type="text" class="form-control" placeholder="First Name" id="firstName" name="firstName" required>
+                  </div>
+                  <div class="col form-group">
+                    <!-- <label for="lastName">Last Name</label> -->
+                    <input type="text" class="form-control" placeholder="Last Name" id="lastName" name="lastName" required>
+                  </div>
+                </div>
+             
               <div class="form-group">
                 <!-- <label for="email">Email</label> -->
                 <input type="email" class="form-control" placeholder="Email Id" id="email" name="email" required>
@@ -67,14 +53,14 @@
                 <button class="btn btn-primary">Send OTP</button>
               </div>
               <br>
-              <p style="text-align: center;">Already a user? <a href="/">Login here</a></p>
+              <p style="text-align: center;">Already a user? <a href="/login">Login here</a></p>
             </form>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <br><br>
+<%- include('footer') %>
 
-
-  <%- include('footer') %>
 

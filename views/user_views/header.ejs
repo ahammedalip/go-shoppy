@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
     integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -55,8 +54,32 @@
 
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-item nav-link" href="/cart"><i class='bx bx-cart' style="font-size: 30px;"></i></a>
-        <a class="nav-item nav-link" href="/wishlist"><i class='bx bx-heart' style="font-size: 30px;"></i></a>
+        <a class="nav-item nav-link" href="/cart">
+          <i class='bx bx-cart' style="font-size: 40px; position: relative;">
+          <% if(user){ %>
+          <span style="position: absolute; top: 0; right: 0; border-radius: 50%;width: 20px;height: 20px; font-size: 15px; background-color: red; color: white; padding: 4px 8px;" id="cart-counter" class="badge badge-danger">
+           
+              <%= user.cart.length %></span>
+              <% }else{ %>
+                <span style="position: absolute; top: 0; right: 0; border-radius: 50%;width: 20px;height: 20px; font-size: 15px; background-color: red; color: white; padding: 4px 8px;" id="cart-counter" class="badge badge-danger">
+           
+                  0</span>
+             <% } %></i>
+      </a>
+      <a class="nav-item nav-link" href="/wishlist">
+        <i class='bx bx-heart' style="font-size: 38px; position: relative;">
+          <% if(user && user.wishlist.length > 0) { %>
+            <span style="position: absolute; top: 0; right: 0; border-radius: 50%;width: 20px;height: 20px; font-size: 15px; background-color: red; color: white; padding: 4px 8px;" id="wishlist-counter" class="">
+              <%= user.wishlist.length %>
+            </span>
+          <% }else{ %>
+            <span style="position: absolute; top: 0; right: 0; border-radius: 50%;width: 20px;height: 20px; font-size: 15px; background-color: red; color: white; padding: 4px 8px;" id="wishlist-counter" class="">
+              0
+            </span>
+            <% } %>
+        </i>
+      </a>
+      
       </div>
     </div>
   </nav>

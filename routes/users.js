@@ -37,6 +37,7 @@ router.delete('/cart/remove/:productId', usercontroller.deleteItemsCart)
 router.post ('/cart', usercontroller.addToCart)
 router.post ('/cart/add', usercontroller.addtoCartProductpage)
 router.post('/cart/apply_coupon', usercontroller.postApplyCoupon)
+router.post ('/cart/addaddress', usercontroller.postAddressCart)
 
 router.post ('/wishlist/add/:productId', usercontroller.addToWishlistIndividual)
 

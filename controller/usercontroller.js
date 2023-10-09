@@ -16,25 +16,23 @@ const coupon = require('../model/couponModel');
 const usercontroller = {}
 
 usercontroller.getGuestHome = async (req, res) => {
-    if (req.cookies.user) {
+   
         try {
             const categories = await ProductCategory.find({ isUnlisted: false })
 
-            res.render('../views/user_views/userhome', { categories });
+            res.render('../views/user_views/userhome', { categories, user:false });
         }
         catch (error) {
             console.log(error);
         }
-    } else {
-        res.render('../views/user_views/guesthome.ejs')
-    }
+    
 }
 
 usercontroller.getLoginpage = (req, res) => {
     if (req.cookies.user) {
         res.render('../views/user_views/userhome')
     } else {
-        res.render('../views/user_views/userlogin', { errorMessage: false })
+        res.render('../views/user_views/userlogin', { errorMessage: false, user:false })
     }
 }
 
@@ -61,7 +59,7 @@ usercontroller.postLoginPage = async (req, res) => {
 
         if (userverify.isBlocked) {
 
-            return res.render('../views/user_views/userlogin', { errorMessage: 'User is blocked' });
+            return res.render('../views/user_views/userlogin', { errorMessage: 'User is blocked' , user:userverify});
         }
 
         else if (userverify && bcrypt.compareSync(req.body.password, userverify.password)) {
@@ -95,7 +93,7 @@ usercontroller.getSignupPage = (req, res) => {
         res.render('../views/user_views/userhome')
     }
     else {
-        res.render('../views/user_views/usersignup', { errorMessage: false })
+        res.render('../views/user_views/usersignup', { errorMessage: false, user:false })
     }
 
 }
@@ -161,7 +159,7 @@ usercontroller.getOtpPage = (req, res) => {
         res.render('../views/user_views/userhome')
     }
     else {
-        res.render('../views/user_views/userotp', { errorMessage: false })
+        res.render('../views/user_views/userotp', { errorMessage: false , user:false})
     }
 }
 
@@ -202,7 +200,7 @@ usercontroller.postOtpPage = async (req, res) => {
 usercontroller.getresetPassword = (req, res) => {
 
 
-    res.render('../views/user_views/resetpassword', { errorMessage: false })
+    res.render('../views/user_views/resetpassword', { errorMessage: false, user:false })
 
 }
 
@@ -262,7 +260,7 @@ usercontroller.getVerifyOTP = (req, res) => {
 
 
 
-    res.render('../views/user_views/resetotp', { errorMessage: false })
+    res.render('../views/user_views/resetotp', { errorMessage: false, user:false })
 
 }
 
@@ -284,7 +282,7 @@ usercontroller.postVerifyOTP = (req, res) => {
 
 usercontroller.getSubmitPass = (req, res) => {
 
-    res.render('../views/user_views/newpassword', { errorMessage: false })
+    res.render('../views/user_views/newpassword', { errorMessage: false, user:false })
 
 }
 
@@ -320,13 +318,17 @@ usercontroller.postSubmitPass = async (req, res) => {
 
 
 usercontroller.gethome = async (req, res) => {
+    
     if (req.cookies.user) {
         // console.log(req.cookies.user);
         // if user is there then accepting them to userhome
         try {
+            const user = await userSignup.findOne({email:req.cookies.user})
             const categories = await ProductCategory.find({ isUnlisted: false })
+            console.log('user cart', user);
+            const userCart = user.cart
 
-            res.render('../views/user_views/userhome', { categories });
+            res.render('../views/user_views/userhome', { categories,user });
         }
         catch (error) {
             console.log('error fetching categories', error);
@@ -339,24 +341,25 @@ usercontroller.gethome = async (req, res) => {
 
 usercontroller.getProducts = async (req, res) => {
     try {
+        const user = await userSignup.findOne({email: req.cookies.user})
         const categories = await ProductCategory.find({ isUnlisted: false });
         const productsPerPage = 6; // Define the number of products per page
 
-        // Get the current page number from the query parameter or default to 1
+        
         const currentPage = parseInt(req.query.page) || 1;
 
-        // Calculate the starting index and ending index for the products to display on the current page
+        
         const startIndex = (currentPage - 1) * productsPerPage;
         const endIndex = startIndex + productsPerPage;
 
-        // Fetch the products for the current page
+        
         const products = await productList.find({ unlisted: false }).skip(startIndex).limit(productsPerPage);
 
-        // Calculate the total number of pages based on the total number of products
+        
         const totalProducts = await productList.countDocuments({ unlisted: false });
         const totalPages = Math.ceil(totalProducts / productsPerPage);
 
-        res.render('../views/user_views/products', { categories, products, currentPage, totalPages });
+        res.render('../views/user_views/products', { categories, products, currentPage, totalPages, user });
     } catch (error) {
         console.log('error in product page', error);
         res.send('error in product list');
@@ -367,6 +370,7 @@ usercontroller.getCategoryFilter = async (req, res) => {
     const categoryId = req.params.categoryId;
 
     try {
+        const user = await userSignup.findOne({email:req.cookies.user});
         const categories = await ProductCategory.find({ isUnlisted: false });
         const cat = await ProductCategory.findById(categoryId);
         const productsPerPage = 6; // Define the number of products per page
@@ -386,7 +390,7 @@ usercontroller.getCategoryFilter = async (req, res) => {
         const totalProducts = await productList.countDocuments({ category: cat.categoryName, unlisted: false });
         const totalPages = Math.ceil(totalProducts / productsPerPage);
 
-        res.render('../views/user_views/products', { categories, products, currentPage, totalPages });
+        res.render('../views/user_views/products', { categories, products, currentPage, totalPages, user });
     } catch (error) {
         console.log('Error in category filter page', error);
         res.send('Error in category filter product list');
@@ -398,12 +402,19 @@ usercontroller.getIndividualProduct = async (req, res) => {
 
 
     try {
+        const user = await userSignup.findOne({email:req.cookies.user});
         const productId = req.params.productId;
         const categories = await ProductCategory.find({ isUnlisted: false })
         const individualProduct = await productList.findOne({ _id: productId })
-        // console.log(individualProduct);
-        // individualProduct.fullImages = individualProduct.images.map(image => '/uploads' + image);
-        res.render('../views/user_views/individualproduct', { categories, individualProduct })
+        // console.log(individualProduct.offer);
+        let offerPrice;
+        if(individualProduct.offer){
+            const price = individualProduct.price;
+            const discount = price*(individualProduct.offer/100)
+            offerPrice =Math.floor(price - discount) 
+           console.log('offer price', offerPrice);
+        }
+        res.render('../views/user_views/individualproduct', { categories, individualProduct, user, offerPrice })
     }
     catch (error) {
         console.log('Error at individual product page:_________________________', error);
@@ -436,7 +447,6 @@ usercontroller.applyFilter = async (req, res) => {
 usercontroller.getCart = async (req, res) => {
     if (req.cookies.user) {
 
-
         try {
             const user = await userSignup.findOne({ email: req.cookies.user })
                 .populate({
@@ -446,8 +456,17 @@ usercontroller.getCart = async (req, res) => {
 
            
                 const availableCoupons = await coupon.find({isActive:true})
-                // console.log('Active coupons', availableCoupons);
-            // Now, user.cart will contain the populated product details
+               user.cart.forEach(item=>{
+                const offer = item.productId.offerPrice
+
+                console.log('offer', offer);
+                if(offer){
+                    console.log('consoling the total of individual product',item.total);
+                    item.total = item.productId.offerPrice
+                }
+               })
+               
+           
             const cartProducts = user.cart;
             let totalQuantity = 0;
 
@@ -465,19 +484,16 @@ usercontroller.getCart = async (req, res) => {
             req.session.totalPrice = wholeTotal
             
 
-            
-            
-
-            const discountedTotal = req.session.discountedTotal
             const grandTotal= wholeTotal;
             
             req.session.grandTotal = wholeTotal;
 
-            // console.log('discounted total from get cart session', discountedTotal);
+           console.log('whole total', wholeTotal);
+           console.log('grand total',grandTotal );
 
           
 
-            res.render('../views/user_views/cart', { cartProducts, totalQuantity, wholeTotal,  grandTotal, availableCoupons });
+            res.render('../views/user_views/cart', { cartProducts, totalQuantity, wholeTotal,  grandTotal, availableCoupons, user });
         } catch (error) {
             console.log('error at get cart', error);
             res.send('Error fetching cart');
@@ -497,7 +513,9 @@ usercontroller.updateCartItem = async (req, res) => {
 
         // Find the user and log the entire user object for inspection
         const user = await userSignup.findOne({ email: req.cookies.user }).populate('cart.productId');
-        // console.log('User Object:', user);
+        user.cart.forEach(item =>{
+            console.log('offer directly from updarecartitem',item.productId.offer)
+        })
 
         if (user) {
             // Attempt to find the cart item to update
@@ -508,12 +526,9 @@ usercontroller.updateCartItem = async (req, res) => {
             if (cartItem) {
                 // Update the quantity for the cart item
                 cartItem.quantity = quantity;
-                // console.log('updated quantity', cartItem.quantity);
-                // console.log('individual price', cartItem.productId.price);
-                // Calculate the total for the cart item based on quantity and individualPrice
+                // console.log('offer percentage', user.cart.productId.offer);
                 cartItem.total = cartItem.quantity * cartItem.productId.price;
-                // console.log('cart total after adding', cartItem.total);
-                // Save the updated cart item within the user object
+                
                 await user.save();
 
                 let totalQuantity = 0
@@ -622,6 +637,39 @@ usercontroller.postApplyCoupon = async (req, res) => {
     catch (error) {
         console.log('Error at coupon applying', error);
         res.status(500).send('Error while applying coupon')
+    }
+}
+
+usercontroller.postAddressCart = async (req, res) => {
+    try {
+        const { FullName, ContactNo, BuildingName, PostOffice, place, City, State, PIN, Country } = req.body
+        const user = await userSignup.findOne({ email: req.cookies.user })
+
+
+        const newAddress = {
+            FullName,
+            ContactNo,
+            BuildingName,
+            PostOffice,
+            place,
+            City,
+            State,
+            PIN,
+            Country
+        };
+
+        // Push the new address into the user's address array
+        user.address.push(newAddress);
+
+        await user.save()
+
+        res.redirect('/cart/placeorder')
+
+    }
+
+    catch (error) {
+        console.log('error at post add adress from cart', error);
+        res.status(500).send('error at adding address')
     }
 }
 
@@ -758,10 +806,10 @@ usercontroller.getWishlist = async (req, res) => {
     if (!req.cookies.user) {
         return res.redirect('/login');
     }
-    const user = await userSignup.find({ email: req.cookies.user })
+    const user = await userSignup.findOne({ email: req.cookies.user })
     const wishlistedItems = await userSignup.findOne({ email: req.cookies.user }).populate('wishlist.productId')
 
-    res.render('../views/user_views/wishlist', { wishlist: wishlistedItems.wishlist })
+    res.render('../views/user_views/wishlist', { wishlist: wishlistedItems.wishlist, user })
 }
 
 usercontroller.deleteItemsfromWishlist = async (req, res) => {
@@ -805,12 +853,13 @@ usercontroller.getprofile = async (req, res) => {
 
 
         const addresses = user.address
+        const formattedWallet = user.wallet.toLocaleString();
         // console.log('user adress 0',user.address[1]);
         console.log('mesage;;;;;;;', req.query.message);
         if (req.query.message) {
             var message = 'Password changed succesfully'
         }
-        res.render('../views/user_views/profile.ejs', { user, addresses, message })
+        res.render('../views/user_views/profile.ejs', { user, addresses, message, formattedWallet })
     }
     catch (error) {
         console.log('Error at get userprofile', error);
@@ -978,12 +1027,8 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
         const selectedAddressId = user.address.find(address => address._id.toString() === selectedAddress);
         console.log('selected address', selectedAddressId);
 
-
-
-
-
-        const totalprice = req.session.totalPrice
-        console.log('total price', totalprice);
+        const grandTotal = req.session.grandTotal
+        console.log('grand total price', grandTotal);
         console.log('payment method', selectedPaymentOption);
 
         const orderProducts = [];
@@ -1000,7 +1045,7 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
         const newOrder = new order({
             userId: user._id,
             products: orderProducts,
-            totalprice: totalprice,
+            totalprice: grandTotal,
             orderStatus: 'Pending',
             paymentMethod: selectedPaymentOption,
             address: selectedAddressId
@@ -1011,7 +1056,7 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
         let updateWallet;
         if (selectedPaymentOption === 'WalletPay') {
             try {
-                updateWallet = user.wallet - totalprice
+                updateWallet = user.wallet - grandTotal
                 // console.log('user._id', user._id);
                 await userSignup.findOneAndUpdate(
                     { _id: user._id },
@@ -1071,7 +1116,7 @@ usercontroller.getOrders = async (req, res) => {
         }
         const orders = await order.find({ userId: user._id }).populate('products.productId')
         // console.log('orders at total order list page-------', orders);
-        res.render('../views/user_views/orderlist', { orders: orders })
+        res.render('../views/user_views/orderlist', { orders: orders, user })
 
     }
     catch (error) {
@@ -1082,6 +1127,11 @@ usercontroller.getOrders = async (req, res) => {
 
 usercontroller.getOrderDetails = async (req, res) => {
     try {
+        const user = await userSignup.findOne({email:req.cookies.user});
+
+        if(!user){
+            res.redirect('/login')
+        }
         const orderId = req.params.orderId
 
         // const orders = await order.find()
@@ -1096,7 +1146,7 @@ usercontroller.getOrderDetails = async (req, res) => {
         }
 
 
-        res.render('../views/user_views/orderDetails', { orderDetails, orderId })
+        res.render('../views/user_views/orderDetails', { orderDetails, orderId, user })
 
     }
     catch (error) {
@@ -1114,8 +1164,6 @@ usercontroller.cancelOrder = async (req, res) => {
             { orderStatus: 'cancel_req' },
             { new: true }
         )
-
-
 
 
         console.log('order cancelled, given the updated order after cancelling', updateOrder);
@@ -1140,7 +1188,7 @@ usercontroller.getChangePassProfile = async (req, res) => {
         if (!user) {
             res.redirect('/login')
         }
-        res.render('../views/user_views/profilechangepass', { errorMessage: false })
+        res.render('../views/user_views/profilechangepass', { errorMessage: false, user })
     }
     catch (error) {
         console.log('Error at get change password: ', error);

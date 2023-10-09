@@ -23,8 +23,7 @@
 
 
                                     <% cartProducts.forEach((item, index)=> { %>
-                                        <!-- <%- console.log('result from tag', item.total, item._id) %> -->
-                                        <tr>
+                                       
                                             <div>
 
 
@@ -51,10 +50,17 @@
                                                         data-index="<%= index %>"
                                                         data-product="<%= item._id %>">+</button>
                                                 </td>
+                                               <% if(item.productId.offer){ %>
+                                                <td style="vertical-align: middle;" data-total="<%= item.total %>"
+                                                    data-product="<%= item._id %>" class="total-price">
+                                                    <span>Offer Price: ₹ <%= item.total %></span>
+                                                </td>
+                                              <% }else{ %>
                                                 <td style="vertical-align: middle;" data-total="<%= item.total %>"
                                                     data-product="<%= item._id %>" class="total-price">
                                                     <span>Total Price: ₹ <%= item.total %></span>
                                                 </td>
+                                                <% }%>
                                                 <td style="vertical-align: middle;">
                                                     <div>
                                                         <button class="btn btn-sm remove-item"
@@ -104,7 +110,7 @@
                             <div class="row">
                                 <div class="col" style=" padding: 40px 40px 0 20px; border-bottom: 1px solid grey   ;">
                                     <p>Total Items :</p>
-                                    <p>Total Price : </p>
+                                    <p>Sub Price : </p>
                                     <p>Discount:</p>
                                     <p>Delivery Charges : </p>
 
@@ -267,7 +273,7 @@
                                     const grandTotal = document.querySelector(`[data-product="grand-data"].grand-total`);
                                     grandTotal.textContent = ` ₹ ${grandtotal.toFixed(2)}`;
 
-                                    location.reload();
+                                    // location.reload();
 
 
                                 })
@@ -329,7 +335,7 @@
                                         const grandTotal = document.querySelector(`[data-product="grand-data"].grand-total`);
                                         grandTotal.textContent = ` ₹ ${grandtotal.toFixed(2)}`;
 
-                                        location.reload();
+                                        // location.reload();
 
 
                                     })

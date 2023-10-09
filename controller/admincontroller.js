@@ -241,15 +241,24 @@ adminController.getAddProduct = async (req, res) => {
 
 
 adminController.postAddProduct = [
+    
     upload.array('images', 4), // Apply the upload middleware here
     async (req, res) => {
+        console.log('coming here');
         try {
-            const { productName, purchaseRate, category, price, quantity, additionalInfo, brand, colour } = req.body;
+            const { productName, purchaseRate, offer, category, price, quantity, additionalInfo, brand, colour } = req.body;
             const uploadedImages = req.files; // Access uploaded files using req.files
 
             // Fetch the category document using the provided categoryId
             const selectedCategory = await ProductCategory.findOne({ _id: category });
-
+            console.log('offer', offer);
+            let offerPrice;
+            if(offer){
+                 offerPrice =Math.floor(price - (price*(offer/100))) 
+                console.log(offerPrice);
+            }else{
+                offerPrice=0
+            }
             if (!selectedCategory) {
                 return res.send('Selected category not found'); // Handle category not found case
             }
@@ -264,6 +273,8 @@ adminController.postAddProduct = [
                 additionalInfo,
                 brand,
                 colour,
+                offer,
+                offerPrice,
                 images: uploadedImages.map(image => image.filename) // Store filenames in the images array
             });
 
@@ -328,10 +339,18 @@ adminController.UpdateProduct = async (req, res) => {
             quantity,
             colour,
             brand,
+            offer,
             additionalInfo
         } = req.body;
 
-        // console.log('consoling req.body of upadateproduct',req.body);
+        let offerPrice;
+            if(offer){
+                 offerPrice = Math.floor(price - (price*(offer/100)));
+                console.log(offerPrice);
+            }else{
+                offerPrice = 0;
+            }
+       
 
 
         // Update the existing category name in the database
@@ -345,6 +364,8 @@ adminController.UpdateProduct = async (req, res) => {
                     quantity: quantity,
                     colour: colour,
                     brand: brand,
+                    offer: offer,
+                    offerPrice: offerPrice,
                     additionalInfo: additionalInfo
                 }
             }
@@ -420,6 +441,24 @@ adminController.postStatusUpdate = async (req, res) => {
         console.error('Error updating order status:', error);
         res.status(500).json({ message: 'Error updating order status' });
     }
+}
+
+adminController.getCompleteOrderDetails = async(req, res) =>{
+    try{
+
+        const orderId = req.params.orderId;
+        // console.log('order id', orderId);
+
+        const ordered = await order.findById(orderId).populate('products.productId')
+        // console.log('complete order details', ordered);
+
+        res.render('../views/admin_views/detailedOrderView',{ordered})
+    }
+    catch(error){
+        console.log('Error at detailed order view', error);
+        res.send('Error while fetching Order details')
+    }
+   
 }
 
 

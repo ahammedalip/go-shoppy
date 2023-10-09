@@ -214,6 +214,23 @@ nav .profile-details img{
   background-color: #003F62;
 }
 
+/* detailed order page */
+.order-div{
+  border: 1px solid grey;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: rgb(249, 249, 249);
+  box-shadow: 5px 5px 10px rgba(179, 179, 179, 0.5);
+  
+}
+
+.heading-div{
+  background-color: rgb(227, 227, 227);
+  box-shadow:1px 1px 5px 5px rgb(227, 227, 227, 0.5);
+  /* background: transparent; */
+  /* backdrop-filter: blur(3px); */
+}
+
 .home-section .home-content{
   position: relative;
   padding-top: 104px;

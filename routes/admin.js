@@ -11,7 +11,7 @@ const router = express.Router()
 router.get('/login', adminController.getAdminlogin)
 router.post('/login', adminController.postAdminLogin)
 
-router.use(requireAdminAuth)
+// router.use(requireAdminAuth)
 
 
 router.get('/dash', adminController.getAdminDash)
@@ -42,6 +42,7 @@ router.post ('/updateproduct/:productId', adminController.UpdateProduct)
 
 router.get('/order', adminController.getTotalOrderList)
 router.post ('/orders/update-status/:orderId', adminController.postStatusUpdate)
+router.get('/order/details/:orderId', adminController.getCompleteOrderDetails)
 
 router.get('/coupon', adminController.getCoupon)
 router.post('/create-coupon', adminController.postCoupon)
