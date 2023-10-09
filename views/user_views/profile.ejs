@@ -11,7 +11,7 @@
                     <%= message %>
                 </div>
                 <br>
-                <div class="col-md-12" >
+                <div class="col-md-12">
                     <div class="row">
                         <div class=" col-md-7 ">
                             <div class="card mb-4" style="box-shadow: 1px 1px 5px rgba(132, 132, 132, 0.5) ;">
@@ -56,40 +56,68 @@
                                                 data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                                 Edit
                                             </button>
-                                            
+
                                         </div>
                                         <a href="/profile/changepassword">Change Password</a>
                                     </div>
                                 </div>
-    
+
                             </div>
                         </div>
                         <div class="wallet-class col-md-5">
                             <div class="wallet" style="background-image: url('/images/card3.png');">
                                 <div class="row">
                                     <div class="col">
-                                        <svg class="icon-wallet" xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 24 24" style="fill: #FBBC05;"><path d="M21.822 7.431A1 1 0 0 0 21 7H7.333L6.179 4.23A1.994 1.994 0 0 0 4.333 3H2v2h2.333l4.744 11.385A1 1 0 0 0 10 17h8c.417 0 .79-.259.937-.648l3-8a1 1 0 0 0-.115-.921zM17.307 15h-6.64l-2.5-6h11.39l-2.25 6z"></path><circle cx="10.5" cy="19.5" r="1.5"></circle><circle cx="17.5" cy="19.5" r="1.5"></circle></svg>
-                                <h6 class="goshoppy-wallet">GoShoppy</h6>
+                                        <svg class="icon-wallet" xmlns="http://www.w3.org/2000/svg" width="35"
+                                            height="35" viewBox="0 0 24 24" style="fill: #FBBC05;">
+                                            <path
+                                                d="M21.822 7.431A1 1 0 0 0 21 7H7.333L6.179 4.23A1.994 1.994 0 0 0 4.333 3H2v2h2.333l4.744 11.385A1 1 0 0 0 10 17h8c.417 0 .79-.259.937-.648l3-8a1 1 0 0 0-.115-.921zM17.307 15h-6.64l-2.5-6h11.39l-2.25 6z">
+                                            </path>
+                                            <circle cx="10.5" cy="19.5" r="1.5"></circle>
+                                            <circle cx="17.5" cy="19.5" r="1.5"></circle>
+                                        </svg>
+                                        <h6 class="goshoppy-wallet">GoShoppy</h6>
 
-                                <p class="wallet-name">
-                                    <%= user.firstName%>
-                                        <%= user.lastName%>
-                                </p>
+                                        <p class="wallet-name">
+                                            <%= user.firstName%>
+                                                <%= user.lastName%>
+                                        </p>
                                     </div>
                                     <div class="col">
                                         <h5 class="wallet-wallet">Wallet Bal.</h5>
-                                        <h5 class="wallet-amount">₹<%= formattedWallet %></h5>
+                                        <h5 class="wallet-amount">₹<%= formattedWallet %>
+                                        </h5>
                                     </div>
                                 </div>
-                                
-                                <p class="wallet-id"><%= user._id %></p>
+
+                                <p class="wallet-id">
+                                    <%= user._id %>
+                                </p>
 
                             </div>
+                            <br>
+
+                            <div style="border: 1px solid grey; padding: 10px; border-radius: 5px;">
+
+                            
+                            <div class="copy-referral col-md-10">
+                                <p>Your Referral code: <span id="referralCode">
+                                        <%= user.refferralcode %>
+                                    </span>
+                                    <button class="btn copy-button" onclick="copyReferralCode()">Copy</button>
+                                </p>
+
+                              
+                            </div>
+                            <br>
+                            <h6>When signing up a new user with referral code will be rewarded by ₹ 50</h6>
                         </div>
-                       
+
+                        </div>
+
                     </div>
-                    
-                   
+
+
                 </div>
                 <br>
                 <div class="addressMainDiv container">
@@ -149,7 +177,8 @@
                                                     data-bs-target="#staticBackdrop2" data-address-index="<%= index %>">
                                                     Edit
                                                 </button>
-                                                <button class="btn addressEditDelete deleteAddress" address-id="<%= addr._id %>">Delete</button>
+                                                <button class="btn addressEditDelete deleteAddress"
+                                                    address-id="<%= addr._id %>">Delete</button>
                                             </div>
                                         </div>
 
@@ -310,7 +339,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="/profile/editaddress" method="post" >
+                    <form action="/profile/editaddress" method="post">
                         <input type="hidden" id="AddressIDEdit" name="AddressID" value="">
 
                         <!-- Full Name -->
@@ -428,63 +457,85 @@
         });
 
 
-       const deleteButtons = document.querySelectorAll('.deleteAddress')
-       
-       deleteButtons.forEach(button => {
-        button.addEventListener('click',() => {
-            const addressID = button.getAttribute("address-id");
+        const deleteButtons = document.querySelectorAll('.deleteAddress')
 
-            console.log('address id from delete DOM', addressID);
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const addressID = button.getAttribute("address-id");
 
-            // Show a confirmation dialog
-        const confirmDelete = window.confirm('Are you sure you want to delete this address?');
+                console.log('address id from delete DOM', addressID);
 
-        if(confirmDelete){
-            fetch('/profile/delete/'+addressID,{
-                method: 'DELETE',
-                headers: {
-                    'content-Type' : 'application/json'
+                // Show a confirmation dialog
+                const confirmDelete = window.confirm('Are you sure you want to delete this address?');
+
+                if (confirmDelete) {
+                    fetch('/profile/delete/' + addressID, {
+                        method: 'DELETE',
+                        headers: {
+                            'content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                console.log('response is ok, from the controller also');
+                            }
+                            return response.json()
+                        })
+                        .then(data => {
+                            console.log("data from the controller is fetched", data)
+                            location.reload();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Address deleted succesfully',
+                                showConfirmation: true,
+                                // timer : 2000
+
+                            });
+                        })
                 }
-            })
-            .then(response =>{
-                if(response.ok){
-                    console.log('response is ok, from the controller also');
-                }
-                return response.json()
-            })
-            .then(data => {
-                console.log("data from the controller is fetched", data)
-                location.reload();
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Address deleted succesfully',
-                    showConfirmation: true,
-                    // timer : 2000
 
-                });
             })
-        }
-           
+
         })
 
-    })
-    
-  
+
         var message = '<%= message %>';
-        
+
         // Get the messageDiv element by its ID
         var messageDiv = document.getElementById('messageDiv');
-    
+
         // Check if the message exists and is not empty
         if (message && message.trim() !== '') {
             // Set the message text
             messageDiv.innerHTML = message;
-    
+
             // Display the message div
             messageDiv.style.display = 'block';
         }
+
+
+
+        function copyReferralCode() {
+            const referralCodeElement = document.getElementById('referralCode');
+
+            // navigator.clipboard.writeText(referralCodeElement);
+            const range = document.createRange();
+            range.selectNode(referralCodeElement);
+
+            // Select the text inside the range
+            window.getSelection().removeAllRanges(); // Clear any existing selections
+            window.getSelection().addRange(range);
+
+            // Copy the selected text to the clipboard
+            document.execCommand('copy');
+
+            // Deselect the text
+            window.getSelection().removeAllRanges();
+
+        }
+
     </script>
-    
+
 
     <!-- <button class="editprofileLink col-sm-3">Edit</button> -->
     <%- include ('footer')%>

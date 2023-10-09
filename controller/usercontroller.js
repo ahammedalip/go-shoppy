@@ -16,23 +16,23 @@ const coupon = require('../model/couponModel');
 const usercontroller = {}
 
 usercontroller.getGuestHome = async (req, res) => {
-   
-        try {
-            const categories = await ProductCategory.find({ isUnlisted: false })
 
-            res.render('../views/user_views/userhome', { categories, user:false });
-        }
-        catch (error) {
-            console.log(error);
-        }
-    
+    try {
+        const categories = await ProductCategory.find({ isUnlisted: false })
+
+        res.render('../views/user_views/userhome', { categories, user: false });
+    }
+    catch (error) {
+        console.log(error);
+    }
+
 }
 
 usercontroller.getLoginpage = (req, res) => {
     if (req.cookies.user) {
         res.render('../views/user_views/userhome')
     } else {
-        res.render('../views/user_views/userlogin', { errorMessage: false, user:false })
+        res.render('../views/user_views/userlogin', { errorMessage: false, user: false })
     }
 }
 
@@ -59,7 +59,7 @@ usercontroller.postLoginPage = async (req, res) => {
 
         if (userverify.isBlocked) {
 
-            return res.render('../views/user_views/userlogin', { errorMessage: 'User is blocked' , user:userverify});
+            return res.render('../views/user_views/userlogin', { errorMessage: 'User is blocked', user: userverify || false });
         }
 
         else if (userverify && bcrypt.compareSync(req.body.password, userverify.password)) {
@@ -93,32 +93,36 @@ usercontroller.getSignupPage = (req, res) => {
         res.render('../views/user_views/userhome')
     }
     else {
-        res.render('../views/user_views/usersignup', { errorMessage: false, user:false })
+        res.render('../views/user_views/usersignup', { errorMessage: false, user: false })
     }
 
 }
 
 usercontroller.PostSignup = async (req, res) => {
 
-    const { firstName, lastName, email, mobile, password } = req.body;
+    const { firstName, lastName, email, mobile, password, referral } = req.body;
     const userSignupData = { firstName, lastName, email, mobile, password }
+    const referralCode = referral
+    console.log('referalcode from the text box', referralCode);
 
     // Check if the email already exists
     const existingUser = await userSignup.findOne({ email });
     if (mobile.length < 10 || mobile.length > 10) {
-        return res.render('../views/user_views/usersignup', { errorMessage: 'mobile number should be 10 digits' });
+        return res.render('../views/user_views/usersignup', { errorMessage: 'mobile number should be 10 digits' ,user:false});
     }
 
     if (password.length < 5) {
-        return res.render('../views/user_views/usersignup', { errorMessage: 'password should be atleast 5 characters' })
+        return res.render('../views/user_views/usersignup', { errorMessage: 'password should be atleast 5 characters', user: false })
     }
 
     if (existingUser) {
         // Email already exists, render the signup page with an error message
-        return res.render('../views/user_views/usersignup', { errorMessage: 'Email already exists' });
+        return res.render('../views/user_views/usersignup', { errorMessage: 'Email already exists' ,user:false});
     }
 
     req.session.userSignupData = userSignupData;
+    req.session.referralcode = referralCode;
+    
     console.log(userSignupData);
 
     const transporter = nodemailer.createTransport({
@@ -159,7 +163,7 @@ usercontroller.getOtpPage = (req, res) => {
         res.render('../views/user_views/userhome')
     }
     else {
-        res.render('../views/user_views/userotp', { errorMessage: false , user:false})
+        res.render('../views/user_views/userotp', { errorMessage: false, user: false })
     }
 }
 
@@ -173,7 +177,11 @@ usercontroller.postOtpPage = async (req, res) => {
     // console.log(req.session.otp);
 
     if (userEnteredOtp == req.session.otp) {
-        //  res.send('success')
+      
+        // console.log('getting from the session', req.session.referralcode );
+        const applyReferralCode = req.session.referralcode;
+        // console.log('apply referals from req.session.referalcode',applyReferralCode);
+
         try {
             const newSignup = userSignup({
                 firstName: req.session.userSignupData.firstName,
@@ -184,15 +192,30 @@ usercontroller.postOtpPage = async (req, res) => {
 
             })
             await newSignup.save()
+            
+            let referralOffer = 50;
+            // const referals = await userSignup.find({refferralcode: applyReferralCode});
+            
+            try{
+                console.log('coming here');
+               await userSignup.findOneAndUpdate({refferralcode:applyReferralCode},
+                    { $inc: {wallet: referralOffer}})
+            }catch(error){
+                console.log('error at applying referral code', error);
+                res.send('Error at applying user referrals')
+            }
+            
+           
             req.session.destroy();
             // console.log(req.session.userSignupData);
-            res.render('../views/user_views/userlogin', { errorMessage: 'Signup succesfull, Use login' })
+            res.render('../views/user_views/userlogin', { errorMessage: 'Signup succesfull, Use login' , user:false})
         }
-        catch {
+        catch(error) {
+            console.log('error at post signup',error)
             res.status(401).send('Invalid OTP');
         }
     } else {
-        res.render('../views/user_views/userotp', { errorMessage: 'Enter valid OTP' })
+        res.render('../views/user_views/userotp', { errorMessage: 'Enter valid OTP' , user:false})
     }
 }
 
@@ -200,7 +223,7 @@ usercontroller.postOtpPage = async (req, res) => {
 usercontroller.getresetPassword = (req, res) => {
 
 
-    res.render('../views/user_views/resetpassword', { errorMessage: false, user:false })
+    res.render('../views/user_views/resetpassword', { errorMessage: false, user: false })
 
 }
 
@@ -260,7 +283,7 @@ usercontroller.getVerifyOTP = (req, res) => {
 
 
 
-    res.render('../views/user_views/resetotp', { errorMessage: false, user:false })
+    res.render('../views/user_views/resetotp', { errorMessage: false, user: false })
 
 }
 
@@ -282,7 +305,7 @@ usercontroller.postVerifyOTP = (req, res) => {
 
 usercontroller.getSubmitPass = (req, res) => {
 
-    res.render('../views/user_views/newpassword', { errorMessage: false, user:false })
+    res.render('../views/user_views/newpassword', { errorMessage: false, user: false })
 
 }
 
@@ -318,17 +341,17 @@ usercontroller.postSubmitPass = async (req, res) => {
 
 
 usercontroller.gethome = async (req, res) => {
-    
+
     if (req.cookies.user) {
         // console.log(req.cookies.user);
         // if user is there then accepting them to userhome
         try {
-            const user = await userSignup.findOne({email:req.cookies.user})
+            const user = await userSignup.findOne({ email: req.cookies.user })
             const categories = await ProductCategory.find({ isUnlisted: false })
             console.log('user cart', user);
             const userCart = user.cart
 
-            res.render('../views/user_views/userhome', { categories,user });
+            res.render('../views/user_views/userhome', { categories, user });
         }
         catch (error) {
             console.log('error fetching categories', error);
@@ -341,21 +364,21 @@ usercontroller.gethome = async (req, res) => {
 
 usercontroller.getProducts = async (req, res) => {
     try {
-        const user = await userSignup.findOne({email: req.cookies.user})
+        const user = await userSignup.findOne({ email: req.cookies.user })
         const categories = await ProductCategory.find({ isUnlisted: false });
         const productsPerPage = 6; // Define the number of products per page
 
-        
+
         const currentPage = parseInt(req.query.page) || 1;
 
-        
+
         const startIndex = (currentPage - 1) * productsPerPage;
         const endIndex = startIndex + productsPerPage;
 
-        
+
         const products = await productList.find({ unlisted: false }).skip(startIndex).limit(productsPerPage);
 
-        
+
         const totalProducts = await productList.countDocuments({ unlisted: false });
         const totalPages = Math.ceil(totalProducts / productsPerPage);
 
@@ -370,7 +393,7 @@ usercontroller.getCategoryFilter = async (req, res) => {
     const categoryId = req.params.categoryId;
 
     try {
-        const user = await userSignup.findOne({email:req.cookies.user});
+        const user = await userSignup.findOne({ email: req.cookies.user });
         const categories = await ProductCategory.find({ isUnlisted: false });
         const cat = await ProductCategory.findById(categoryId);
         const productsPerPage = 6; // Define the number of products per page
@@ -402,17 +425,17 @@ usercontroller.getIndividualProduct = async (req, res) => {
 
 
     try {
-        const user = await userSignup.findOne({email:req.cookies.user});
+        const user = await userSignup.findOne({ email: req.cookies.user });
         const productId = req.params.productId;
         const categories = await ProductCategory.find({ isUnlisted: false })
         const individualProduct = await productList.findOne({ _id: productId })
         // console.log(individualProduct.offer);
         let offerPrice;
-        if(individualProduct.offer){
+        if (individualProduct.offer) {
             const price = individualProduct.price;
-            const discount = price*(individualProduct.offer/100)
-            offerPrice =Math.floor(price - discount) 
-           console.log('offer price', offerPrice);
+            const discount = price * (individualProduct.offer / 100)
+            offerPrice = Math.floor(price - discount)
+            console.log('offer price', offerPrice);
         }
         res.render('../views/user_views/individualproduct', { categories, individualProduct, user, offerPrice })
     }
@@ -454,19 +477,24 @@ usercontroller.getCart = async (req, res) => {
                     model: 'products' // This should match the model name of your Product
                 });
 
-           
-                const availableCoupons = await coupon.find({isActive:true})
-               user.cart.forEach(item=>{
+
+            const availableCoupons = await coupon.find({ isActive: true })
+            user.cart.forEach(item => {
                 const offer = item.productId.offerPrice
 
                 console.log('offer', offer);
-                if(offer){
-                    console.log('consoling the total of individual product',item.total);
-                    item.total = item.productId.offerPrice
+                if (offer) {
+                    console.log('consoling the total of individual product', item.total);
+                    item.total = offer*item.quantity; 
+
+                    console.log('second item.total', item.total);
                 }
-               })
-               
-           
+            })
+            console.log('user is user', user)
+            // user.cart.forEach(item=>{
+            //     console.log('oferprice',item.total);
+            // })
+
             const cartProducts = user.cart;
             let totalQuantity = 0;
 
@@ -482,18 +510,19 @@ usercontroller.getCart = async (req, res) => {
 
             req.session.userEmail = user.email
             req.session.totalPrice = wholeTotal
-            
 
-            const grandTotal= wholeTotal;
-            
+
+            const grandTotal = wholeTotal;
+
             req.session.grandTotal = wholeTotal;
 
-           console.log('whole total', wholeTotal);
-           console.log('grand total',grandTotal );
+            //    console.log('whole total', wholeTotal);
+            //    console.log('grand total',grandTotal );
+            console.log('cart products', cartProducts);
 
-          
 
-            res.render('../views/user_views/cart', { cartProducts, totalQuantity, wholeTotal,  grandTotal, availableCoupons, user });
+
+            res.render('../views/user_views/cart', { cartProducts, totalQuantity, wholeTotal, grandTotal, availableCoupons, user });
         } catch (error) {
             console.log('error at get cart', error);
             res.send('Error fetching cart');
@@ -513,8 +542,9 @@ usercontroller.updateCartItem = async (req, res) => {
 
         // Find the user and log the entire user object for inspection
         const user = await userSignup.findOne({ email: req.cookies.user }).populate('cart.productId');
-        user.cart.forEach(item =>{
-            console.log('offer directly from updarecartitem',item.productId.offer)
+        user.cart.forEach(item => {
+
+            console.log('offer directly offer, offerprice', item.productId.offer, item.productId.offerPrice)
         })
 
         if (user) {
@@ -526,10 +556,20 @@ usercontroller.updateCartItem = async (req, res) => {
             if (cartItem) {
                 // Update the quantity for the cart item
                 cartItem.quantity = quantity;
-                // console.log('offer percentage', user.cart.productId.offer);
-                cartItem.total = cartItem.quantity * cartItem.productId.price;
-                
-                await user.save();
+
+                console.log('product offer find', cartItem.productId.offer);
+
+                if (cartItem.productId.offer) {
+                    cartItem.total = cartItem.quantity * cartItem.productId.offerPrice
+                    await user.save();
+                } else {
+                    cartItem.total = cartItem.quantity * cartItem.productId.price;
+                    await user.save();
+                }
+
+
+
+
 
                 let totalQuantity = 0
                 user.cart.forEach(item => {
@@ -543,7 +583,7 @@ usercontroller.updateCartItem = async (req, res) => {
 
                 user.cart.forEach(item => {
                     wholeTotal += item.total
-                    totalIncDiscount = wholeTotal-disc
+                    totalIncDiscount = wholeTotal - disc
                 })
                 console.log('grand total after discount', totalIncDiscount);
                 req.session.totalPrice = wholeTotal
@@ -605,34 +645,34 @@ usercontroller.postApplyCoupon = async (req, res) => {
         if (!couponGiven) {
             console.log('coming here if coupon doesnt exist');
             return res.json({ success: true, message: 'Coupon does not exist' });
-        }else{
+        } else {
             if (couponGiven.isActive === false) {
                 return res.json({ success: true, message: 'Coupon expired!' });
-            } 
+            }
             if (req.session.totalPrice < couponGiven.minimumPrice) {
                 res.redirect('/cart?message=min_prc_nt')
             }
 
             // Apply the coupon discount to the cart total price
-        var discountedTotal = req.session.totalPrice * (1 - couponGiven.discountPercent / 100);
+            var discountedTotal = req.session.totalPrice * (1 - couponGiven.discountPercent / 100);
 
-        if (discountedTotal > couponGiven.maximumDiscount) {
-            discountedTotal = couponGiven.maximumDiscount
-        }
-        console.log('discounted total', discountedTotal);
-        // Update the session with the discounted total
-        req.session.discountedTotal = discountedTotal;
-        
-        const couponGrandTotal = req.session.grandTotal- discountedTotal
-        console.log('grand total after discount', couponGrandTotal);
-        
-        req.session.grandTotal =  couponGrandTotal;
-        return res.json({success: true, discountedTotal, couponGrandTotal, message: 'Coupon is succesfully applied!'})
-        // res.redirect('/cart?message=cp_success')
-        }
-       
+            if (discountedTotal > couponGiven.maximumDiscount) {
+                discountedTotal = couponGiven.maximumDiscount
+            }
+            console.log('discounted total', discountedTotal);
+            // Update the session with the discounted total
+            req.session.discountedTotal = discountedTotal;
 
-        
+            const couponGrandTotal = req.session.grandTotal - discountedTotal
+            console.log('grand total after discount', couponGrandTotal);
+
+            req.session.grandTotal = couponGrandTotal;
+            return res.json({ success: true, discountedTotal, couponGrandTotal, message: 'Coupon is succesfully applied!' })
+            // res.redirect('/cart?message=cp_success')
+        }
+
+
+
     }
     catch (error) {
         console.log('Error at coupon applying', error);
@@ -868,6 +908,18 @@ usercontroller.getprofile = async (req, res) => {
 
 }
 
+// usercontroller.postReferals = async(req,res) =>{
+//     const referal = req.body.referal
+//     try{
+//         const user =await userSignup.find({refferralcode: referal})
+//         console.log('from db,', user);
+//     }
+//     catch(error){
+//         console.log('error at checking referal coupons', error);
+//     }
+//     console.log(referal);
+// }
+
 usercontroller.editBasicProfile = async (req, res) => {
 
 
@@ -1053,7 +1105,7 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
         })
 
         await newOrder.save()
-        let updateWallet;
+        let updateWallet; 
         if (selectedPaymentOption === 'WalletPay') {
             try {
                 updateWallet = user.wallet - grandTotal
@@ -1127,9 +1179,9 @@ usercontroller.getOrders = async (req, res) => {
 
 usercontroller.getOrderDetails = async (req, res) => {
     try {
-        const user = await userSignup.findOne({email:req.cookies.user});
+        const user = await userSignup.findOne({ email: req.cookies.user });
 
-        if(!user){
+        if (!user) {
             res.redirect('/login')
         }
         const orderId = req.params.orderId

@@ -33,10 +33,18 @@
                                                         alt="<%= item.productId.productName %>">
                                                     <%= item.productId.productName %>
                                                 </td>
-                                                <td style="color: rgb(125, 125, 125); vertical-align: middle;">₹ <span
+                                                <% if(item.productId.offer){ %>
+                                                    <td style="color: rgb(79, 174, 88); vertical-align: middle;">Offer price ₹ <span
                                                         class="unit-price">
-                                                        <%= item.productId.price %>
+                                                        <%= item.productId.offerPrice %>
                                                     </span>/per unit</td>
+                                               <% }else{%>
+                                                <td style="color: rgb(125, 125, 125); vertical-align: middle;">₹ <span
+                                                    class="unit-price">
+                                                    <%= item.productId.price %>
+                                                </span>/per unit</td>
+                                             <%  } %>
+                                                 
                                                 <td class="quantity" style="vertical-align: middle;">
                                                     <button class="btn btn-warning btn-sm decrement"
                                                         data-index="<%= index %>"
@@ -50,17 +58,12 @@
                                                         data-index="<%= index %>"
                                                         data-product="<%= item._id %>">+</button>
                                                 </td>
-                                               <% if(item.productId.offer){ %>
-                                                <td style="vertical-align: middle;" data-total="<%= item.total %>"
-                                                    data-product="<%= item._id %>" class="total-price">
-                                                    <span>Offer Price: ₹ <%= item.total %></span>
-                                                </td>
-                                              <% }else{ %>
+                                              
                                                 <td style="vertical-align: middle;" data-total="<%= item.total %>"
                                                     data-product="<%= item._id %>" class="total-price">
                                                     <span>Total Price: ₹ <%= item.total %></span>
                                                 </td>
-                                                <% }%>
+                                                
                                                 <td style="vertical-align: middle;">
                                                     <div>
                                                         <button class="btn btn-sm remove-item"
@@ -111,7 +114,7 @@
                                 <div class="col" style=" padding: 40px 40px 0 20px; border-bottom: 1px solid grey   ;">
                                     <p>Total Items :</p>
                                     <p>Sub Price : </p>
-                                    <p>Discount:</p>
+                                    <p>Coupon Discount:</p>
                                     <p>Delivery Charges : </p>
 
                                 </div>
@@ -273,7 +276,7 @@
                                     const grandTotal = document.querySelector(`[data-product="grand-data"].grand-total`);
                                     grandTotal.textContent = ` ₹ ${grandtotal.toFixed(2)}`;
 
-                                    // location.reload();
+                                    location.reload();
 
 
                                 })
@@ -335,7 +338,7 @@
                                         const grandTotal = document.querySelector(`[data-product="grand-data"].grand-total`);
                                         grandTotal.textContent = ` ₹ ${grandtotal.toFixed(2)}`;
 
-                                        // location.reload();
+                                        location.reload();
 
 
                                     })

@@ -24,6 +24,7 @@ router.post('/resubmitpassword', usercontroller.postSubmitPass)
 
 router.get('/userhome',usercontroller.gethome)
 router.get ('/profile', usercontroller.getprofile)
+// router.post('/referal_code', usercontroller.postReferals)
 router.get ('/profile/changepassword', usercontroller.getChangePassProfile)
 router.post('/change-password', usercontroller.postProfileChangePass)
 router.post ('/profile/edit-profile', usercontroller.editBasicProfile)

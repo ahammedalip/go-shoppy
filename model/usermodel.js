@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const shortid = require('shortid')
 
 
 const SignupSchema = new mongoose.Schema({
@@ -78,6 +79,11 @@ const SignupSchema = new mongoose.Schema({
     wallet:{
         type: Number,
         default: 0
+    },
+    refferralcode:{
+        type: String,
+        unique: true,
+        default: shortid.generate,
     }
 })
 
