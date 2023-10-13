@@ -188,7 +188,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
 
 
@@ -280,6 +280,10 @@
                 return;
 
             }
+            let details = {
+                selectedPaymentOption: selectedPaymentOption,
+                selectedAddress: selectedAddress
+            }
             // Send an AJAX request to the controller
             fetch('/cart/placeorder/submit', {
                 method: 'POST',
@@ -287,8 +291,7 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    selectedPaymentOption: selectedPaymentOption,
-                    selectedAddress: selectedAddress
+                    details
                 }),
             })
                 .then((response) => response.json())
@@ -310,23 +313,23 @@
                         });
                     } else if (data.onlineSuccess) {
                         console.log('hii');
-                        console.log('looking for undefined--- key,orderid,amount',data.key,data.orderid, data.amount);
+                        console.log('looking for undefined--- key,orderid,amount', data.key, data.orderid, data.amount);
                         var options = {
                             "key": "" + data.key + "",
                             "amount": "" + data.amount + "",
                             "currency": "INR",
                             "image": "/icons/Logo_short.png",
-                            "order_id": "" + data.order_id + "",
+                            "order_id": data.order_id,
                             "handler": function (response) {
-
+                                createOrder(details);
                             },
                             "theme": {
                                 "color": "#dc3545"
                             },
                             "prefill": {
-                                "name": "Gaurav Kumar",
-                                "email": "gaurav.kumar@example.com",
-                                "contact": "9000090000"
+                                "name": "",
+                                "email": "",
+                                "contact": ""
                             },
                             "notes": {
                                 "address": "Razorpay Corporate Office"
@@ -356,7 +359,22 @@
                 });
         });
 
+        function createOrder(details) {
+            fetch('/orderOnline', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    details
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    
+                })
 
+        }
 
 
     </script>
