@@ -184,6 +184,53 @@
         </div>
     </div>
 
+    <!--Success Modal -->
+<!-- <div class="modal fade" id="successmodal" tabindex="-1" role="dialog" aria-labelledby="succesmodal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="d-flex justify-content-center">
+                <img style="width: 450px;" src="/images/5631827.jpg" alt="order placed">
+                <p> <a href="/orders">View order details</a></p>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+  <!-- Modal -->
+<div class="modal fade" id="successmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          
+       
+        </div>
+        <div class="modal-body">
+            <div class="d-flex justify-content-center">
+                <img style="width: 450px;" src="/images/5631827.jpg" alt="order placed">
+               
+            </div>
+            <p style="text-align: center;"> <a href="/orders">View order details</a></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+         
+        </div>
+      </div>
+    </div>
+  </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
@@ -245,33 +292,7 @@
                 event.preventDefault();
                 return; // Prevent form submission
             }
-            // else if (selectedPaymentOption === 'Online payment') {
-            //     console.log('coming here');
-            //     var orderId;
-            //     // console.log('orderid',orderId);
-            //     $(document).ready(function () {
-            //         var settings = {
-            //             "url": "/create/orderId",
-            //             "method": "POST",
-            //             "timeout": 0,
-            //             "headers": {
-            //                 "Content-Type": "application/json"
-            //             },
-            //             "data": JSON.stringify({
-            //                 "amount": "50000"
-            //             }),
-            //         };
-
-            //         //creates new orderId everytime
-            //         $.ajax(settings).done(function (response) {
-
-            //             orderId = response.orderId;
-
-            //             console.log('order id --', orderId);
-            //             $("button").show();
-            //         });
-            //     });
-            // }
+            
             const selectedAddress = document.getElementById('selectedAddressInput').value
             console.log('selected address option........', selectedAddress);
             if (!selectedAddress) {
@@ -296,8 +317,9 @@
             })
                 .then((response) => response.json())
                 .then((data) => {
+                    console.log('data at first if', data);
 
-                    if (data.success) {
+                    if (data.succes== true) {
                         console.log('data  ---', data);
 
                         // Order placed successfully, trigger success SweetAlert2 alert
@@ -309,7 +331,11 @@
                             timer: 2000,
                         }).then(() => {
                             // Redirect to another page or perform other actions
-                            // window.location.href = '/userhome';
+                            // window.location.href = '/afterorder';
+
+                            $('#successmodal').modal('show');
+                             window.location.href = '/userhome';
+
                         });
                     } else if (data.onlineSuccess) {
                         console.log('hii');
@@ -318,13 +344,13 @@
                             "key": "" + data.key + "",
                             "amount": "" + data.amount + "",
                             "currency": "INR",
-                            "image": "/icons/Logo_short.png",
+                            "image": "/images/logo3.jpg",
                             "order_id": data.order_id,
                             "handler": function (response) {
                                 createOrder(details);
                             },
                             "theme": {
-                                "color": "#dc3545"
+                                "color": "#003F62"
                             },
                             "prefill": {
                                 "name": "",
@@ -345,6 +371,7 @@
                         console.log('hii 2');
                     }
                     else {
+                         console.log('data error',data);
                         // Error occurred, trigger error SweetAlert2 alert
                         Swal.fire({
                             icon: 'error',

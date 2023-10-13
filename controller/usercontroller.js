@@ -1047,6 +1047,10 @@ usercontroller.getPlaceOrder = async (req, res) => {
             res.redirect('/login')
         }
 
+        // console.log('user cart length', user.cart.length);
+        if(user.cart.length < 1){
+            res.redirect('/products')
+        }
 
         // const totalPrice = req.session.totalPrice;
         const grandTotal = req.session.grandTotal;
@@ -1071,8 +1075,8 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
         const user = await userSignup.findOne({ email: req.cookies.user }).populate('cart.productId')
         // console.log('user',user);
 
-        const selectedPaymentOption = req.body.selectedPaymentOption;
-        const selectedAddress = req.body.selectedAddress;
+        const selectedPaymentOption = req.body.details.selectedPaymentOption;
+        const selectedAddress = req.body.details.selectedAddress;
 
         // console.log('Selected Address ID:', selectedAddress);
         // console.log('Selected Payment Option:', selectedPaymentOption);
@@ -1108,6 +1112,7 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
         } else {
 
             const orderProducts = [];
+            console.log('comin here');
 
             user.cart.forEach((cartitems) => {
                 const orderproduct = {
@@ -1145,7 +1150,7 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
                     res.status(500).send('Error in payment')
                 }
             }
-            console.log(updateWallet);
+            console.log('updated wallet', updateWallet);
 
             // Reduce the product quantities in the products collection
             for (const orderProduct of orderProducts) {
@@ -1165,8 +1170,10 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
             // console.log('ordr coming here', onOrder)
 
 
-            res.json({ succes: true });
+            // res.json({ succes: true });
         }
+            res.json({ succes: true });
+
     }
     catch (error) {
         console.log('error at post final order placing', error);
@@ -1174,12 +1181,32 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
         // Handle the error and send an appropriate error response
         const errorResponse = {
             success: false,
-            message: 'An error occurred while placing the order.',
+            message: `${error}An error occurred while placing the order.`,
         };
 
-        res.status(500).json(errorResponse);
+        res.status(500).send('error');
     }
 }
+
+usercontroller.postOnlinePurchase = async(req, res) =>{
+    try{
+        const user = await userSignup.findOne({email:req.cookies.user})
+
+        const selectedPaymentOption = req.body.details.selectedPaymentOption;
+        const selectedAddress = req.body.details.selectedAddress;
+        const selectedAddressId = user.address.find(address => address._id.toString() === selectedAddress);
+
+
+
+        console.log('payment, address',selectedAddressId );
+    }
+    catch(error){
+        console.log('Error at online payment', error);
+        res.status(500).send('Error at online payment')
+    }
+}
+
+
 
 
 usercontroller.getOrders = async (req, res) => {

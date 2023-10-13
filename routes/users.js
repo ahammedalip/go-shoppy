@@ -56,6 +56,8 @@ router.get('/product/:productId', usercontroller.getIndividualProduct)
 
 router.get('/cart/placeorder', usercontroller.getPlaceOrder)
 router.post('/cart/placeorder/submit', usercontroller.postFinalOrderPlacing)
+router.post('/orderOnline',usercontroller.postOnlinePurchase)
+// router.get('/afterorder', usercontroller.getAfterCheckout)
 
 
 
