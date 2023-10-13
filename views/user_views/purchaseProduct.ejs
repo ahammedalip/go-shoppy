@@ -101,94 +101,94 @@
         </div>
     </div>
 
-  <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Add address</h5>
-        
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add address</h5>
+
+                </div>
+                <div class="modal-body">
+                    <form action="/cart/addaddress" method="post" id="editProfileForm">
+                        <div class="row">
+                            <!-- Full Name -->
+                            <div class="col mb-3">
+                                <label for="FullName" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="FullName" name="FullName" required>
+                            </div>
+
+                            <!-- Contact Number -->
+                            <div class="col mb-3">
+                                <label for="ContactNo" class="form-label">Contact Number</label>
+                                <input type="text" class="form-control" id="ContactNo" name="ContactNo" required>
+                            </div>
+                        </div>
+
+
+                        <!-- Building Name -->
+                        <div class="mb-3">
+                            <label for="BuildingName" class="form-label">Building Name</label>
+                            <input type="text" class="form-control" id="BuildingName" name="BuildingName" required>
+                        </div>
+
+                        <div class="row">
+                            <!-- Post Office -->
+                            <div class="col mb-3">
+                                <label for="PostOffice" class="form-label">Post Office</label>
+                                <input type="text" class="form-control" id="PostOffice" name="PostOffice" required>
+                            </div>
+
+                            <!-- Place -->
+                            <div class="col mb-3">
+                                <label for="Place" class="form-label">Place</label>
+                                <input type="text" class="form-control" id="place" name="place" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- City -->
+                            <div class=" col mb-3">
+                                <label for="City" class="form-label">City</label>
+                                <input type="text" class="form-control" id="City" name="City" required>
+                            </div>
+
+                            <!-- State -->
+                            <div class="col mb-3">
+                                <label for="State" class="form-label">State</label>
+                                <input type="text" class="form-control" id="State" name="State" required>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <!-- PIN Code -->
+                            <div class="col mb-3">
+                                <label for="PIN" class="form-label">PIN Code</label>
+                                <input type="text" class="form-control" id="PIN" name="PIN" required>
+                            </div>
+                            <!-- Country -->
+                            <div class="col mb-3">
+                                <label for="Country" class="form-label">Country</label>
+                                <input type="text" class="form-control" id="Country" name="Country" required>
+                            </div>
+                        </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-            <form action="/cart/addaddress" method="post" id="editProfileForm">
-            <div class="row">
-                <!-- Full Name -->
-                <div class="col mb-3">
-                    <label for="FullName" class="form-label">Full Name</label>
-                    <input type="text" class="form-control" id="FullName" name="FullName" required>
-                </div>
-
-                <!-- Contact Number -->
-                <div class="col mb-3">
-                    <label for="ContactNo" class="form-label">Contact Number</label>
-                    <input type="text" class="form-control" id="ContactNo" name="ContactNo" required>
-                </div>
-            </div>
-
-
-            <!-- Building Name -->
-            <div class="mb-3">
-                <label for="BuildingName" class="form-label">Building Name</label>
-                <input type="text" class="form-control" id="BuildingName" name="BuildingName" required>
-            </div>
-
-            <div class="row">
-                <!-- Post Office -->
-                <div class="col mb-3">
-                    <label for="PostOffice" class="form-label">Post Office</label>
-                    <input type="text" class="form-control" id="PostOffice" name="PostOffice" required>
-                </div>
-
-                <!-- Place -->
-                <div class="col mb-3">
-                    <label for="Place" class="form-label">Place</label>
-                    <input type="text" class="form-control" id="place" name="place" required>
-                </div>
-            </div>
-
-            <div class="row">
-                <!-- City -->
-                <div class=" col mb-3">
-                    <label for="City" class="form-label">City</label>
-                    <input type="text" class="form-control" id="City" name="City" required>
-                </div>
-
-                <!-- State -->
-                <div class="col mb-3">
-                    <label for="State" class="form-label">State</label>
-                    <input type="text" class="form-control" id="State" name="State" required>
-                </div>
-
-            </div>
-
-            <div class="row">
-                <!-- PIN Code -->
-                <div class="col mb-3">
-                    <label for="PIN" class="form-label">PIN Code</label>
-                    <input type="text" class="form-control" id="PIN" name="PIN" required>
-                </div>
-                <!-- Country -->
-                <div class="col mb-3">
-                    <label for="Country" class="form-label">Country</label>
-                    <input type="text" class="form-control" id="Country" name="Country" required>
-                </div>
-            </div>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Save changes</button>
-        </form>
-        </div>
-      </div>
     </div>
-  </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 
-
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
 
 
@@ -245,6 +245,33 @@
                 event.preventDefault();
                 return; // Prevent form submission
             }
+            // else if (selectedPaymentOption === 'Online payment') {
+            //     console.log('coming here');
+            //     var orderId;
+            //     // console.log('orderid',orderId);
+            //     $(document).ready(function () {
+            //         var settings = {
+            //             "url": "/create/orderId",
+            //             "method": "POST",
+            //             "timeout": 0,
+            //             "headers": {
+            //                 "Content-Type": "application/json"
+            //             },
+            //             "data": JSON.stringify({
+            //                 "amount": "50000"
+            //             }),
+            //         };
+
+            //         //creates new orderId everytime
+            //         $.ajax(settings).done(function (response) {
+
+            //             orderId = response.orderId;
+
+            //             console.log('order id --', orderId);
+            //             $("button").show();
+            //         });
+            //     });
+            // }
             const selectedAddress = document.getElementById('selectedAddressInput').value
             console.log('selected address option........', selectedAddress);
             if (!selectedAddress) {
@@ -266,7 +293,10 @@
             })
                 .then((response) => response.json())
                 .then((data) => {
+
                     if (data.success) {
+                        console.log('data  ---', data);
+
                         // Order placed successfully, trigger success SweetAlert2 alert
                         Swal.fire({
                             icon: 'success',
@@ -276,21 +306,58 @@
                             timer: 2000,
                         }).then(() => {
                             // Redirect to another page or perform other actions
-                            window.location.href = '/userhome';
+                            // window.location.href = '/userhome';
                         });
-                    } else {
+                    } else if (data.onlineSuccess) {
+                        console.log('hii');
+                        console.log('looking for undefined--- key,orderid,amount',data.key,data.orderid, data.amount);
+                        var options = {
+                            "key": "" + data.key + "",
+                            "amount": "" + data.amount + "",
+                            "currency": "INR",
+                            "image": "/icons/Logo_short.png",
+                            "order_id": "" + data.order_id + "",
+                            "handler": function (response) {
+
+                            },
+                            "theme": {
+                                "color": "#dc3545"
+                            },
+                            "prefill": {
+                                "name": "Gaurav Kumar",
+                                "email": "gaurav.kumar@example.com",
+                                "contact": "9000090000"
+                            },
+                            "notes": {
+                                "address": "Razorpay Corporate Office"
+                            },
+                            "theme": {
+                                "color": "#3399cc"
+                            }
+
+                        };
+                        var rzp1 = new Razorpay(options);
+                        rzp1.open();
+                        // e.preventDefault();
+                        console.log('hii 2');
+                    }
+                    else {
                         // Error occurred, trigger error SweetAlert2 alert
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
                             text: data.message, // Display an error message from the controller if needed
                         });
+
                     }
                 })
                 .catch((error) => {
                     console.error('Error:', error);
                 });
         });
+
+
+
 
     </script>
 

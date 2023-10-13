@@ -8,6 +8,7 @@ const productList = require('../model/productmodel')
 const order = require('../model/orderModel')
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt')
+var Razorpay = require('razorpay')
 const path = require('path');
 const fs = require('fs');
 const coupon = require('../model/couponModel');
@@ -108,7 +109,7 @@ usercontroller.PostSignup = async (req, res) => {
     // Check if the email already exists
     const existingUser = await userSignup.findOne({ email });
     if (mobile.length < 10 || mobile.length > 10) {
-        return res.render('../views/user_views/usersignup', { errorMessage: 'mobile number should be 10 digits' ,user:false});
+        return res.render('../views/user_views/usersignup', { errorMessage: 'mobile number should be 10 digits', user: false });
     }
 
     if (password.length < 5) {
@@ -117,12 +118,12 @@ usercontroller.PostSignup = async (req, res) => {
 
     if (existingUser) {
         // Email already exists, render the signup page with an error message
-        return res.render('../views/user_views/usersignup', { errorMessage: 'Email already exists' ,user:false});
+        return res.render('../views/user_views/usersignup', { errorMessage: 'Email already exists', user: false });
     }
 
     req.session.userSignupData = userSignupData;
     req.session.referralcode = referralCode;
-    
+
     console.log(userSignupData);
 
     const transporter = nodemailer.createTransport({
@@ -177,7 +178,7 @@ usercontroller.postOtpPage = async (req, res) => {
     // console.log(req.session.otp);
 
     if (userEnteredOtp == req.session.otp) {
-      
+
         // console.log('getting from the session', req.session.referralcode );
         const applyReferralCode = req.session.referralcode;
         // console.log('apply referals from req.session.referalcode',applyReferralCode);
@@ -192,30 +193,30 @@ usercontroller.postOtpPage = async (req, res) => {
 
             })
             await newSignup.save()
-            
+
             let referralOffer = 50;
             // const referals = await userSignup.find({refferralcode: applyReferralCode});
-            
-            try{
+
+            try {
                 console.log('coming here');
-               await userSignup.findOneAndUpdate({refferralcode:applyReferralCode},
-                    { $inc: {wallet: referralOffer}})
-            }catch(error){
+                await userSignup.findOneAndUpdate({ refferralcode: applyReferralCode },
+                    { $inc: { wallet: referralOffer } })
+            } catch (error) {
                 console.log('error at applying referral code', error);
                 res.send('Error at applying user referrals')
             }
-            
-           
+
+
             req.session.destroy();
             // console.log(req.session.userSignupData);
-            res.render('../views/user_views/userlogin', { errorMessage: 'Signup succesfull, Use login' , user:false})
+            res.render('../views/user_views/userlogin', { errorMessage: 'Signup succesfull, Use login', user: false })
         }
-        catch(error) {
-            console.log('error at post signup',error)
+        catch (error) {
+            console.log('error at post signup', error)
             res.status(401).send('Invalid OTP');
         }
     } else {
-        res.render('../views/user_views/userotp', { errorMessage: 'Enter valid OTP' , user:false})
+        res.render('../views/user_views/userotp', { errorMessage: 'Enter valid OTP', user: false })
     }
 }
 
@@ -485,7 +486,7 @@ usercontroller.getCart = async (req, res) => {
                 console.log('offer', offer);
                 if (offer) {
                     console.log('consoling the total of individual product', item.total);
-                    item.total = offer*item.quantity; 
+                    item.total = offer * item.quantity;
 
                     console.log('second item.total', item.total);
                 }
@@ -1073,77 +1074,99 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
         const selectedPaymentOption = req.body.selectedPaymentOption;
         const selectedAddress = req.body.selectedAddress;
 
-        console.log('Selected Address ID:', selectedAddress);
-        console.log('Selected Payment Option:', selectedPaymentOption);
+        // console.log('Selected Address ID:', selectedAddress);
+        // console.log('Selected Payment Option:', selectedPaymentOption);
 
         const selectedAddressId = user.address.find(address => address._id.toString() === selectedAddress);
-        console.log('selected address', selectedAddressId);
+        // console.log('selected address', selectedAddressId);
 
         const grandTotal = req.session.grandTotal
         console.log('grand total price', grandTotal);
         console.log('payment method', selectedPaymentOption);
 
-        const orderProducts = [];
+        if (selectedPaymentOption === 'Online payment') {
+            console.log('its online payment')
+            var instance = new Razorpay({ key_id: 'rzp_test_ddvUrRJNK8Yvou', key_secret: 'wb4J9yrG1vekMjxdHOfMe40k' })
+            
+            var options = {
+                amount: grandTotal * 100,  // amount in the smallest currency unit
+                currency: "INR",
+                receipt: "order_rcptid_11"
+            };
+            instance.orders.create(options, function (err, order) {
+                onlineOrder = { order }
+                console.log(order);
+                console.log('order id only,',order.id);
+                console.log('order amount ,',order.amount_due);
+                // console.log('order id only,',order.);
 
-        user.cart.forEach((cartitems) => {
-            const orderproduct = {
-                productId: cartitems.productId,
-                quantity: cartitems.quantity
+
+
+                res.json({ onlineSuccess: true, orderid: order.id, key:"rzp_test_ddvUrRJNK8Yvou", amount: order.amount_due})
+            })
+           
+        } else {
+
+            const orderProducts = [];
+
+            user.cart.forEach((cartitems) => {
+                const orderproduct = {
+                    productId: cartitems.productId,
+                    quantity: cartitems.quantity
+                }
+
+                orderProducts.push(orderproduct);
+            })
+
+            const newOrder = new order({
+                userId: user._id,
+                products: orderProducts,
+                totalprice: grandTotal,
+                orderStatus: 'Pending',
+                paymentMethod: selectedPaymentOption,
+                address: selectedAddressId
+
+            })
+
+            await newOrder.save()
+            let updateWallet;
+            if (selectedPaymentOption === 'WalletPay') {
+                try {
+                    updateWallet = user.wallet - grandTotal
+                    // console.log('user._id', user._id);
+                    await userSignup.findOneAndUpdate(
+                        { _id: user._id },
+                        { $set: { wallet: updateWallet } }
+                    );
+
+                }
+                catch (error) {
+                    console.log('Error at walletpayment ', error);
+                    res.status(500).send('Error in payment')
+                }
+            }
+            console.log(updateWallet);
+
+            // Reduce the product quantities in the products collection
+            for (const orderProduct of orderProducts) {
+                const product = await productList.findById(orderProduct.productId);
+                if (product) {
+                    // Reduce the product quantity by the ordered quantity
+                    product.quantity -= orderProduct.quantity;
+                    await product.save();
+                }
             }
 
-            orderProducts.push(orderproduct);
-        })
+            await userSignup.findOneAndUpdate(
+                { _id: user._id },
+                { $pull: { cart: { productId: { $in: orderProducts.map(product => product.productId) } } } }
+            );
 
-        const newOrder = new order({
-            userId: user._id,
-            products: orderProducts,
-            totalprice: grandTotal,
-            orderStatus: 'Pending',
-            paymentMethod: selectedPaymentOption,
-            address: selectedAddressId
+            // console.log('ordr coming here', onOrder)
 
-        })
 
-        await newOrder.save()
-        let updateWallet; 
-        if (selectedPaymentOption === 'WalletPay') {
-            try {
-                updateWallet = user.wallet - grandTotal
-                // console.log('user._id', user._id);
-                await userSignup.findOneAndUpdate(
-                    { _id: user._id },
-                    { $set: { wallet: updateWallet } }
-                );
-
-            }
-            catch (error) {
-                console.log('Error at walletpayment ', error);
-                res.status(500).send('Error in payment')
-            }
+            res.json({ succes: true });
         }
-        console.log(updateWallet);
-
-        // Reduce the product quantities in the products collection
-        for (const orderProduct of orderProducts) {
-            const product = await productList.findById(orderProduct.productId);
-            if (product) {
-                // Reduce the product quantity by the ordered quantity
-                product.quantity -= orderProduct.quantity;
-                await product.save();
-            }
-        }
-
-        await userSignup.findOneAndUpdate(
-            { _id: user._id },
-            { $pull: { cart: { productId: { $in: orderProducts.map(product => product.productId) } } } }
-        );
-
-        const successResponse = {
-            success: true,
-        };
-
-        res.json(successResponse);
-
     }
     catch (error) {
         console.log('error at post final order placing', error);

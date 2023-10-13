@@ -8,12 +8,18 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
 const mongoose = require('mongoose')
+const Razorpay = require('razorpay')
 
 // const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const adminRouter = require('./routes/admin')
 
 var app = express();
+
+var instance = new Razorpay({
+  key_id: 'rzp_test_ddvUrRJNK8Yvou',
+  key_secret: 'wb4J9yrG1vekMjxdHOfMe40k',
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
