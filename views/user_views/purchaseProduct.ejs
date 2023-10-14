@@ -185,7 +185,7 @@
     </div>
 
     <!--Success Modal -->
-<!-- <div class="modal fade" id="successmodal" tabindex="-1" role="dialog" aria-labelledby="succesmodal" aria-hidden="true">
+    <!-- <div class="modal fade" id="successmodal" tabindex="-1" role="dialog" aria-labelledby="succesmodal" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -208,28 +208,28 @@
     </div>
   </div> -->
 
-  <!-- Modal -->
-<div class="modal fade" id="successmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          
-       
-        </div>
-        <div class="modal-body">
-            <div class="d-flex justify-content-center">
-                <img style="width: 450px;" src="/images/5631827.jpg" alt="order placed">
-               
+    <!-- Modal -->
+    <div class="modal fade" id="successmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+
+
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-center">
+                        <img style="width: 450px;" src="/images/5631827.jpg" alt="order placed">
+
+                    </div>
+                    <p style="text-align: center;"> <a href="/orders">View order details</a></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                </div>
             </div>
-            <p style="text-align: center;"> <a href="/orders">View order details</a></p>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-         
-        </div>
-      </div>
     </div>
-  </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
@@ -292,7 +292,7 @@
                 event.preventDefault();
                 return; // Prevent form submission
             }
-            
+
             const selectedAddress = document.getElementById('selectedAddressInput').value
             console.log('selected address option........', selectedAddress);
             if (!selectedAddress) {
@@ -319,10 +319,10 @@
                 .then((data) => {
                     console.log('data at first if', data);
 
-                    if (data.succes== true) {
+                    if (data.success === true) {
                         console.log('data  ---', data);
 
-                        // Order placed successfully, trigger success SweetAlert2 alert
+
                         Swal.fire({
                             icon: 'success',
                             title: 'Order Placed Successfully',
@@ -334,19 +334,20 @@
                             // window.location.href = '/afterorder';
 
                             $('#successmodal').modal('show');
-                             window.location.href = '/userhome';
+                            //  window.location.href = '/userhome';
 
                         });
                     } else if (data.onlineSuccess) {
-                        console.log('hii');
-                        console.log('looking for undefined--- key,orderid,amount', data.key, data.orderid, data.amount);
+                        // console.log('hii');
+                        console.log('looking for undefined--- key,orderid,amount', data.order, data.order.key, data.order.id, data.order.amount);
                         var options = {
                             "key": "" + data.key + "",
-                            "amount": "" + data.amount + "",
+                            "amount": "" + data.order.amount + "",
                             "currency": "INR",
                             "image": "/images/logo3.jpg",
-                            "order_id": data.order_id,
+                            "order_id": data.order.id,
                             "handler": function (response) {
+                                console.log('response', response);
                                 createOrder(details);
                             },
                             "theme": {
@@ -371,7 +372,7 @@
                         console.log('hii 2');
                     }
                     else {
-                         console.log('data error',data);
+                        console.log('data error', data);
                         // Error occurred, trigger error SweetAlert2 alert
                         Swal.fire({
                             icon: 'error',
@@ -387,6 +388,7 @@
         });
 
         function createOrder(details) {
+            console.log(details);
             fetch('/orderOnline', {
                 method: 'POST',
                 headers: {
@@ -398,7 +400,20 @@
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Order Placed Successfully',
+                        text: 'Keep shopping!',
+                        showConfirmButton: false,
+                        timer: 2000,
+                    }).then(() => {
+                        // Redirect to another page or perform other actions
+                        // window.location.href = '/afterorder';
+
+                        $('#successmodal').modal('show');
+                        //  window.location.href = '/userhome';
+
+                    });
                 })
 
         }

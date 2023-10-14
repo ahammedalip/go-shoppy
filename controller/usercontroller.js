@@ -1048,7 +1048,7 @@ usercontroller.getPlaceOrder = async (req, res) => {
         }
 
         // console.log('user cart length', user.cart.length);
-        if(user.cart.length < 1){
+        if (user.cart.length < 1) {
             res.redirect('/products')
         }
 
@@ -1089,30 +1089,40 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
         console.log('payment method', selectedPaymentOption);
 
         if (selectedPaymentOption === 'Online payment') {
-            console.log('its online payment')
-            var instance = new Razorpay({ key_id: 'rzp_test_ddvUrRJNK8Yvou', key_secret: 'wb4J9yrG1vekMjxdHOfMe40k' })
-            
+            console.log('its online payment');
+            var instance = new Razorpay({ key_id: 'rzp_test_ddvUrRJNK8Yvou', key_secret: 'wb4J9yrG1vekMjxdHOfMe40k' });
+
             var options = {
                 amount: grandTotal * 100,  // amount in the smallest currency unit
                 currency: "INR",
                 receipt: "order_rcptid_11"
             };
+
             instance.orders.create(options, function (err, order) {
-                onlineOrder = { order }
-                console.log(order);
-                console.log('order id only,',order.id);
-                console.log('order amount ,',order.amount_due);
-                // console.log('order id only,',order.);
+                if (order) {
+                    console.log(order);
+                    // console.log('order id only:', order.id);
+                    // console.log('order amount:', order.amount_due);
 
+                    console.log('online success')
+                    res.json({
+                        onlineSuccess: true,
+                        order: order,
+                        
+                        key: "rzp_test_ddvUrRJNK8Yvou",
+                       
+                    });
+                } else if (err) {
+                    console.error('error from here', err);
+                    // Handle the error and send an appropriate response
+                    res.status(500).json({ error: 'Error creating Razorpay order' });
+                }
+            });
 
-
-                res.json({ onlineSuccess: true, orderid: order.id, key:"rzp_test_ddvUrRJNK8Yvou", amount: order.amount_due})
-            })
-           
         } else {
 
             const orderProducts = [];
-            console.log('comin here');
+            // console.log('comin here');
 
             user.cart.forEach((cartitems) => {
                 const orderproduct = {
@@ -1170,9 +1180,8 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
             // console.log('ordr coming here', onOrder)
 
 
-            // res.json({ succes: true });
+            res.json({ success: true });
         }
-            res.json({ succes: true });
 
     }
     catch (error) {
@@ -1188,19 +1197,60 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
     }
 }
 
-usercontroller.postOnlinePurchase = async(req, res) =>{
-    try{
-        const user = await userSignup.findOne({email:req.cookies.user})
+usercontroller.postOnlinePurchase = async (req, res) => {
+    try {
+        const user = await userSignup.findOne({ email: req.cookies.user })
 
         const selectedPaymentOption = req.body.details.selectedPaymentOption;
         const selectedAddress = req.body.details.selectedAddress;
         const selectedAddressId = user.address.find(address => address._id.toString() === selectedAddress);
+        const grandTotal = req.session.grandTotal;
 
+        console.log('payment, address--------------', selectedAddressId, selectedPaymentOption);
 
+        const orderProducts = [];
+            // console.log('comin here');
 
-        console.log('payment, address',selectedAddressId );
+            user.cart.forEach((cartitems) => {
+                const orderproduct = {
+                    productId: cartitems.productId,
+                    quantity: cartitems.quantity
+                }
+
+                orderProducts.push(orderproduct);
+            })
+
+            const newOrder = new order({
+                userId: user._id,
+                products: orderProducts,
+                totalprice: grandTotal,
+                orderStatus: 'Pending',
+                paymentMethod: selectedPaymentOption,
+                address: selectedAddressId
+
+            })
+
+            await newOrder.save()
+           
+
+            // Reduce the product quantities in the products collection
+            for (const orderProduct of orderProducts) {
+                const product = await productList.findById(orderProduct.productId);
+                if (product) {
+                    // Reduce the product quantity by the ordered quantity
+                    product.quantity -= orderProduct.quantity;
+                    await product.save();
+                }
+            }
+
+            await userSignup.findOneAndUpdate(
+                { _id: user._id },
+                { $pull: { cart: { productId: { $in: orderProducts.map(product => product.productId) } } } }
+            );
+
+            res.json({success: true})
     }
-    catch(error){
+    catch (error) {
         console.log('Error at online payment', error);
         res.status(500).send('Error at online payment')
     }
