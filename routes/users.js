@@ -45,6 +45,7 @@ router.post ('/wishlist/add/:productId', usercontroller.addToWishlistIndividual)
 router.get ('/orders', usercontroller.getOrders)
 router.get('/orders/details/:orderId', usercontroller.getOrderDetails)
 router.post ('/orders/cancel/:orderId', usercontroller.cancelOrder)
+router.post('/orders/return/:orderId', usercontroller.returnOrder)
 
 router.get ('/wishlist', usercontroller.getWishlist)
 router.delete ('/wishlist/remove/:productId', usercontroller.deleteItemsfromWishlist)
@@ -57,7 +58,7 @@ router.get('/product/:productId', usercontroller.getIndividualProduct)
 router.get('/cart/placeorder', usercontroller.getPlaceOrder)
 router.post('/cart/placeorder/submit', usercontroller.postFinalOrderPlacing)
 router.post('/orderOnline',usercontroller.postOnlinePurchase)
-// router.get('/afterorder', usercontroller.getAfterCheckout)
+router.get('/afterorder', usercontroller.getAfterCheckout)
 
 
 

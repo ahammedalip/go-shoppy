@@ -17,51 +17,70 @@
                                 </h6>
                                 <h6>Ordered Date: <%= orderDetails[0].orderDate.toDateString() %>
                                 </h6>
+                                <h6>Payment method: <%= orderDetails[0].paymentMethod %>
+                                </h6>
                                 <h6>Order Status:
                                     <% if(orderDetails[0].orderStatus=='cancel_req' ){ %>
                                         <p>Requested for cancellation</p>
-                                        <% }else{ %>
-                                            <%= orderDetails[0].orderStatus %>
-                                                <% } %>
+                                        <% }else if(orderDetails[0].orderStatus=='return_req'){ %>
+                                           
+                                                <p>Requested for returning</p>
+                                                <% }else{ %>
+                                                    <%= orderDetails[0].orderStatus %>
+                                               <% } %>
                                 </h6>
 
 
-                            
-                                        <% if (orderDetails[0].orderStatus =='Pending'  ) { %>
-                                            <div class="col">
-                                                <button type="submit" class="btn cancel-order">Cancel Order</button>
-                                            </div>
-                                            <% }else if(orderDetails[0].orderStatus == 'delivered'){%>
-                                                <div class="col">
-                                                    <button type="submit" class="btn return-order"> Return order</button>
-                                                </div>
-                                                <% } %>
 
-                                      <br>
-                                        
+                                <!-- <% if (orderDetails[0].orderStatus=='Pending' ) { %>
+                                    <div class="col">
+                                        <button type="submit" class="btn cancel-order">Cancel Order</button>
+                                    </div>
+                                    <% }else if(orderDetails[0].orderStatus=='delivered' ){%>
+                                        <div class="col">
+                                            <button type="submit" class="btn return-order" orderid="  <%= orderId %>">
+                                                Return</button>
+                                        </div>
+                                        <% } %> -->
+
+                                <% if(orderDetails[0].orderStatus=='delivered' ){%>
+                                    <div class="col">
+                                        <button type="submit" class="btn return-order" orderid="  <%= orderId %>"
+                                            onclick="firstReturn()">
+                                            Return</button>
+                                    </div>
+                                    <% }else if(orderDetails[0].orderStatus=='Pending' ){%>
+                                        <div class="col">
+                                            <button type="submit" class="btn cancel-order">Cancel Order</button>
+                                        </div>
+                                        <% } %>
+                                            <br>
+
                             </div>
 
-                            <div class="col-md-6" >
+                            <div class="col-md-6">
                                 <br>
                                 <h5 style="font-weight: 600; font-size: 1.5rem;">Shipping info:</h5>
-                                <h6>Name: <%= orderDetails[0].address.FullName %></h6>
-                                <h6>Contact: <%= orderDetails[0].address.ContactNo %></h6>
+                                <h6>Name: <%= orderDetails[0].address.FullName %>
+                                </h6>
+                                <h6>Contact: <%= orderDetails[0].address.ContactNo %>
+                                </h6>
                                 <p>Address:
                                     <%= orderDetails[0].address.BuildingName %>,
-                                    <%= orderDetails[0].address.PostOffice %>,
-                                        <%= orderDetails[0].address.place %>,
-                                            <%= orderDetails[0].address.City %>,
-                                                <%= orderDetails[0].address.State %>,
-                                                    <%= orderDetails[0].address.PIN %>,
-                                </p>    
-                                       
+                                        <%= orderDetails[0].address.PostOffice %>,
+                                            <%= orderDetails[0].address.place %>,
+                                                <%= orderDetails[0].address.City %>,
+                                                    <%= orderDetails[0].address.State %>,
+                                                        <%= orderDetails[0].address.PIN %>,
+                                </p>
+
 
                             </div>
                         </div>
 
                     </div>
 
-                    <div class="col">
+                    <div class="container d-flex justify-content-center">
 
                         <div class="table">
                             <table>
@@ -73,7 +92,8 @@
                                 </tr>
                                 <% orderDetails[0].products.forEach(product=> { %>
                                     <tr>
-                                        <td style="vertical-align: middle;"><img src="/uploads/<%= product.productId.images[0] %>"
+                                        <td style="vertical-align: middle;"><img
+                                                src="/uploads/<%= product.productId.images[0] %>"
                                                 alt="<%= product.productId.productName %>"
                                                 style="width: 80px; height: 80px; border: 1px solid rgb(223, 219, 219); border-radius: 5px;">
                                         </td>
@@ -125,12 +145,53 @@
         }
 
 
+        async function returnOrder(orderId) {
+            try {
+                console.log('button clicked');
+                const response = await fetch(`/orders/return/${orderId}`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    alert('Order return request sent')
+                    window.location.reload();
+                }
+            }
+            catch (error) {
+                console.log('Error returning order', error);
+                alert('An error occured while returning order');
+            }
+        }
+
 
 
         document.querySelector('.cancel-order').addEventListener('click', () => {
+            console.log('buttn clicked 1');
             const orderId = '<%= orderId %>';
             cancelOrder(orderId);
         });
+
+        function firstReturn() {
+
+            console.log('button clicked at return order');
+            const orderId = '<%= orderId %>';
+            returnOrder(orderId)
+
+        }
+
+
+
+
+
+        // const returnOrderButtons = document.querySelectorAll('.return-order');
+
+        // returnOrderButtons.forEach(button => {
+        //     button.addEventListener('click', () => {
+        //         console.log('button clicked');
+        //         const orderId = button.getAttribute('orderid'); // Get the orderid from the button's attribute
+        //         returnOrder(orderId);
+        //     });
+        // });
     </script>
 
     <%- include('footer') %>

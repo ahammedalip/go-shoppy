@@ -63,13 +63,17 @@
                         <select class="form-select order-status-select" aria-label="Order Status"
                           data-order-id="<%= order._id %>">
 
-                          <option value="shipped" <%=order.orderStatus==='shipped' ? 'selected' : '' %>>Shipped</option>
+                          <option value="Shipped" <%=order.orderStatus==='shipped' ? 'selected' : '' %>>Shipped</option>
                           <option value="cancel_req" <%=order.orderStatus==='cancel_req' ? 'selected' : '' %>>Requested
                             for cancel</option>
-                          <option value="pending" <%=order.orderStatus==='Pending' ? 'selected' : '' %>>Pending</option>
+                          <option value="Pending" <%=order.orderStatus==='Pending' ? 'selected' : '' %>>Pending</option>
                           <option value="cancelled" <%=order.orderStatus==='cancelled' ? 'selected' : '' %>>cancelled
                           </option>
-                          <option value="delivered" <%=order.orderStatus==='delivered' ? 'selected' : '' %>>Delivered
+                          <option value="Delivered" <%=order.orderStatus==='delivered' ? 'selected' : '' %>>Delivered
+                          </option>
+                          <option value="return_req" <%=order.orderStatus==='return_req' ? 'selected' : '' %>> Return req.std
+                          </option>
+                          <option value="Returned" <%=order.orderStatus==='returned' ? 'selected' : '' %>> Returned
                           </option>
                         </select>
                       </td>

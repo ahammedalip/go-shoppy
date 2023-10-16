@@ -1142,6 +1142,7 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
                 address: selectedAddressId
 
             })
+            
 
             await newOrder.save()
             let updateWallet;
@@ -1333,6 +1334,30 @@ usercontroller.cancelOrder = async (req, res) => {
     }
 }
 
+usercontroller.returnOrder = async (req, res) =>{
+    try{
+        const orderId= req.params.orderId;
+        console.log('coming here and order id is ', orderId);
+
+        const updateOrder = await order.findByIdAndUpdate(
+            orderId,
+            { orderStatus: 'return_req' },
+            { new: true }
+        )
+        console.log('order return requsted, given the updated order after return', updateOrder);
+
+        const successResponse = {
+            success: true,
+        };
+
+        res.json(successResponse);
+
+    }
+    catch(error){
+        console.log('Error while returning order', error);
+    }
+}
+
 usercontroller.getChangePassProfile = async (req, res) => {
 
     try {
@@ -1386,5 +1411,20 @@ usercontroller.postProfileChangePass = async (req, res) => {
     }
 }
 
+
+usercontroller.getAfterCheckout = async(req, res) =>{
+    try{
+        const user = await userSignup.findOne({email: req.cookies.user})
+
+        if(!user){
+            res.redirect('/userhome')
+        }
+        res.render('../views/user_views/afterorderplaced', {user})
+    }
+    catch(error){
+        console.log('Error at after checkout page', error);
+        res.send('Error')
+    }
+}
 
 module.exports = usercontroller;
