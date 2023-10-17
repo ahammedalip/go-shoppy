@@ -197,14 +197,17 @@ usercontroller.postOtpPage = async (req, res) => {
             let referralOffer = 50;
             // const referals = await userSignup.find({refferralcode: applyReferralCode});
 
-            try {
-                console.log('coming here');
-                await userSignup.findOneAndUpdate({ refferralcode: applyReferralCode },
-                    { $inc: { wallet: referralOffer } })
-            } catch (error) {
-                console.log('error at applying referral code', error);
-                res.send('Error at applying user referrals')
+            if(applyReferralCode){
+                try {
+                    console.log('coming here');
+                    await userSignup.findOneAndUpdate({ refferralcode: applyReferralCode },
+                        { $inc: { wallet: referralOffer } })
+                } catch (error) {
+                    console.log('error at applying referral code', error);
+                    res.send('Error at applying user referrals')
+                }
             }
+           
 
 
             req.session.destroy();
@@ -483,15 +486,15 @@ usercontroller.getCart = async (req, res) => {
             user.cart.forEach(item => {
                 const offer = item.productId.offerPrice
 
-                console.log('offer', offer);
+                // console.log('offer', offer);
                 if (offer) {
-                    console.log('consoling the total of individual product', item.total);
+                    // console.log('consoling the total of individual product', item.total);
                     item.total = offer * item.quantity;
 
-                    console.log('second item.total', item.total);
+                    // console.log('second item.total', item.total);
                 }
             })
-            console.log('user is user', user)
+            // console.log('user is user', user)
             // user.cart.forEach(item=>{
             //     console.log('oferprice',item.total);
             // })
@@ -519,7 +522,7 @@ usercontroller.getCart = async (req, res) => {
 
             //    console.log('whole total', wholeTotal);
             //    console.log('grand total',grandTotal );
-            console.log('cart products', cartProducts);
+            // console.log('cart products', cartProducts);
 
 
 
@@ -724,17 +727,20 @@ usercontroller.addtoCartProductpage = async (req, res) => {
         const user = await userSignup.findOne({ email: req.cookies.user }).populate('cart.productId');
         // console.log('user from addtocart product page', user.cart);
         const productId = req.body.productId; // Get the product ID from the form data
-        console.log('from addtoCartproduct page:>', productId);
+        // console.log('from addtoCartproduct page:>', productId);
+        // console.log('from user cart', user.cart);
+
+      
 
         if (user) {
 
-            const existingProduct = user.cart.find(item => item.productId.toString() === productId)
-
-            console.log('existing product', existingProduct);
+            const existingProduct = user.cart.find((item) => item.productId._id.toString() === productId)
+       
+            // console.log('existing product', existingProduct);
 
 
             const getprice = await productList.findOne({ _id: productId })
-            console.log('getprice ', getprice.price);
+            // console.log('getprice ', getprice.price);
 
 
             // console.log('existing product id+++++ price');
@@ -777,6 +783,7 @@ usercontroller.addToCart = async (req, res) => {
         const existingCartItem = user.cart.find((item) => item.productId.toString() === productId);
 
         if (existingCartItem) {
+           
             // If the product exists, you can update its quantity instead of adding a duplicate
             existingCartItem.quantity += 1;
         } else {

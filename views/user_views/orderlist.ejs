@@ -1,49 +1,57 @@
 <%- include('header') %>
 
-<div class="container">
-    <% if(orders.length === 0) {  %>
-        <h6>You didn't have ordered yet!</h6>
-    <% } else { %>
-       <br>
-        <div class="order-details" style="padding: 30px; background-color: rgb(255, 252, 240);">
-            <h2>Your Order History</h2>
-            <% orders.sort((a, b) => b.orderDate - a.orderDate); %>
-            <% orders.forEach(order => { %>
-                <div class="order-details" style="border: 1px solid gray; padding: 20px; background-color: white;">
-                    <div class="row" style="border-bottom: 2px solid #003F62">
-                        <div class="col">
-                            <p>Order Id: <%= order._id %></p>
-                        </div>
-                        <div class="col">
-                            <p>Order Date: <%= order.orderDate.toDateString() %></p>
-                        </div>
+<div class="row" style="width: 100%;">
+    <%- include('profilepartial') %>
 
-                    </div>
-                   
-                    <div class="row" style="padding: 10px 10px 0 10px;">
-                        <div class="col">
-                            <p style="font-size: 1.2rem;">Total Price: ₹ <%= order.totalprice %></p>
+    <div class="col-md-10">
+        <div class="container col-md-10" style="font-size: 1rem; padding-bottom: 20px;">
+            <% if(orders.length === 0) {  %>
+                <h6>You didn't have ordered yet!</h6>
+            <% } else { %>
+               <br>
+                <div class="order-details" style="padding: 20px; background-color: rgb(255, 253, 253);">
+                    <h2>Your Order History</h2>
+                    <% orders.sort((a, b) => b.orderDate - a.orderDate); %>
+                    <% orders.forEach(order => { %>
+                        <div class="order-details" style="border: 1px solid gray; padding: 20px; background-color: white;">
+                            <div class="row" style="border-bottom: 2px solid #003F62">
+                                <div class="col">
+                                    <p>Order Id: <%= order._id %></p>
+                                </div>
+                                <div class="col">
+                                    <p>Order Date: <%= order.orderDate.toDateString() %></p>
+                                </div>
+        
+                            </div>
+                           
+                            <div class="row" style="padding: 10px 10px 0 10px;">
+                                <div class="col">
+                                    <p style="font-size: 1.2rem;">Total Price: ₹ <%= order.totalprice %></p>
+                                </div>
+                                <div class="col">
+                                    <p style="font-size: 1.2rem;">Order Status: <%= order.orderStatus %></p>
+                                </div>
+                                <div class="col">
+                                    <p style="font-size: 1.2rem;">Payment Method: <%= order.paymentMethod %></p>
+                                </div>
+        
+                            </div>
+                            <a class="d-flex justify-content-center" href="/orders/details/<%= order._id %>"><button class="btn return-order">Details</button></a>
+        
+                           
+                            
+                           
+                           
+                            
                         </div>
-                        <div class="col">
-                            <p style="font-size: 1.2rem;">Order Status: <%= order.orderStatus %></p>
-                        </div>
-                        <div class="col">
-                            <p style="font-size: 1.2rem;">Payment Method: <%= order.paymentMethod %></p>
-                        </div>
-
-                    </div>
-                    <a class="d-flex justify-content-center" href="/orders/details/<%= order._id %>"><button class="btn return-order">Details</button></a>
-
-                   
-                    
-                   
-                   
-                    
+                        <br>
+                    <% }); %>
                 </div>
-                <br>
-            <% }); %>
+            <% } %>
         </div>
-    <% } %>
+    </div>
 </div>
+
+
 
 <%- include('footer') %>

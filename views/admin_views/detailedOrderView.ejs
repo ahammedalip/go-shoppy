@@ -2,8 +2,9 @@
 
 
 
-    <div class="" style="margin-left: 240px; width:auto; padding-top: 30px; padding-left: 20px;">
+    <div class="" style="margin-left: 240px; width:auto; padding-top: 30px; padding-left: 20px; padding-bottom: 20px;">
         <h4>Order Details</h4>
+        <p><a href="/admin/order" style="text-decoration: none">Back to order list</a></p>
         <div class="col-md-10 order-div">
 
 
@@ -17,8 +18,9 @@
 
                     </div>
                     <div class="col">
-                        <p>Order Id: <%= ordered._id %>
-                        </p>
+                       Order Id: <%= ordered._id %>
+                       
+                        <p>payment Method: <%= ordered.paymentMethod %> </p>
 
                     </div>
                 </div>

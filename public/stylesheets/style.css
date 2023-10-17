@@ -529,6 +529,16 @@ footer {
   text-decoration: none;
   list-style: none;
 }
+.applogo{
+  padding: 5px;
+  font-size: 25px;
+}
+
+.addressdiv{
+  color: #000;
+  font-family: 'Exo 2', sans-serif;
+  padding-top: 5px;
+}
 
 .footer-columns {
   display: flex;
@@ -552,7 +562,7 @@ footer {
   margin-bottom: 10px;
 }
 
-.footer-column-1 a {
+.footer-column a {
   text-decoration: none;
   color: #0862a7;
 }
