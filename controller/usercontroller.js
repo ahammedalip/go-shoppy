@@ -30,23 +30,36 @@ usercontroller.getGuestHome = async (req, res) => {
 }
 
 usercontroller.getLoginpage = (req, res) => {
-    if (req.cookies.user) {
-        res.render('../views/user_views/userhome')
-    } else {
-        res.render('../views/user_views/userlogin', { errorMessage: false, user: false })
+    try {
+        if (req.cookies.user) {
+            res.render('../views/user_views/userhome')
+        } else {
+            res.render('../views/user_views/userlogin', { errorMessage: false, user: false })
+        }
+
+    } catch (error) {
+        console.log('Error at get login page', error);
     }
+
 }
 
 usercontroller.postLogoutUserHome = (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            console.log('error in destroying', err);
-        } else {
-            res.clearCookie('user')
-            // console.log('logout working');
-            res.redirect('/')
-        }
-    })
+    try {
+
+        req.session.destroy((err) => {
+            if (err) {
+                console.log('error in destroying', err);
+            } else {
+                res.clearCookie('user')
+                // console.log('logout working');
+                res.redirect('/')
+            }
+        })
+    } catch (error) {
+        console.log('Error at post logout', error);
+        res.status.send('Error')
+    }
+
 };
 
 usercontroller.postLoginPage = async (req, res) => {
@@ -90,12 +103,19 @@ usercontroller.postLoginPage = async (req, res) => {
 }
 
 usercontroller.getSignupPage = (req, res) => {
-    if (req.cookies.user) {
-        res.render('../views/user_views/userhome')
+    try {
+        if (req.cookies.user) {
+            res.render('../views/user_views/userhome')
+        }
+        else {
+            res.render('../views/user_views/usersignup', { errorMessage: false, user: false })
+        }
+
+    } catch (error) {
+        console.log('Error at get signup page', error);
+        res.status(500).send('Error ', error)
     }
-    else {
-        res.render('../views/user_views/usersignup', { errorMessage: false, user: false })
-    }
+
 
 }
 
@@ -105,58 +125,64 @@ usercontroller.PostSignup = async (req, res) => {
     const userSignupData = { firstName, lastName, email, mobile, password }
     const referralCode = referral
     console.log('referalcode from the text box', referralCode);
+    try {
 
-    // Check if the email already exists
-    const existingUser = await userSignup.findOne({ email });
-    if (mobile.length < 10 || mobile.length > 10) {
-        return res.render('../views/user_views/usersignup', { errorMessage: 'mobile number should be 10 digits', user: false });
-    }
-
-    if (password.length < 5) {
-        return res.render('../views/user_views/usersignup', { errorMessage: 'password should be atleast 5 characters', user: false })
-    }
-
-    if (existingUser) {
-        // Email already exists, render the signup page with an error message
-        return res.render('../views/user_views/usersignup', { errorMessage: 'Email already exists', user: false });
-    }
-
-    req.session.userSignupData = userSignupData;
-    req.session.referralcode = referralCode;
-
-    console.log(userSignupData);
-
-    const transporter = nodemailer.createTransport({
-        service: 'Gmail', // Use your email service provider
-        auth: {
-            user: 'ahmd.work12@gmail.com', // Your email
-            pass: 'tsgqtxqxcfpvmrin'   // Your email password or an app-specific password
+        // Check if the email already exists
+        const existingUser = await userSignup.findOne({ email });
+        if (mobile.length < 10 || mobile.length > 10) {
+            return res.render('../views/user_views/usersignup', { errorMessage: 'mobile number should be 10 digits', user: false });
         }
-    });
 
-    // Generate a random OTP
-    const generatedOTP = Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
-    req.session.otp = generatedOTP
-    console.log(req.session.otp);
-
-    const mailOptions = {
-        from: 'ahmd.work12@gmail.com',
-        to: req.body.email, // User's email
-        subject: 'OTP Verification',
-        text: `Your OTP for verification of Go Shoppy is : ${generatedOTP}. 
-    Do not share the OTP with anyone.
-    For further details and complaints visit info.goshoppy.com`
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
+        if (password.length < 5) {
+            return res.render('../views/user_views/usersignup', { errorMessage: 'password should be atleast 5 characters', user: false })
         }
-    });
 
-    res.redirect('/verify_otp')
+        if (existingUser) {
+            // Email already exists, render the signup page with an error message
+            return res.render('../views/user_views/usersignup', { errorMessage: 'Email already exists', user: false });
+        }
+
+        req.session.userSignupData = userSignupData;
+        req.session.referralcode = referralCode;
+
+        console.log(userSignupData);
+
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail', // Use your email service provider
+            auth: {
+                user: 'ahmd.work12@gmail.com', // Your email
+                pass: 'tsgqtxqxcfpvmrin'   // Your email password or an app-specific password
+            }
+        });
+
+        // Generate a random OTP
+        const generatedOTP = Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
+        req.session.otp = generatedOTP
+        console.log(req.session.otp);
+
+        const mailOptions = {
+            from: 'ahmd.work12@gmail.com',
+            to: req.body.email, // User's email
+            subject: 'OTP Verification',
+            text: `Your OTP for verification of Go Shoppy is : ${generatedOTP}. 
+     Do not share the OTP with anyone.
+     For further details and complaints visit info.goshoppy.com`
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log('Email sent: ' + info.response);
+            }
+        });
+
+        res.redirect('/verify_otp')
+    } catch (error) {
+        console.log('Error at post signup', error);
+        res.status(500).send('Error')
+    }
+
 }
 
 usercontroller.getOtpPage = (req, res) => {
@@ -197,7 +223,7 @@ usercontroller.postOtpPage = async (req, res) => {
             let referralOffer = 50;
             // const referals = await userSignup.find({refferralcode: applyReferralCode});
 
-            if(applyReferralCode){
+            if (applyReferralCode) {
                 try {
                     console.log('coming here');
                     await userSignup.findOneAndUpdate({ refferralcode: applyReferralCode },
@@ -207,7 +233,7 @@ usercontroller.postOtpPage = async (req, res) => {
                     res.send('Error at applying user referrals')
                 }
             }
-           
+
 
 
             req.session.destroy();
@@ -730,12 +756,12 @@ usercontroller.addtoCartProductpage = async (req, res) => {
         // console.log('from addtoCartproduct page:>', productId);
         // console.log('from user cart', user.cart);
 
-      
+
 
         if (user) {
 
             const existingProduct = user.cart.find((item) => item.productId._id.toString() === productId)
-       
+
             // console.log('existing product', existingProduct);
 
 
@@ -783,7 +809,7 @@ usercontroller.addToCart = async (req, res) => {
         const existingCartItem = user.cart.find((item) => item.productId.toString() === productId);
 
         if (existingCartItem) {
-           
+
             // If the product exists, you can update its quantity instead of adding a duplicate
             existingCartItem.quantity += 1;
         } else {
@@ -1115,9 +1141,9 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
                     res.json({
                         onlineSuccess: true,
                         order: order,
-                        
+
                         key: "rzp_test_ddvUrRJNK8Yvou",
-                       
+
                     });
                 } else if (err) {
                     console.error('error from here', err);
@@ -1149,7 +1175,7 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
                 address: selectedAddressId
 
             })
-            
+
 
             await newOrder.save()
             let updateWallet;
@@ -1217,46 +1243,46 @@ usercontroller.postOnlinePurchase = async (req, res) => {
         console.log('payment, address--------------', selectedAddressId, selectedPaymentOption);
 
         const orderProducts = [];
-            // console.log('comin here');
+        // console.log('comin here');
 
-            user.cart.forEach((cartitems) => {
-                const orderproduct = {
-                    productId: cartitems.productId,
-                    quantity: cartitems.quantity
-                }
-
-                orderProducts.push(orderproduct);
-            })
-
-            const newOrder = new order({
-                userId: user._id,
-                products: orderProducts,
-                totalprice: grandTotal,
-                orderStatus: 'Pending',
-                paymentMethod: selectedPaymentOption,
-                address: selectedAddressId
-
-            })
-
-            await newOrder.save()
-           
-
-            // Reduce the product quantities in the products collection
-            for (const orderProduct of orderProducts) {
-                const product = await productList.findById(orderProduct.productId);
-                if (product) {
-                    // Reduce the product quantity by the ordered quantity
-                    product.quantity -= orderProduct.quantity;
-                    await product.save();
-                }
+        user.cart.forEach((cartitems) => {
+            const orderproduct = {
+                productId: cartitems.productId,
+                quantity: cartitems.quantity
             }
 
-            await userSignup.findOneAndUpdate(
-                { _id: user._id },
-                { $pull: { cart: { productId: { $in: orderProducts.map(product => product.productId) } } } }
-            );
+            orderProducts.push(orderproduct);
+        })
 
-            res.json({success: true})
+        const newOrder = new order({
+            userId: user._id,
+            products: orderProducts,
+            totalprice: grandTotal,
+            orderStatus: 'Pending',
+            paymentMethod: selectedPaymentOption,
+            address: selectedAddressId
+
+        })
+
+        await newOrder.save()
+
+
+        // Reduce the product quantities in the products collection
+        for (const orderProduct of orderProducts) {
+            const product = await productList.findById(orderProduct.productId);
+            if (product) {
+                // Reduce the product quantity by the ordered quantity
+                product.quantity -= orderProduct.quantity;
+                await product.save();
+            }
+        }
+
+        await userSignup.findOneAndUpdate(
+            { _id: user._id },
+            { $pull: { cart: { productId: { $in: orderProducts.map(product => product.productId) } } } }
+        );
+
+        res.json({ success: true })
     }
     catch (error) {
         console.log('Error at online payment', error);
@@ -1341,9 +1367,9 @@ usercontroller.cancelOrder = async (req, res) => {
     }
 }
 
-usercontroller.returnOrder = async (req, res) =>{
-    try{
-        const orderId= req.params.orderId;
+usercontroller.returnOrder = async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
         console.log('coming here and order id is ', orderId);
 
         const updateOrder = await order.findByIdAndUpdate(
@@ -1360,7 +1386,7 @@ usercontroller.returnOrder = async (req, res) =>{
         res.json(successResponse);
 
     }
-    catch(error){
+    catch (error) {
         console.log('Error while returning order', error);
     }
 }
@@ -1419,16 +1445,16 @@ usercontroller.postProfileChangePass = async (req, res) => {
 }
 
 
-usercontroller.getAfterCheckout = async(req, res) =>{
-    try{
-        const user = await userSignup.findOne({email: req.cookies.user})
+usercontroller.getAfterCheckout = async (req, res) => {
+    try {
+        const user = await userSignup.findOne({ email: req.cookies.user })
 
-        if(!user){
+        if (!user) {
             res.redirect('/userhome')
         }
-        res.render('../views/user_views/afterorderplaced', {user})
+        res.render('../views/user_views/afterorderplaced', { user })
     }
-    catch(error){
+    catch (error) {
         console.log('Error at after checkout page', error);
         res.send('Error')
     }

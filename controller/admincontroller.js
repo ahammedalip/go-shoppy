@@ -39,11 +39,19 @@ const upload = multer({ storage: storage });
 
 
 adminController.getAdminlogin = (req, res) => {
-    // console.log("admin getlogin");
-    if (req.session.adminId) {
-        res.redirect('/admin/dash')
+
+    try{
+        if (req.session.adminId) {
+            res.redirect('/admin/dash')
+        }
+        res.render('../views/admin_views/adminlogin')
+
+    }catch(error){
+        console.log('Error at get admin login', error);
+        res.status(500).send('Error')
     }
-    res.render('../views/admin_views/adminlogin')
+
+   
 }
 
 adminController.postAdminLogin = async (req, res) => {
@@ -56,7 +64,6 @@ adminController.postAdminLogin = async (req, res) => {
             console.log(req.session.adminId);
 
             res.cookie('adminAuthenticated', true, { maxAge: 24 * 60 * 60 * 1000 }); // 24 hours in milliseconds
-
             res.redirect('/admin/dash')
         }
 
@@ -93,7 +100,6 @@ adminController.getAdminDash = (req, res) => {
 
 }
 
-
 adminController.getUserList = async (req, res) => {
     try {
         const userList = await userModel.find(); // Fetch all users from the database
@@ -103,10 +109,6 @@ adminController.getUserList = async (req, res) => {
         res.send('Error fetching user list');
     }
 };
-
-
-
-
 
 
 adminController.getCategoryList = async (req, res) => {
