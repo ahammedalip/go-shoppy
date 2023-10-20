@@ -406,9 +406,13 @@ usercontroller.getProducts = async (req, res) => {
         const endIndex = startIndex + productsPerPage;
 
 
+
+
         const products = await productList.find({ unlisted: false }).skip(startIndex).limit(productsPerPage);
 
-
+        // if(filter){
+        //     const
+        // }
         const totalProducts = await productList.countDocuments({ unlisted: false });
         const totalPages = Math.ceil(totalProducts / productsPerPage);
 
@@ -477,23 +481,52 @@ usercontroller.getIndividualProduct = async (req, res) => {
 }
 
 usercontroller.applyFilter = async (req, res) => {
-    const minPrice = parseFloat(req.query.minPrice);
-    const maxPrice = parseFloat(req.query.maxPrice);
+    const min = req.query.min;
+    const max = req.query.max;
+    const above = req.query.above;
 
-    console.log('min price & max.price', minPrice, maxPrice);
+    console.log('min price & max.price', min, max, above);
 
     try {
-        // Find products within the specified price range
-        const products = await productList.find({
-            price: { $gte: minPrice, $lte: maxPrice },
-        });
+        
+        const user= await userSignup.findOne({email:req.cookies.user})
+        const categories = await ProductCategory.find({ isUnlisted: false });
 
-        console.log("Filtered products:", products);
+        const productsPerPage = 6; // Define the number of products per page
+        const currentPage = parseInt(req.query.page) || 1;
+        const startIndex = (currentPage - 1) * productsPerPage;
+        const endIndex = startIndex + productsPerPage;
+        let filteredProducts;
+        let totalProductsFromFilter;
+        if(above){
+            filteredProducts = await productList.find({unlisted:false,
+                price:{$gte:parseInt(above)}}).skip(startIndex).limit(productsPerPage);
 
-        res.json(products);
+                totalProductsFromFilter = await productList.find({unlisted:false,
+                    price:{$gte:parseInt(above)}});
+
+            }else{
+                filteredProducts = await productList.find({unlisted:false,
+                    price:{
+                        $gte:parseInt(min),
+                        $lte:parseInt(max)
+                    }
+                    }).skip(startIndex).limit(productsPerPage);
+
+                    totalProductsFromFilter = await productList.find({unlisted:false,
+                        price:{
+                            $gte:parseInt(min),
+                            $lte:parseInt(max)
+                        }
+                        });
+            }
+
+        const totalPages = Math.ceil(totalProductsFromFilter / productsPerPage);
+
+        res.render('../views/user_views/products', { products: filteredProducts, user, categories, currentPage, totalPages });
     } catch (err) {
         console.error("Error filtering products:", err);
-        res.status(500).json({ error: "Internal server error" });
+        res.status(500).send("Internal server error" );
     }
 }
 
@@ -916,6 +949,7 @@ usercontroller.getprofile = async (req, res) => {
     if (!req.cookies.user) {
         return res.redirect('/login')
     }
+
     try {
         const user = await userSignup.findOne({ email: req.cookies.user })
         // console.log('user from cookie', user);
