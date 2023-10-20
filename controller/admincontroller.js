@@ -44,7 +44,7 @@ adminController.getAdminlogin = (req, res) => {
         if (req.session.adminId) {
             res.redirect('/admin/dash')
         }
-        res.render('../views/admin_views/adminlogin')
+        res.render('../views/admin_views/adminlogin',{message:false})
 
     }catch(error){
         console.log('Error at get admin login', error);
@@ -65,6 +65,9 @@ adminController.postAdminLogin = async (req, res) => {
 
             res.cookie('adminAuthenticated', true, { maxAge: 24 * 60 * 60 * 1000 }); // 24 hours in milliseconds
             res.redirect('/admin/dash')
+        }else if(adminverify.password !== req.body.password){
+            res.render('../views/admin_views/adminlogin', {message:"Password is wrong!"})
+             
         }
 
     } catch (err) {

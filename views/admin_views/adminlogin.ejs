@@ -28,6 +28,11 @@
                         <h2 class="text-center">Admin Login</h2>
                     </div>
                     <div class="card-body">
+                        <% if (message) { %>
+                            <div class="alert alert-info">
+                                <%= message %>
+                            </div>
+                        <% } %>
                         <form action="/admin/login" method="POST">
                             <div class="form-group">
                                 
