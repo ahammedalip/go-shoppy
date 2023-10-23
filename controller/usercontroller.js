@@ -20,7 +20,6 @@ usercontroller.getGuestHome = async (req, res) => {
 
     try {
         const categories = await ProductCategory.find({ isUnlisted: false })
-
         res.render('../views/user_views/userhome', { categories, user: false });
     }
     catch (error) {
@@ -40,18 +39,15 @@ usercontroller.getLoginpage = (req, res) => {
     } catch (error) {
         console.log('Error at get login page', error);
     }
-
 }
 
 usercontroller.postLogoutUserHome = (req, res) => {
     try {
-
         req.session.destroy((err) => {
             if (err) {
                 console.log('error in destroying', err);
             } else {
                 res.clearCookie('user')
-                // console.log('logout working');
                 res.redirect('/')
             }
         })
@@ -59,7 +55,6 @@ usercontroller.postLogoutUserHome = (req, res) => {
         console.log('Error at post logout', error);
         res.status.send('Error')
     }
-
 };
 
 usercontroller.postLoginPage = async (req, res) => {
@@ -72,17 +67,13 @@ usercontroller.postLoginPage = async (req, res) => {
         const userverify = await userSignup.findOne({ email: req.body.email })
 
         if (userverify.isBlocked) {
-
             return res.render('../views/user_views/userlogin', { errorMessage: 'User is blocked', user: userverify || false });
         }
 
         else if (userverify && bcrypt.compareSync(req.body.password, userverify.password)) {
 
-            // session for user is created... user email id is stored
             req.session.email = req.body.email
 
-            // how to create a cookie
-            // setting expiration date to 1 days from now
             const expirationDate = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
 
             res.cookie('user', req.body.email, { expires: expirationDate })
@@ -99,7 +90,6 @@ usercontroller.postLoginPage = async (req, res) => {
         console.error(error);
         res.send('some error');
     }
-
 }
 
 usercontroller.getSignupPage = (req, res) => {
@@ -110,13 +100,10 @@ usercontroller.getSignupPage = (req, res) => {
         else {
             res.render('../views/user_views/usersignup', { errorMessage: false, user: false })
         }
-
     } catch (error) {
         console.log('Error at get signup page', error);
         res.status(500).send('Error ', error)
     }
-
-
 }
 
 usercontroller.PostSignup = async (req, res) => {
@@ -182,7 +169,6 @@ usercontroller.PostSignup = async (req, res) => {
         console.log('Error at post signup', error);
         res.status(500).send('Error')
     }
-
 }
 
 usercontroller.getOtpPage = (req, res) => {
@@ -194,14 +180,9 @@ usercontroller.getOtpPage = (req, res) => {
     }
 }
 
-
 usercontroller.postOtpPage = async (req, res) => {
     const { otp } = req.body
-
     const userEnteredOtp = otp
-
-    // console.log("new otp got", userEnteredOtp);
-    // console.log(req.session.otp);
 
     if (userEnteredOtp == req.session.otp) {
 
@@ -221,7 +202,6 @@ usercontroller.postOtpPage = async (req, res) => {
             await newSignup.save()
 
             let referralOffer = 50;
-            // const referals = await userSignup.find({refferralcode: applyReferralCode});
 
             if (applyReferralCode) {
                 try {
@@ -234,10 +214,8 @@ usercontroller.postOtpPage = async (req, res) => {
                 }
             }
 
-
-
             req.session.destroy();
-            // console.log(req.session.userSignupData);
+  
             res.render('../views/user_views/userlogin', { errorMessage: 'Signup succesfull, Use login', user: false })
         }
         catch (error) {
@@ -251,8 +229,6 @@ usercontroller.postOtpPage = async (req, res) => {
 
 
 usercontroller.getresetPassword = (req, res) => {
-
-
     res.render('../views/user_views/resetpassword', { errorMessage: false, user: false })
 
 }
@@ -311,8 +287,6 @@ usercontroller.postSendOtp = async (req, res) => {
 
 usercontroller.getVerifyOTP = (req, res) => {
 
-
-
     res.render('../views/user_views/resetotp', { errorMessage: false, user: false })
 
 }
@@ -320,8 +294,6 @@ usercontroller.getVerifyOTP = (req, res) => {
 usercontroller.postVerifyOTP = (req, res) => {
     const userEnteredOTP = req.body.otp; // OTP entered by the user
     const sessionOTP = req.session.otp; // OTP stored in the session
-    // console.log('User Entered OTP:', userEnteredOTP);
-    // console.log('Session OTP:', sessionOTP);
 
     if (userEnteredOTP == sessionOTP) {
         // OTP is correct, proceed to the password reset page
@@ -338,7 +310,6 @@ usercontroller.getSubmitPass = (req, res) => {
     res.render('../views/user_views/newpassword', { errorMessage: false, user: false })
 
 }
-
 
 usercontroller.postSubmitPass = async (req, res) => {
     const { newPassword, confirmPassword } = req.body;
@@ -358,7 +329,6 @@ usercontroller.postSubmitPass = async (req, res) => {
             return res.render('../views/user_views/newpassword', { errorMessage: 'User not found' });
         }
 
-
         // Password updated successfully, clear the session and redirect to login
         req.session.destroy();
         res.render('../views/user_views/userlogin', { errorMessage: 'Password changed succesfully, please login' }); // Change this to the appropriate login route
@@ -368,13 +338,10 @@ usercontroller.postSubmitPass = async (req, res) => {
     }
 };
 
-
-
 usercontroller.gethome = async (req, res) => {
 
     if (req.cookies.user) {
-        // console.log(req.cookies.user);
-        // if user is there then accepting them to userhome
+
         try {
             const user = await userSignup.findOne({ email: req.cookies.user })
             const categories = await ProductCategory.find({ isUnlisted: false })
@@ -398,21 +365,12 @@ usercontroller.getProducts = async (req, res) => {
         const categories = await ProductCategory.find({ isUnlisted: false });
         const productsPerPage = 6; // Define the number of products per page
 
-
         const currentPage = parseInt(req.query.page) || 1;
-
-
         const startIndex = (currentPage - 1) * productsPerPage;
         const endIndex = startIndex + productsPerPage;
 
-
-
-
         const products = await productList.find({ unlisted: false }).skip(startIndex).limit(productsPerPage);
 
-        // if(filter){
-        //     const
-        // }
         const totalProducts = await productList.countDocuments({ unlisted: false });
         const totalPages = Math.ceil(totalProducts / productsPerPage);
 
@@ -545,18 +503,14 @@ usercontroller.getCart = async (req, res) => {
             user.cart.forEach(item => {
                 const offer = item.productId.offerPrice
 
-                // console.log('offer', offer);
+  
                 if (offer) {
-                    // console.log('consoling the total of individual product', item.total);
+      
                     item.total = offer * item.quantity;
 
-                    // console.log('second item.total', item.total);
                 }
             })
-            // console.log('user is user', user)
-            // user.cart.forEach(item=>{
-            //     console.log('oferprice',item.total);
-            // })
+  
 
             const cartProducts = user.cart;
             let totalQuantity = 0;
@@ -579,12 +533,6 @@ usercontroller.getCart = async (req, res) => {
 
             req.session.grandTotal = wholeTotal;
 
-            //    console.log('whole total', wholeTotal);
-            //    console.log('grand total',grandTotal );
-            // console.log('cart products', cartProducts);
-
-
-
             res.render('../views/user_views/cart', { cartProducts, totalQuantity, wholeTotal, grandTotal, availableCoupons, user });
         } catch (error) {
             console.log('error at get cart', error);
@@ -593,7 +541,6 @@ usercontroller.getCart = async (req, res) => {
     } else {
         return res.redirect('/login')
     }
-
 }
 
 usercontroller.updateCartItem = async (req, res) => {
@@ -976,18 +923,6 @@ usercontroller.getprofile = async (req, res) => {
 
 }
 
-// usercontroller.postReferals = async(req,res) =>{
-//     const referal = req.body.referal
-//     try{
-//         const user =await userSignup.find({refferralcode: referal})
-//         console.log('from db,', user);
-//     }
-//     catch(error){
-//         console.log('error at checking referal coupons', error);
-//     }
-//     console.log(referal);
-// }
-
 usercontroller.editBasicProfile = async (req, res) => {
 
 
@@ -1114,18 +1049,15 @@ usercontroller.getPlaceOrder = async (req, res) => {
             res.redirect('/login')
         }
 
-        // console.log('user cart length', user.cart.length);
         if (user.cart.length < 1) {
             res.redirect('/products')
         }
 
-        // const totalPrice = req.session.totalPrice;
         const grandTotal = req.session.grandTotal;
         console.log('grand total in session ', grandTotal);
 
         const addresses = await user.address
 
-        // console.log('total address',addresses);
         res.render('../views/user_views/purchaseProduct', { user, grandTotal, addresses })
 
     }
@@ -1137,19 +1069,11 @@ usercontroller.getPlaceOrder = async (req, res) => {
 
 usercontroller.postFinalOrderPlacing = async (req, res) => {
     try {
-
-
         const user = await userSignup.findOne({ email: req.cookies.user }).populate('cart.productId')
-        // console.log('user',user);
-
+        
         const selectedPaymentOption = req.body.details.selectedPaymentOption;
         const selectedAddress = req.body.details.selectedAddress;
-
-        // console.log('Selected Address ID:', selectedAddress);
-        // console.log('Selected Payment Option:', selectedPaymentOption);
-
         const selectedAddressId = user.address.find(address => address._id.toString() === selectedAddress);
-        // console.log('selected address', selectedAddressId);
 
         const grandTotal = req.session.grandTotal
         console.log('grand total price', grandTotal);
@@ -1168,9 +1092,6 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
             instance.orders.create(options, function (err, order) {
                 if (order) {
                     console.log(order);
-                    // console.log('order id only:', order.id);
-                    // console.log('order amount:', order.amount_due);
-
                     console.log('online success')
                     res.json({
                         onlineSuccess: true,
@@ -1209,7 +1130,6 @@ usercontroller.postFinalOrderPlacing = async (req, res) => {
                 address: selectedAddressId
 
             })
-
 
             await newOrder.save()
             let updateWallet;
