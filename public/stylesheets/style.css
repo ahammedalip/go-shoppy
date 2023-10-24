@@ -444,7 +444,31 @@ box-shadow: 5px 5px 10px rgba(70, 70, 70, 0.5);
 border-left: 1px solid rgb(169, 169, 169);
   outline: none; /* Remove the default button outline */
 }
+/* wallet trans */
+.walletTrans{
+  padding: 10px;
+  border: 1px solid rgb(203, 203, 203);
+  border-radius: 10px;
+  box-shadow: 1px 4px 4px 1px rgb(212, 212, 212);
+}
+.red-text{
+  color: red;
+}
+.green-text{
+  color: green;
+}
 
+.wallet-card-div{
+  
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 42vh;
+    /* width: 2vw; */
+  border-radius: 20px;
+  box-shadow: 5px 5px 10px rgba(70, 70, 70, 0.5);
+  /* filter: blur(1px); */
+}
 
 /* order details page */
 

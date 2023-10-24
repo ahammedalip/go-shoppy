@@ -31,7 +31,7 @@ router.post ('/profile/edit-profile', usercontroller.editBasicProfile)
 router.post ('/profile/addaddress', usercontroller.postAddAddress)
 router.post ('/profile/editaddress', usercontroller.postEditAddress)
 router.delete ('/profile/delete/:addressID', usercontroller.deleteUserAddress)
-
+router.get('/wallet', usercontroller.getWalletTRans)
 router.get('/cart', usercontroller.getCart)
 router.put('/cart/update/:productId', usercontroller.updateCartItem);
 router.delete('/cart/remove/:productId', usercontroller.deleteItemsCart)

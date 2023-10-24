@@ -1,0 +1,47 @@
+<%- include('header') %>
+
+<div class="row" style="width: 100%;">
+    <%- include('profilepartial') %>
+
+    <div class="col-md-10" style="padding: 20px;">
+        <div class="row">
+        <div class="col-md-7 walletTrans">
+            <h2 style="text-align: center;">Transaction History</h2>
+
+            <table class="table">
+        
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Transaction Type</th>
+                    </tr>
+                
+                <tbody>
+                    <% user.walletTransaction.sort((a, b) => b.date - a.date).forEach(function(transaction) { %>
+                        <tr>
+                            <td><%= transaction.date.toDateString() %></td>
+                            <td class="<%= transaction.transactionType === 'Debit' ? 'red-text' : transaction.transactionType === 'Credit' ? 'green-text' : '' %>"><%= transaction.transactionType %></td>
+                            <td>₹ <%= transaction.amount %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+        <div class="col wallet-card">
+            <div class="col wallet-card-div" style="background-image: url('/images/wallet12.jpg');">
+                <div>
+                    <br>
+                    <h3 style="text-align: center; vertical-align: middle;">Wallet Balance:</h3>
+                    <h2 style="text-align: center; font-size:5rem; color: rgb(7, 5, 5); font-family:'Exo 2', sans-serif;"><%= user.wallet.toLocaleString() %></h2>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+       
+    </div>
+
+
+
+</div>
+

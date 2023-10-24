@@ -401,7 +401,7 @@ adminController.getTotalOrderList = async (req, res) => {
 adminController.postStatusUpdate = async (req, res) => {
     const { orderId } = req.params;
     const { status } = req.body;
-    console.log('status----------', req.body);
+    // console.log('status----------', req.body);
     try {
         const updatedOrder = await order.findByIdAndUpdate(orderId, { orderStatus: status }, { new: true });
 
@@ -415,10 +415,17 @@ adminController.postStatusUpdate = async (req, res) => {
               const currentWallet = payuser.userId.wallet;
               const returnToWallet = payuser.totalprice;
               const updateWallet = currentWallet + returnToWallet;
+              const walletTrans={
+                date:new Date(),
+                amount: returnToWallet,
+                transactionType: "Credit"
+              }
           
               await userSignup.findOneAndUpdate(
                 { _id: payuser.userId },
-                { $set: { wallet: updateWallet } }
+                { $set: { wallet: updateWallet },
+                $push:{walletTransaction:walletTrans}
+            }
               );
           
               // Log the updated wallet amount
@@ -478,10 +485,7 @@ adminController.getCoupon = async(req, res) =>{
 try{
     const coupons = await coupon.find();
 
-     // Get the current date
      const currentDate = new Date();
-
-     // Update isActive based on expirationDate
      for (const couponItem of coupons) {
          if (couponItem.expirationDate < currentDate) {
              couponItem.isActive = false;
@@ -498,10 +502,7 @@ try{
 
 adminController.postCoupon = async (req, res) =>{
     try {
-        // Extract data from the form submission
         const { code, discountPercent,minimumPrice, maximumDiscount, expirationDate,description, isActive } = req.body;
-
-    
         const newCoupon = new coupon({
             code,
             discountPercent,
@@ -511,13 +512,9 @@ adminController.postCoupon = async (req, res) =>{
             description,
             isActive: isActive === 'on',
         });
-
-       
         await newCoupon.save();
-       
         res.redirect('/admin/coupon?message=c-succes'); // Redirect to a page showing the list of coupons, adjust the route as needed
     } catch (error) {
-        // Handle errors, e.g., show an error message to the user
         console.error('Error creating coupon:', error);
         res.status(500).send('Error creating coupon');
     }
@@ -526,8 +523,6 @@ adminController.postCoupon = async (req, res) =>{
 adminController.deleteCoupon = async(req,res) => {
     try{
         const couponId =req.params.couponId
-        console.log('coupon id ', couponId);
-
         await coupon.findByIdAndDelete(couponId)
         return res.json({succes: true})
     }
@@ -536,8 +531,6 @@ adminController.deleteCoupon = async(req,res) => {
         res.send('Error at coupon delete')
     }
 }
-
-
 
 adminController.adminLogout = (req, res) => {
     const wasLoggedIn = !!req.session.adminId; // Check if user was logged in
@@ -551,7 +544,6 @@ adminController.adminLogout = (req, res) => {
         res.redirect('/admin/dash'); // Redirect to dashboard if user was not logged in
     }
 };
-
 
 
 

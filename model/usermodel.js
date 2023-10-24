@@ -80,6 +80,17 @@ const SignupSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    walletTransaction:[{
+        date:{
+            type:Date,
+        },
+        amount:{
+            type:Number
+        },
+        transactionType:{
+            type:String
+        }
+    }],
     refferralcode:{
         type: String,
         unique: true,
