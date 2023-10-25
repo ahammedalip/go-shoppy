@@ -53,10 +53,9 @@ app.get('/favicon.ico', (req, res) => res.status(204));
 app.use('/admin', adminRouter)
 app.use('/', usersRouter);
 
-// // catch 404 and forward to error handler
-// app.use(function(req, res, next) {
-//   next(createError(404));
-// });
+app.use((req, res, next) => {
+  res.status(404).render('../views/user_views/error404.ejs',{user:false}); // Render the 404 page
+});
 
 mongoose.connect(process.env.MONGO_URL)
     .then(() => {

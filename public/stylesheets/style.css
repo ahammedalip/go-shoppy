@@ -3,6 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Handjet:wght@300;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed&family=Exo+2&family=Poppins:wght@300&display=swap');
 
 * {
   padding: 0;
@@ -118,6 +119,41 @@ body {
 
 /* product list page */
 
+.search-bar {
+  display: flex;
+  align-items: center;
+  border-radius: 50px; /* Set a high value to create an oval shape */
+  background-color: #ffd75f;
+  padding: 10px;
+  height: 40px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
+  border: 1px solid #f1ca54;
+}
+
+.search-input {
+  flex: 1; /* Allow the input to take up the remaining space */
+}
+
+#search-input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  outline: none;
+}
+
+.btn-search {
+  background: transparent;
+  border: none;
+  color: #003F62;
+  cursor: pointer;
+  
+}
+
+.btn-search:hover {
+
+  background-color:#f5c431;
+}
+
 
 .product-title {
   font-weight: bolder;
@@ -135,7 +171,29 @@ body {
   display: flex;
   /* Use flexbox */
   flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
   /* Stack child elements vertically */
+  background-color: white;
+  border-radius: 5px;
+}
+
+.card-unique:hover {
+  transform: scale(1.01); /* Zoom in by 5% when hovering */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+  border-radius: 10px;
+}
+.btn-add{
+  /* color: #FBBC05; */
+  background-color: #FBBC05;
+  transition: 0.5s;
+
+  /* background-color: #003F62; */
+}
+.btn-add:hover{
+  box-shadow: 0 0 8px rgba(133, 133, 133, 0.5);
+background-color: #003F62;
+  /* color: white; */
+  color: #ffffff;
 }
 
 .card-inner {
@@ -150,7 +208,7 @@ body {
 .card-img-top {
   height: 150px;
   width: auto;
-
+padding-top: 5px;
 }
 
 .card-title {
@@ -536,7 +594,21 @@ border-left: 1px solid rgb(169, 169, 169);
   color: black;
 }
 
+/* error */
 
+.error404{
+  height: 70vh;
+  /* background-color: #31323d; */
+}
+
+.e404{
+  font-family: 'Barlow Semi Condensed', sans-serif;
+  color: #FBBC05;
+}
+.e0{
+  font-family: 'Barlow Semi Condensed', sans-serif;
+  
+}
 /* below is footer */
 
 

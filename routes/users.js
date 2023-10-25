@@ -68,6 +68,4 @@ router.get('/afterorder', usercontroller.getAfterCheckout)
 router.post('/logout', usercontroller.postLogoutUserHome)
 
 
-
-
 module.exports = router;

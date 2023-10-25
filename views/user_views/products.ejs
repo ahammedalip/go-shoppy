@@ -2,13 +2,31 @@
 
     <div class="row" style="width: 100%;">
         <%- include('partials') %>
-            <div class="products-list col-md-10" >
+            <div class="products-list col-md-10" style="background-color: rgb(255, 251, 251);" >
 
                 <div class="product-title">
-                    <h3 style="font-family: 'Exo 2', sans-serif;">PRODUCTS</h3>
+                    <div class="row">
+                        <div class="col">
+                            <h3 style="font-family: 'Exo 2', sans-serif; padding: 10px;">PRODUCTS</h3>
+                        </div>
+                        <div class="col-md-4" style="padding: 10px;" >
+
+                            <div class="search-bar">
+                                <div class="search-input">
+                                  <input type="text" id="search-input" placeholder="Search products here...">
+                                </div>
+                                <button class="btn btn-search" id="search-button">Search</button>
+                              </div>
+                        </div>
+                       
+                          
+                              
+                        
+                    </div>
+                   
                 </div>
                 <br>
-                <div class="row" id="products-container">
+                <div class="row" id="products-container" style="background-color: rgb(255, 251, 251);">
                     <% products.forEach(product=> { %>
                         <div class="col-md-4">
                             <a href="/product/<%= product._id %>" class="text-decoration-none">
@@ -35,16 +53,11 @@
                                         <form action="/cart/add" method="POST">
                                             <input type="hidden" name="productId" value="<%= product._id %>">
                                             <!-- <a href=""  class="btn btn-primary" data-product="<%= product._id %>">Add to Cart</a> -->
-                                            <a> <button type="submit" class="btn btn-primary">Add to Cart</button></a>
+                                            <a> <button type="submit" class="btn btn-add">Add to Cart</button></a>
                                         </form>
 
 
                                     </div>
-
-
-
-
-
                                 </div>
                             </a>
                             <br>
@@ -87,23 +100,9 @@
             }
         });
 
-        const productsContainer = document.getElementById("products-container");
+       
 
-// Function to render products on the page
-function renderProducts(products) {
-    // Clear the existing product listing
-    productsContainer.innerHTML = "";
 
-    // Render the filtered products
-    products.forEach((product) => {
-        const productElement = document.createElement("div");
-        // Create and configure productElement with product data
-        // ...
-
-        // Append productElement to the container
-        productsContainer.appendChild(productElement);
-    });
-}
 
 // Handle the form submission for price range filtering
 const priceRangeForm = document.getElementById("priceRangeForm");
