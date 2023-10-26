@@ -372,30 +372,49 @@ usercontroller.applyFilter = async (req, res) => {
         const endIndex = startIndex + productsPerPage;
         let filteredProducts;
         let totalProductsFromFilter;
+        let totalProducts;
         if(above){
             filteredProducts = await productList.find({unlisted:false,
                 price:{$gte:parseInt(above)}}).skip(startIndex).limit(productsPerPage);
-                totalProductsFromFilter = await productList.find({unlisted:false,
-                    price:{$gte:parseInt(above)}});
+                totalProductsFromFilter = await productList.find({unlisted:false,price:{$gte:parseInt(above)}});
+                totalProducts= await productList.countDocuments({unlisted:false,price:{$gte:parseInt(above)}})
             }else{
-                filteredProducts = await productList.find({unlisted:false,
-                    price:{
-                        $gte:parseInt(min),
-                        $lte:parseInt(max)
-                    }
-                    }).skip(startIndex).limit(productsPerPage);
-                    totalProductsFromFilter = await productList.find({unlisted:false,
-                        price:{
-                            $gte:parseInt(min),
-                            $lte:parseInt(max)
-                        }
-                        });
+                filteredProducts = await productList.find({unlisted:false,price:{$gte:parseInt(min),$lte:parseInt(max)}}).skip(startIndex).limit(productsPerPage);
+                    totalProductsFromFilter = await productList.find({unlisted:false, price:{ $gte:parseInt(min), $lte:parseInt(max)}});
+                    totalProducts= await productList.countDocuments({unlisted:false, price:{ $gte:parseInt(min), $lte:parseInt(max)}})
+                    console.log('counted docz', totalProducts);
             }
-        const totalPages = Math.ceil(totalProductsFromFilter / productsPerPage);
+        const totalPages = Math.ceil(totalProducts / productsPerPage);
         res.render('../views/user_views/products', { products: filteredProducts, user, categories, currentPage, totalPages });
     } catch (err) {
         console.error("Error filtering products:", err);
         res.status(500).send("Internal server error" );
+    }
+}
+
+usercontroller.postSearchfilter = async (req, res) =>{
+    const searchQuery = req.body.searchQuery;
+    console.log('search query is', searchQuery)
+    try{
+       
+        const user = await userSignup.findOne({email: req.cookies.user})
+        const categories = await ProductCategory.find({isUnlisted:false})
+        const productsPerPage = 6; // Define the number of products per page
+        const currentPage = parseInt(req.query.page) || 1;
+        const startIndex = (currentPage - 1) * productsPerPage;
+        const products = await productList.find({productName:{$regex: searchQuery, $options:'i'}, unlisted:false}).skip(startIndex).limit(productsPerPage)
+        const totalProducts = await productList.countDocuments({ productName: { $regex: searchQuery, $options: 'i' }, unlisted: false });
+
+        console.log('products as per search', products);
+
+        const totalPages =Math.ceil(totalProducts/productsPerPage)
+        console.log('total pages: ',totalPages);
+        res.render('../views/user_views/products.ejs', {user, products, categories, currentPage, totalPages })
+        
+    }
+    catch(error){
+        console.log('Error is at post searchfilter', error)
+        res.status(500).send('Error')
     }
 }
 

@@ -2,28 +2,30 @@
 
     <div class="row" style="width: 100%;">
         <%- include('partials') %>
-            <div class="products-list col-md-10" style="background-color: rgb(255, 251, 251);" >
+            <div class="products-list col-md-10" style="background-color: rgb(255, 251, 251);">
 
                 <div class="product-title">
                     <div class="row">
                         <div class="col">
                             <h3 style="font-family: 'Exo 2', sans-serif; padding: 10px;">PRODUCTS</h3>
                         </div>
-                        <div class="col-md-4" style="padding: 10px;" >
+                        <div class="col-md-4" style="padding: 10px;">
 
                             <div class="search-bar">
                                 <div class="search-input">
-                                  <input type="text" id="search-input" placeholder="Search products here...">
+                                    <form action="/products/search" method="POST">
+                                    <input type="text" id="search-input" name="searchQuery" placeholder="Search products here...">
                                 </div>
-                                <button class="btn btn-search" id="search-button">Search</button>
-                              </div>
+                                <button type="submit" class="btn btn-search" id="search-button">Search</button>
+                            </form>
+                            </div>
                         </div>
-                       
-                          
-                              
-                        
+
+
+
+
                     </div>
-                   
+
                 </div>
                 <br>
                 <div class="row" id="products-container" style="background-color: rgb(255, 251, 251);">
@@ -39,22 +41,32 @@
                                         </h5>
                                         <h6 class="card-text-prod">Brand: <%= product.brand %>
                                         </h6>
-                                        <h6 class="card-text-prod" >₹ <span style="font-weight: bold; font-size: 1.2em;"><%=product.price %></span>
+                                        <h6 class="card-text-prod">₹ <span style="font-weight: bold; font-size: 1.2em;">
+                                                <%=product.price %>
+                                            </span>
                                         </h6>
                                         <% if(product.offer){ %>
-                                            <h6 class="card-text-prod" style="color: red;"><span ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill: rgba(255, 0, 0, 1);"><path d="m20.749 12 1.104-1.908a1 1 0 0 0-.365-1.366l-1.91-1.104v-2.2a1 1 0 0 0-1-1h-2.199l-1.103-1.909a1.008 1.008 0 0 0-.607-.466.993.993 0 0 0-.759.1L12 3.251l-1.91-1.105a1 1 0 0 0-1.366.366L7.62 4.422H5.421a1 1 0 0 0-1 1v2.199l-1.91 1.104a.998.998 0 0 0-.365 1.367L3.25 12l-1.104 1.908a1.004 1.004 0 0 0 .364 1.367l1.91 1.104v2.199a1 1 0 0 0 1 1h2.2l1.104 1.91a1.01 1.01 0 0 0 .866.5c.174 0 .347-.046.501-.135l1.908-1.104 1.91 1.104a1.001 1.001 0 0 0 1.366-.365l1.103-1.91h2.199a1 1 0 0 0 1-1v-2.199l1.91-1.104a1 1 0 0 0 .365-1.367L20.749 12zM9.499 6.99a1.5 1.5 0 1 1-.001 3.001 1.5 1.5 0 0 1 .001-3.001zm.3 9.6-1.6-1.199 6-8 1.6 1.199-6 8zm4.7.4a1.5 1.5 0 1 1 .001-3.001 1.5 1.5 0 0 1-.001 3.001z"></path></svg> </span> <%=
-                                                product.offer %> % discount
-                                        </h6>
-                                        <% }else{ %>
-                                            <br>
-                                            <% } %>
-                                        <h6 class="card-text-prod">Color: <%= product.colour %>
-                                        </h6>
-                                        <form action="/cart/add" method="POST">
-                                            <input type="hidden" name="productId" value="<%= product._id %>">
-                                            <!-- <a href=""  class="btn btn-primary" data-product="<%= product._id %>">Add to Cart</a> -->
-                                            <a> <button type="submit" class="btn btn-add">Add to Cart</button></a>
-                                        </form>
+                                            <h6 class="card-text-prod" style="color: red;"><span><svg
+                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" style="fill: rgba(255, 0, 0, 1);">
+                                                        <path
+                                                            d="m20.749 12 1.104-1.908a1 1 0 0 0-.365-1.366l-1.91-1.104v-2.2a1 1 0 0 0-1-1h-2.199l-1.103-1.909a1.008 1.008 0 0 0-.607-.466.993.993 0 0 0-.759.1L12 3.251l-1.91-1.105a1 1 0 0 0-1.366.366L7.62 4.422H5.421a1 1 0 0 0-1 1v2.199l-1.91 1.104a.998.998 0 0 0-.365 1.367L3.25 12l-1.104 1.908a1.004 1.004 0 0 0 .364 1.367l1.91 1.104v2.199a1 1 0 0 0 1 1h2.2l1.104 1.91a1.01 1.01 0 0 0 .866.5c.174 0 .347-.046.501-.135l1.908-1.104 1.91 1.104a1.001 1.001 0 0 0 1.366-.365l1.103-1.91h2.199a1 1 0 0 0 1-1v-2.199l1.91-1.104a1 1 0 0 0 .365-1.367L20.749 12zM9.499 6.99a1.5 1.5 0 1 1-.001 3.001 1.5 1.5 0 0 1 .001-3.001zm.3 9.6-1.6-1.199 6-8 1.6 1.199-6 8zm4.7.4a1.5 1.5 0 1 1 .001-3.001 1.5 1.5 0 0 1-.001 3.001z">
+                                                        </path>
+                                                    </svg> </span>
+                                                <%= product.offer %> % discount
+                                            </h6>
+                                            <% }else{ %>
+                                                <br>
+                                                <% } %>
+                                                    <h6 class="card-text-prod">Color: <%= product.colour %>
+                                                    </h6>
+                                                    <form action="/cart/add" method="POST">
+                                                        <input type="hidden" name="productId"
+                                                            value="<%= product._id %>">
+                                                        <!-- <a href=""  class="btn btn-primary" data-product="<%= product._id %>">Add to Cart</a> -->
+                                                        <a> <button type="submit" class="btn btn-add">Add to
+                                                                Cart</button></a>
+                                                    </form>
 
 
                                     </div>
@@ -66,19 +78,19 @@
                 </div>
 
                 <!-- Pagination Links -->
-<div class="pagination d-flex justify-content-center" >
-    <% if (currentPage > 1) { %>
-        <a href="?page=<%= currentPage - 1 %>" class="btn prev-next">Previous</a>
-    <% } %>
-    
-    <div class="page-info" style="padding-left: 10px; padding-right: 10px;">
-        <span>Page <%= currentPage %> of <%= totalPages %></span>
-    </div>  
-    
-    <% if (currentPage < totalPages) { %>
-        <a href="?page=<%= currentPage + 1 %>" class="btn prev-next">Next</a>
-    <% } %>
-</div>
+                <div class="pagination d-flex justify-content-center">
+                    <% if (currentPage> 1) { %>
+                        <a href="?page=<%= currentPage - 1 %>" class="btn prev-next">Previous</a>
+                        <% } %>
+
+                            <div class="page-info" style="padding-left: 10px; padding-right: 10px;">
+                                <span>Page <%= currentPage %> of <%= totalPages %></span>
+                            </div>
+
+                            <% if (currentPage < totalPages) { %>
+                                <a href="?page=<%= currentPage + 1 %>" class="btn prev-next">Next</a>
+                                <% } %>
+                </div>
 
             </div>
     </div>
@@ -100,28 +112,28 @@
             }
         });
 
-       
 
 
 
-// Handle the form submission for price range filtering
-const priceRangeForm = document.getElementById("priceRangeForm");
-priceRangeForm.addEventListener("submit", (event) => {
-    event.preventDefault(); // Prevent the form from submitting the traditional way
 
-    const minPrice = document.getElementById("minPrice").value;
-    const maxPrice = document.getElementById("maxPrice").value;
+        // Handle the form submission for price range filtering
+        const priceRangeForm = document.getElementById("priceRangeForm");
+        priceRangeForm.addEventListener("submit", (event) => {
+            event.preventDefault(); // Prevent the form from submitting the traditional way
 
-    // Fetch filtered products based on the selected price range
-    fetch(`/products/filter?minPrice=${minPrice}&maxPrice=${maxPrice}`)
-        .then((response) => response.json())
-        .then((products) => {
-            renderProducts(products);
-        })
-        .catch((error) => {
-            console.error("Error fetching filtered products:", error);
+            const minPrice = document.getElementById("minPrice").value;
+            const maxPrice = document.getElementById("maxPrice").value;
+
+            // Fetch filtered products based on the selected price range
+            fetch(`/products/filter?minPrice=${minPrice}&maxPrice=${maxPrice}`)
+                .then((response) => response.json())
+                .then((products) => {
+                    renderProducts(products);
+                })
+                .catch((error) => {
+                    console.error("Error fetching filtered products:", error);
+                });
         });
-});
     </script>
 
 

@@ -177,6 +177,31 @@ nav .profile-details img{
   background-color: #FBBC05; 
 } */
 
+/* admin dash */
+
+.payment-chart{
+  border: 1px solid rgb(232, 232, 232);
+  width: 430px;
+  height: 450px;
+  box-shadow:  5px 5px 10px rgba(0, 0, 0, 0.2); 
+  padding: 15px;
+}
+
+.category-chart{
+  border: 1px solid rgb(232, 232, 232);
+  width: 430px;
+  height: 450px;
+  box-shadow:  5px 5px 10px rgba(0, 0, 0, 0.2); 
+  padding: 15px;
+}
+
+.monthly-sales-chart{
+  border: 1px solid rgb(232, 232, 232);
+  width: 800px;
+  height: 420px;
+  box-shadow:  5px 5px 10px rgba(0, 0, 0, 0.2); 
+  padding: 15px;
+}
 
 /* order details */
 
@@ -251,7 +276,8 @@ nav .profile-details img{
   background: #fff;
   padding: 15px 14px;
   border-radius: 12px;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+  box-shadow:  5px 5px 10px rgba(0, 0, 0, 0.2); 
+
 }
 .overview-boxes .box-topic{
   font-size: 20px;

@@ -51,6 +51,7 @@ router.get ('/wishlist', usercontroller.getWishlist)
 router.delete ('/wishlist/remove/:productId', usercontroller.deleteItemsfromWishlist)
 router.get('/products', usercontroller.getProducts)
 router.get('/products/filter', usercontroller.applyFilter)
+router.post('/products/search', usercontroller.postSearchfilter)
 router.get('/category/:categoryId', usercontroller.getCategoryFilter) 
 
 router.get('/product/:productId', usercontroller.getIndividualProduct)

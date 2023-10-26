@@ -1,44 +1,39 @@
 <%- include('partials') %>
 
-    <div class="" style=" margin-left: 240px; width:auto; padding-top: 30px; padding-left: 20px;">
+  <div class="" style=" margin-left: 240px; width:auto; padding-top: 30px; padding-left: 20px;">
 
-        <div class="home-content">
-            <div class="overview-boxes">
+    <div class="home-content">
+      <div class="overview-boxes">
 
-                <div class="box">
-                    <div class="right-side">
-                        <div class="box-topic">Total Order</div>
-                        <div class="number">40,876</div>
-                        <div class="indicator">
-                            <i class="bx bx-up-arrow-alt"></i>
-                            <span class="text">Up from yesterday</span>
-                        </div>
-                    </div>
-                    <i class="bx bx-cart-alt cart"></i>
-                </div>
-                <div class="box">
-                    <div class="right-side">
-                        <div class="box-topic">Total Sales</div>
-                        <div class="number">38,876</div>
-                        <div class="indicator">
-                            <i class="bx bx-up-arrow-alt"></i>
-                            <span class="text">Up from yesterday</span>
-                        </div>
-                    </div>
-                    <i class="bx bxs-cart-add cart two"></i>
-                </div>
-                <div class="box">
-                    <div class="right-side">
-                        <div class="box-topic">Total Profit</div>
-                        <div class="number">$12,876</div>
-                        <div class="indicator">
-                            <i class="bx bx-up-arrow-alt"></i>
-                            <span class="text">Up from yesterday</span>
-                        </div>
-                    </div>
-                    <i class="bx bx-cart cart three"></i>
-                </div>
-                <div class="box">
+        <div class="box">
+          <div class="right-side" style="text-align: center;">
+            <div class="box-topic">Successful Orders</div>
+            <div class="number">
+              <%= totalOrders1 %>
+            </div>
+
+          </div>
+          <i class="bx bx-cart-alt cart"></i>
+        </div>
+        <div class="box">
+          <div class="right-side">
+            <div class="box-topic">Total Sales</div>
+            <div class="number">₹ <%= totalSalesAmount %>
+            </div>
+
+          </div>
+          <i class="bx bxs-cart-add cart two"></i>
+        </div>
+        <div class="box">
+          <div class="right-side">
+            <div class="box-topic">Total Profit</div>
+            <div class="number">₹ <%= totalProfitAmount %>
+            </div>
+
+          </div>
+          <i class="bx bx-cart cart three"></i>
+        </div>
+        <!-- <div class="box">
                     <div class="right-side">
                         <div class="box-topic">Total Return</div>
                         <div class="number">11,086</div>
@@ -48,69 +43,136 @@
                         </div>
                     </div>
                     <i class="bx bxs-cart-download cart four"></i>
-                </div>
-            </div>
-
-        </div>
-        <div class="row">
-            <div class="col-md-5">
-                <h6 style="text-align: center;">Payment methods</h6>
-                <canvas id="myChart"></canvas>
-            </div>
-            <div class="col-md-5">
-                <div>
-                    <h6 style="text-align: center;">Category</h6>
-                    <canvas id="categoryWiseSales"></canvas>
-                  </div>
-            </div>
-        </div>
+                </div> -->
+      </div>
 
     </div>
-
-    <%- include('footer') %>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-        <script>
-const ctx = document.getElementById('myChart');
-
-new Chart(ctx, {
-  type: 'doughnut',
-  data: {
-    labels: ['Online Payments', 'Cash on Delivery', 'Wallet Pay'],
-    datasets: [{
-      label: 'Number of payments',
-      data: [12, 19, 3],
-      borderWidth: 1
-    }]
-  },
-  options: {
-    scales: {
-      y: {
-        beginAtZero: true
-      }
-    }
-  }
-});
+    <div class="row">
+      <div class="col d-flex justify-content-center">
 
 
-            const cty = document.getElementById('categoryWiseSales');
+        <div class="payment-chart">
+          <h6 style="text-align: center; font-size: 1.5rem;">Payment methods</h6>
+          <canvas id="myChart"></canvas>
+        </div>
+      </div>
 
-  new Chart(cty, {
-    type: 'polarArea',
-    data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-      datasets: [{
-        label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
+      <div class="col-md-6">
+        <div class="category-chart">
+          <div>
+            <h6 style="text-align: center; font-size: 1.5rem;">Category wise sales</h6>
+            <canvas id="categoryWiseSales"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+<br>
+    <div class="col d-flex justify-content-center" style="padding: 15px;">
+      <div class="monthly-sales-chart">
+        <h6 style="text-align: center; font-size: 1.5rem;">Monthly sales</h6>
+        <div>
+          <canvas id="monthlySales"></canvas>
+        </div>
+      </div>
+      
+    </div>
+
+  </div>
+ 
+  <input type="hidden" id="paymentCountsData" value='<%= JSON.stringify(paymentCounts) %>'>
+  <input type="hidden" id="categoryCountsData" value="<%= JSON.stringify(categoryCounts) %>">
+
+  <%- include('footer') %>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+      const ctx = document.getElementById('myChart');
+
+      const paymentCountsDataElement = document.getElementById('paymentCountsData');
+
+      const paymentCounts = JSON.parse(paymentCountsDataElement.value);
+
+
+      const labels = paymentCounts.map(item => item._id);
+      const dataValues = paymentCounts.map(item => item.count);
+
+      new Chart(ctx, {
+        type: 'doughnut',
+
+        data: {
+          labels: labels,
+
+          datasets: [{
+            label: 'Count of Payment',
+            data: dataValues,
+
+            borderWidth: 2
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
         }
-      }
-    }
-  });
-        </script>
+      });
+
+
+      const cty = document.getElementById('categoryWiseSales');
+      const categoryCountsDataElement = document.getElementById('categoryCountsData');
+      const categoryCounts = JSON.parse(categoryCountsDataElement.value);
+
+      const categoryLabels = categoryCounts.map(item => item._id);
+      const categoryCounted = categoryCounts.map(item => item.count)
+      new Chart(cty, {
+        type: 'polarArea',
+        data: {
+          // labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+          labels: categoryLabels,
+          datasets: [{
+            label: 'Total counts',
+            // data: [12, 19, 3, 5, 2, 3],
+            data: categoryCounted,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+
+      const fxy = document.getElementById('monthlySales');
+      console.log('script is running');
+      // const lab = Utils.months({ count: 7 });
+      console.log('script is running2');
+
+      new Chart(fxy, {
+        type: 'line',
+        data: {
+          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ],
+          datasets: [{
+            label: 'my first data',
+            data: [65, 59, 80, 81, 56, 55, 40, 12, 30, 11, 56, 34],
+            fill: false,
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+
+
+    </script>

@@ -40,18 +40,18 @@ const upload = multer({ storage: storage });
 
 adminController.getAdminlogin = (req, res) => {
 
-    try{
+    try {
         if (req.session.adminId) {
             res.redirect('/admin/dash')
         }
-        res.render('../views/admin_views/adminlogin',{message:false})
+        res.render('../views/admin_views/adminlogin', { message: false })
 
-    }catch(error){
+    } catch (error) {
         console.log('Error at get admin login', error);
         res.status(500).send('Error')
     }
 
-   
+
 }
 
 adminController.postAdminLogin = async (req, res) => {
@@ -65,9 +65,9 @@ adminController.postAdminLogin = async (req, res) => {
 
             res.cookie('adminAuthenticated', true, { maxAge: 24 * 60 * 60 * 1000 }); // 24 hours in milliseconds
             res.redirect('/admin/dash')
-        }else if(adminverify.password !== req.body.password){
-            res.render('../views/admin_views/adminlogin', {message:"Password is wrong!"})
-             
+        } else if (adminverify.password !== req.body.password) {
+            res.render('../views/admin_views/adminlogin', { message: "Password is wrong!" })
+
         }
 
     } catch (err) {
@@ -97,9 +97,183 @@ adminController.toggleBlockStatus = async (req, res) => {
     }
 };
 
-adminController.getAdminDash = (req, res) => {
-  
-    res.render('../views/admin_views/admindash')
+adminController.getAdminDash = async (req, res) => {
+    // number of products
+    const pipeline1 = [
+        {
+            $match: {
+                orderStatus: "Delivered",
+            },
+        },
+        {
+            $group: {
+                _id: null,
+                totalOrders1: { $sum: 1 },
+            },
+        },
+    ];
+    const result1 = await order.aggregate(pipeline1);
+    const totalOrders1 = result1[0] ? result1[0].totalOrders1 : 0;
+
+    // total selling price
+    const pipeline2 = [
+        {
+            $match: {
+                orderStatus: "Delivered",
+            }
+        },
+        {
+            $group: {
+                _id: null,
+                totalSalesAmount: { $sum: '$totalprice' }
+            }
+        }
+    ]
+    const totalSales = await order.aggregate(pipeline2)
+    const totalSalesAmount = totalSales[0] ? totalSales[0].totalSalesAmount : 0;
+    console.log('total sales amount', totalSalesAmount);
+    const formattedSalesAmount = totalSalesAmount.toLocaleString('en-IN', {
+        useGrouping: true,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    });
+
+    const pipeline4 = [
+        {
+            $match: {
+                orderStatus: "Delivered",
+            },
+        },
+        {
+            $unwind: "$products"
+        },
+        {
+            $lookup: {
+                from: "products",
+                localField: "products.productId",
+                foreignField: "_id",
+                as: "productInfo"
+            }
+        },
+        {
+            $unwind: "$productInfo"
+        },
+        {
+            $group: {
+                _id: null,
+
+                totalPurchasePrice: {
+                    $sum: {
+                        $multiply: [
+                            { $toDouble: "$products.quantity" },
+                            { $toDouble: "$productInfo.purchaseRate" }
+                        ]
+                    }
+                }
+            }
+        }
+    ];
+    const totalProfit4 = await order.aggregate(pipeline4);
+
+    console.log('Total Purchase Price:', totalProfit4[0].totalPurchasePrice);
+    const final = totalSalesAmount - totalProfit4[0].totalPurchasePrice
+    // console.log('final profit', final);
+
+    const pipeline = [
+        {
+            $match: {
+                orderStatus: "Delivered",
+            },
+        },
+        {
+            $unwind: "$products"
+        },
+        {
+            $lookup: {
+                from: "products",
+                localField: "products.productId",
+                foreignField: "_id",
+                as: "productInfo"
+            }
+        },
+        {
+            $unwind: "$productInfo"
+        },
+        {
+            $group: {
+                _id: null, // Group all documents into a single group
+                totalRevenue: {
+                    $sum: "$totalprice" // Calculate the sum of the 'totalprice' field
+                },
+                totalPurchaseRate: {
+                    $sum: {
+                        $multiply: [
+                            { $toDouble: "$products.quantity" },
+                            { $toDouble: "$productInfo.purchaseRate" }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                totalRevenue: 1,
+                totalPurchaseRate: 1
+            }
+        }
+    ];
+    const totalRevenueResult = await order.aggregate(pipeline);
+    const totalRevenue = totalRevenueResult[0] ? totalRevenueResult[0].totalRevenue : 0;
+
+
+    const pipeline5 = [{
+        $match: {
+            orderStatus: "Delivered"
+        }
+    },
+    {
+        $group: {
+            _id: "$paymentMethod", // Group by payment method
+            count: { $sum: 1 },    // Count the occurrences of each payment method
+        },
+    },
+    ];
+
+    const paymentCounts = await order.aggregate(pipeline5).exec();
+    // console.log('payment count', paymentCounts);
+
+    const pipeline6 = [
+        {
+          $match: {
+            orderStatus: "Delivered"
+          }
+        },
+        {
+          $unwind: "$products" // Unwind the products array
+        },
+        {
+          $lookup: {
+            from: "products", // The name of the product collection
+            localField: "products.productId",
+            foreignField: "_id",
+            as: "productInfo"
+          }
+        },
+        {
+          $unwind: "$productInfo" // Unwind the productInfo array
+        },
+        {
+          $group: {
+            _id: "$productInfo.category", // Group by the category from the productInfo
+            count: { $sum: 1 } // Count the occurrences of each category
+          }
+        }
+      ];      
+      
+      const categoryCounts = await order.aggregate(pipeline6).exec();
+      console.log('category count', categoryCounts);
+    res.render('../views/admin_views/admindash', { totalOrders1, totalSalesAmount: formattedSalesAmount, totalProfitAmount: final, paymentCounts, categoryCounts })
 
 }
 
@@ -246,7 +420,7 @@ adminController.getAddProduct = async (req, res) => {
 
 
 adminController.postAddProduct = [
-    
+
     upload.array('images', 4), // Apply the upload middleware here
     async (req, res) => {
         console.log('coming here');
@@ -258,11 +432,11 @@ adminController.postAddProduct = [
             const selectedCategory = await ProductCategory.findOne({ _id: category });
             console.log('offer', offer);
             let offerPrice;
-            if(offer){
-                 offerPrice =Math.floor(price - (price*(offer/100))) 
+            if (offer) {
+                offerPrice = Math.floor(price - (price * (offer / 100)))
                 console.log(offerPrice);
-            }else{
-                offerPrice=0
+            } else {
+                offerPrice = 0
             }
             if (!selectedCategory) {
                 return res.send('Selected category not found'); // Handle category not found case
@@ -349,13 +523,13 @@ adminController.UpdateProduct = async (req, res) => {
         } = req.body;
 
         let offerPrice;
-            if(offer){
-                 offerPrice = Math.floor(price - (price*(offer/100)));
-                console.log(offerPrice);
-            }else{
-                offerPrice = 0;
-            }
-       
+        if (offer) {
+            offerPrice = Math.floor(price - (price * (offer / 100)));
+            console.log(offerPrice);
+        } else {
+            offerPrice = 0;
+        }
+
 
 
         // Update the existing category name in the database
@@ -408,38 +582,39 @@ adminController.postStatusUpdate = async (req, res) => {
         if (!updatedOrder) {
             return res.status(404).json({ message: 'Order not found' });
         }
-        
+
         async function returnPaymentToWallet(orderId) {
             try {
-              const payuser = await order.findById(orderId).populate('userId');
-              const currentWallet = payuser.userId.wallet;
-              const returnToWallet = payuser.totalprice;
-              const updateWallet = currentWallet + returnToWallet;
-              const walletTrans={
-                date:new Date(),
-                amount: returnToWallet,
-                transactionType: "Credit"
-              }
-          
-              await userSignup.findOneAndUpdate(
-                { _id: payuser.userId },
-                { $set: { wallet: updateWallet },
-                $push:{walletTransaction:walletTrans}
-            }
-              );
-          
-              // Log the updated wallet amount
-              console.log('Updated Wallet Amount:', updateWallet);
+                const payuser = await order.findById(orderId).populate('userId');
+                const currentWallet = payuser.userId.wallet;
+                const returnToWallet = payuser.totalprice;
+                const updateWallet = currentWallet + returnToWallet;
+                const walletTrans = {
+                    date: new Date(),
+                    amount: returnToWallet,
+                    transactionType: "Credit"
+                }
+
+                await userSignup.findOneAndUpdate(
+                    { _id: payuser.userId },
+                    {
+                        $set: { wallet: updateWallet },
+                        $push: { walletTransaction: walletTrans }
+                    }
+                );
+
+                // Log the updated wallet amount
+                console.log('Updated Wallet Amount:', updateWallet);
             } catch (error) {
-              console.error('Error returning payment to wallet:', error);
-              throw error; // You can choose to rethrow the error or handle it as needed.
+                console.error('Error returning payment to wallet:', error);
+                throw error; // You can choose to rethrow the error or handle it as needed.
             }
-          }
+        }
 
         if (updatedOrder.paymentMethod === 'WalletPay' && status === 'cancelled') {
             try {
                 await returnPaymentToWallet(orderId)
-               
+
             }
             catch (error) {
                 console.log('Error at payment return in cancelling order at postStatusUpdate', error);
@@ -455,8 +630,8 @@ adminController.postStatusUpdate = async (req, res) => {
     }
 }
 
-adminController.getCompleteOrderDetails = async(req, res) =>{
-    try{
+adminController.getCompleteOrderDetails = async (req, res) => {
+    try {
 
         const orderId = req.params.orderId;
         // console.log('order id', orderId);
@@ -464,45 +639,45 @@ adminController.getCompleteOrderDetails = async(req, res) =>{
         const ordered = await order.findById(orderId).populate('products.productId')
         // console.log('complete order details', ordered);
 
-        res.render('../views/admin_views/detailedOrderView',{ordered})
+        res.render('../views/admin_views/detailedOrderView', { ordered })
     }
-    catch(error){
+    catch (error) {
         console.log('Error at detailed order view', error);
         res.send('Error while fetching Order details')
     }
-   
+
 }
 
 
-adminController.getCoupon = async(req, res) =>{
+adminController.getCoupon = async (req, res) => {
 
-    
+
     const mess = req.query.message;
-    if(mess){
+    if (mess) {
         var message = 'Succesfully added coupon!';
     }
-//    console.log('mess and message', mess,message);
-try{
-    const coupons = await coupon.find();
+    //    console.log('mess and message', mess,message);
+    try {
+        const coupons = await coupon.find();
 
-     const currentDate = new Date();
-     for (const couponItem of coupons) {
-         if (couponItem.expirationDate < currentDate) {
-             couponItem.isActive = false;
-             await couponItem.save(); // Save the updated coupon
-         }
-     }
+        const currentDate = new Date();
+        for (const couponItem of coupons) {
+            if (couponItem.expirationDate < currentDate) {
+                couponItem.isActive = false;
+                await couponItem.save(); // Save the updated coupon
+            }
+        }
 
-    res.render('../views/admin_views/coupon.ejs',{message, coupons})
-}catch(error){
-    console.log('error at coupons listing', error);
-    res.send('Error')
-}  
+        res.render('../views/admin_views/coupon.ejs', { message, coupons })
+    } catch (error) {
+        console.log('error at coupons listing', error);
+        res.send('Error')
+    }
 }
 
-adminController.postCoupon = async (req, res) =>{
+adminController.postCoupon = async (req, res) => {
     try {
-        const { code, discountPercent,minimumPrice, maximumDiscount, expirationDate,description, isActive } = req.body;
+        const { code, discountPercent, minimumPrice, maximumDiscount, expirationDate, description, isActive } = req.body;
         const newCoupon = new coupon({
             code,
             discountPercent,
@@ -520,13 +695,13 @@ adminController.postCoupon = async (req, res) =>{
     }
 }
 
-adminController.deleteCoupon = async(req,res) => {
-    try{
-        const couponId =req.params.couponId
+adminController.deleteCoupon = async (req, res) => {
+    try {
+        const couponId = req.params.couponId
         await coupon.findByIdAndDelete(couponId)
-        return res.json({succes: true})
+        return res.json({ succes: true })
     }
-    catch(error){
+    catch (error) {
         console.log('Error at deleting the coupon', error);
         res.send('Error at coupon delete')
     }
