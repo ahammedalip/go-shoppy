@@ -48,6 +48,10 @@ router.get('/coupon', adminController.getCoupon)
 router.post('/create-coupon', adminController.postCoupon)
 router.delete ('/delete_coupon/:couponId', adminController.deleteCoupon)
 
+router.get('/salesreport', adminController.getSalesReportPage)
+router.get('/download-salesReport', adminController.downloadSalesReport);
+// router.get('/downloadreport', adminController.downloadReport)
+
 router.get('/logout', adminController.adminLogout)
 
 module.exports = router;

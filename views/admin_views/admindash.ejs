@@ -33,20 +33,11 @@
           </div>
           <i class="bx bx-cart cart three"></i>
         </div>
-        <!-- <div class="box">
-                    <div class="right-side">
-                        <div class="box-topic">Total Return</div>
-                        <div class="number">11,086</div>
-                        <div class="indicator">
-                            <i class="bx bx-down-arrow-alt down"></i>
-                            <span class="text">Down From Today</span>
-                        </div>
-                    </div>
-                    <i class="bx bxs-cart-download cart four"></i>
-                </div> -->
-      </div>
 
+      </div>
     </div>
+  
+
     <div class="row">
       <div class="col d-flex justify-content-center">
 
@@ -66,7 +57,7 @@
         </div>
       </div>
     </div>
-<br>
+    <br>
     <div class="col d-flex justify-content-center" style="padding: 15px;">
       <div class="monthly-sales-chart">
         <h6 style="text-align: center; font-size: 1.5rem;">Monthly sales</h6>
@@ -74,13 +65,15 @@
           <canvas id="monthlySales"></canvas>
         </div>
       </div>
-      
+
     </div>
 
   </div>
- 
+
   <input type="hidden" id="paymentCountsData" value='<%= JSON.stringify(paymentCounts) %>'>
   <input type="hidden" id="categoryCountsData" value="<%= JSON.stringify(categoryCounts) %>">
+  <input type="hidden" id="monthlySalesCounts" value="<%= JSON.stringify(monthlySalesArray) %>">
+  <!-- <%= console.log( 'from here--',monthlySalesArray) %> -->
 
   <%- include('footer') %>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -148,17 +141,21 @@
 
 
       const fxy = document.getElementById('monthlySales');
-      console.log('script is running');
-      // const lab = Utils.months({ count: 7 });
-      console.log('script is running2');
+      const monthlySalesElement = document.getElementById('monthlySalesCounts');
+      const monthlySalesJSON = monthlySalesElement.value; // Get the JSON string from the input element
+      const monthlySalesArray = JSON.parse(monthlySalesJSON); // Parse the JSON string to get the array
+
+      console.log('monthly data', monthlySalesArray);
+
 
       new Chart(fxy, {
         type: 'line',
         data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ],
+          labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
           datasets: [{
-            label: 'my first data',
-            data: [65, 59, 80, 81, 56, 55, 40, 12, 30, 11, 56, 34],
+            label: 'Sales ₹',
+            // data: [65, 59, 80, 81, 56, 55, 40, 12, 30, 11, 56, 34],
+            data: monthlySalesArray,
             fill: false,
             borderColor: 'rgb(75, 192, 192)',
             tension: 0.1
@@ -174,5 +171,27 @@
       });
 
 
-
+  //     document.getElementById('downloadButton').addEventListener('click', () => {
+    
+  //   const startDate = document.getElementById('startDate').value;
+  //   const endDate = document.getElementById('endDate').value;
+  //       console.log('cpmomg');
+  //   let data = {1:'succes'};
+  //   console.log(data);
+  //   // Perform a fetch request
+  //   fetch('/downloadreport', {
+  //     method: 'post', // Use POST or GET as needed
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(data),
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       // Handle the response data here
+  //       console.log(data);
+  //       // You can process the response data or redirect to another page.
+  //     })
+      
+  // });
     </script>

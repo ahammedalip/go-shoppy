@@ -20,8 +20,16 @@
                     <% user.walletTransaction.sort((a, b) => b.date - a.date).forEach(function(transaction) { %>
                         <tr>
                             <td><%= transaction.date.toDateString() %></td>
-                            <td class="<%= transaction.transactionType === 'Debit' ? 'red-text' : transaction.transactionType === 'Credit' ? 'green-text' : '' %>"><%= transaction.transactionType %></td>
-                            <td>₹ <%= transaction.amount %></td>
+                          
+                           
+                                <% if (transaction.transactionType === 'Debit') { %>
+                                    <td style="color: rgb(210, 34, 34);">- ₹ <%= transaction.amount %> </td>
+                                    
+                                <% } else if (transaction.transactionType === 'Credit') { %>
+                                    <td style="color: green;"> + ₹ <%= transaction.amount %></td>
+                                   
+                                <% } %>
+                                <td class="<%= transaction.transactionType === 'Debit' ? 'red-text' : transaction.transactionType === 'Credit' ? 'green-text' : '' %>"><%= transaction.transactionType %></td>
                         </tr>
                     <% }); %>
                 </tbody>

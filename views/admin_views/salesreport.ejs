@@ -1,0 +1,132 @@
+<%- include('partials') %>
+
+    <div class="" style=" margin-left: 240px; width:auto; padding-top: 30px; padding-left: 20px;">
+
+        <div class="sale-report-main col-md-12 d-flex justify-content-center align-items-center">
+            <div class="sales-report align-items-center row">
+                <div class="sales-filter col" style=" text-align: center;">
+                    <h3>Start date</h3>
+                  
+                        <div class="date-input">
+                            <input type="date" id="startDate" name="startDate">
+                        </div>
+                </div>
+
+                <div class="sales-filter col" style=" text-align: center;">
+                    <h3>End date</h3>
+                    <div class="date-input">
+                        <input type="date" id="endDate" name="endDate">
+                    </div>
+
+                </div>
+                <div class="d-flex justify-content-center" style="padding: 10px;">
+                    <button class="custom-b" id="downloadButton" type="submit">Download report</button>
+                </div>
+         
+            </div>
+        </div>
+
+        <% if(salesChart.length===0){ %>
+
+
+            <h3>Order list is empty</h3>
+
+            <% } else { %>
+                <h3>Delivered Orders</h3>
+                <div class="table-responsive">
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order Id</th>
+                                <th>Order Date</th>
+                                <th>User Name</th>
+
+                                <th>Product</th>
+                                <th>Total Amount</th>
+                                
+                                <th>Payment Method</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% salesChart.sort((a, b)=> b.orderDate - a.orderDate);
+
+                            salesChart.forEach(order => { %>
+                                <tr>
+                                    <td>...<%= order._id.toString().slice(-7) %>
+                                    </td>
+                                    <td>
+                                        <%= order.orderDate.toDateString() %>
+                                    </td>
+                                    <td>
+                                        <%= order.userId.firstName %>
+                                    </td>
+
+
+                                    <td>
+                                        <% order.products.forEach(product=> { %>
+                                            <span class="product-info">
+                                                <%= product.productId.productName %>
+                                            </span>
+                                            (Qua: <%= product.quantity %>)<br>
+                                                <% }); %>
+                                    </td>
+
+                                    <td>
+                                        <%= order.totalprice %>
+                                    </td>
+                                    <td>
+                                        <%= order.paymentMethod %>
+                                    </td>
+                                    
+                                </tr>
+                                <% }); %>
+                                    <% } %>
+
+                        </tbody>
+                    </table>
+                </div>
+
+    </div>
+<script>
+  
+
+
+
+document.getElementById('downloadButton').addEventListener('click', () => {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    fetch(`/admin/download-salesReport?startDate=${startDate}&endDate=${endDate}`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        generateCSV(data);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
+});
+// Updated generateCSV function
+function generateCSV(data) {
+  const fields = ["date", "orderId", "username", "paymentMethod", "totalAmount"];
+  const opts = { fields };
+  const json2csvParser = new json2csv.Parser(opts);
+
+  try {
+    const csv = json2csvParser.parse(data);
+    const blob = new Blob([csv], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = "sales_report.csv";
+    link.click();
+  } catch (error) {
+    console.error("Error generating CSV: " + error);
+  }
+}
+
+</script>
+
+    <%- include('footer') %>

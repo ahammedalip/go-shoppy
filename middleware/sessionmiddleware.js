@@ -3,6 +3,7 @@ const session = require('express-session');
 
 
 
+
 const requireAdminAuth = (req, res, next) => {
     if (req.session.adminId) {
         console.log(req.session.adminId);
@@ -12,6 +13,7 @@ const requireAdminAuth = (req, res, next) => {
         res.redirect('/admin/login'); // Admin is not authenticated, redirect to login
     }
 };
+
 
 
 module.exports = requireAdminAuth;

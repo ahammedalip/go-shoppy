@@ -695,9 +695,9 @@ usercontroller.deleteItemsfromWishlist = async (req, res) => {
 }
 
 usercontroller.getprofile = async (req, res) => {
-    if (!req.cookies.user) {
-        return res.redirect('/login')
-    }
+    // if (!req.cookies.user) {
+    //     return res.redirect('/login')
+    // }
     try {
         const user = await userSignup.findOne({ email: req.cookies.user })
         const firstName = user.firstName

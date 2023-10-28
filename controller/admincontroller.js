@@ -1,7 +1,7 @@
 
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-
+const { Parser } = require('json2csv');
 
 const multer = require('multer');
 const path = require('path');
@@ -245,35 +245,116 @@ adminController.getAdminDash = async (req, res) => {
 
     const pipeline6 = [
         {
-          $match: {
-            orderStatus: "Delivered"
-          }
+            $match: {
+                orderStatus: "Delivered"
+            }
         },
         {
-          $unwind: "$products" // Unwind the products array
+            $unwind: "$products" // Unwind the products array
         },
         {
-          $lookup: {
-            from: "products", // The name of the product collection
-            localField: "products.productId",
-            foreignField: "_id",
-            as: "productInfo"
-          }
+            $lookup: {
+                from: "products", // The name of the product collection
+                localField: "products.productId",
+                foreignField: "_id",
+                as: "productInfo"
+            }
         },
         {
-          $unwind: "$productInfo" // Unwind the productInfo array
+            $unwind: "$productInfo" // Unwind the productInfo array
         },
         {
-          $group: {
-            _id: "$productInfo.category", // Group by the category from the productInfo
-            count: { $sum: 1 } // Count the occurrences of each category
-          }
+            $group: {
+                _id: "$productInfo.category", // Group by the category from the productInfo
+                count: { $sum: 1 } // Count the occurrences of each category
+            }
         }
-      ];      
-      
-      const categoryCounts = await order.aggregate(pipeline6).exec();
-      console.log('category count', categoryCounts);
-    res.render('../views/admin_views/admindash', { totalOrders1, totalSalesAmount: formattedSalesAmount, totalProfitAmount: final, paymentCounts, categoryCounts })
+    ];
+
+    const categoryCounts = await order.aggregate(pipeline6).exec();
+    console.log('category count', categoryCounts);
+
+    const pipeline7 = [
+        {
+            $match: {
+                orderStatus: "Delivered", // You may adjust this to match your criteria
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    year: { $year: "$orderDate" },
+                    month: { $month: "$orderDate" }
+                },
+                totalSales: { $sum: "$totalprice" }
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                year: "$_id.year",
+                month: "$_id.month",
+                totalSales: 1
+            }
+        },
+        {
+            $sort: {
+                year: 1,
+                month: 1
+            }
+        }
+    ]
+    const monthlySalesData = await order.aggregate(pipeline7).exec()
+    console.log('monthly sales', monthlySalesData);
+
+    const monthlySalesArray = Array.from({ length: 12 }, (_, i) => {
+        const month = i + 1;
+        const salesData = monthlySalesData.find(data => data.month === month);
+        return salesData ? salesData.totalSales : 0;
+    });
+
+    res.render('../views/admin_views/admindash', { totalOrders1, totalSalesAmount: formattedSalesAmount, totalProfitAmount: final, paymentCounts, categoryCounts, monthlySalesArray })
+
+}
+
+
+adminController.getSalesReportPage = async (req, res) => {
+    try {
+        const salesChart = await order.find({ orderStatus: "Delivered" }).populate('userId').populate('products.productId');
+        // console.log('sales delivered', salesChart)
+        res.render('../views/admin_views/salesreport', { salesChart })
+    }
+    catch (error) {
+        console.log('error at get sales report page');
+        res.send('error')
+    }
+}
+adminController.downloadSalesReport = async (req, res) => {
+    // console.log('coming here');
+    const { startDate, endDate } = req.query
+    try {
+        const salesResult = await order.find({
+            orderStatus: 'Delivered',
+            orderDate: { $gte: startDate, $lte: endDate },
+        })
+        //   .populate('userId').populate('products.productId');
+
+        const data = salesResult.map((order) => ({
+            date: order.orderDate.toISOString().substring(0, 10),
+            orderId: order._id,
+            username: order.address.FullName,
+            paymentMethod: order.paymentMethod,
+            totalAmount: order.totalprice,
+        }));
+        console.log('dajhdiufh',data);
+        res.json(data);
+    }
+    catch (error) {
+        console.log('Error at download sales report', error);
+        res.send('Error at downloading sales report')
+    }
+
+
 
 }
 

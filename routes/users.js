@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const usercontroller = require('../controller/usercontroller');
+const userSession=  require('../middleware/usermiddleware')
 
 
 router.get('/', usercontroller.getGuestHome)
@@ -22,33 +23,33 @@ router.post('/otpverify',usercontroller.postVerifyOTP)
 router.get('/resubmitpassword',usercontroller.getSubmitPass)
 router.post('/resubmitpassword', usercontroller.postSubmitPass)
 
-router.get('/userhome',usercontroller.gethome)
-router.get ('/profile', usercontroller.getprofile)
+router.get('/userhome',usercontroller.gethome);
+router.get ('/profile',userSession ,usercontroller.getprofile)
 
-router.get ('/profile/changepassword', usercontroller.getChangePassProfile)
-router.post('/change-password', usercontroller.postProfileChangePass)
-router.post ('/profile/edit-profile', usercontroller.editBasicProfile)
-router.post ('/profile/addaddress', usercontroller.postAddAddress)
-router.post ('/profile/editaddress', usercontroller.postEditAddress)
-router.delete ('/profile/delete/:addressID', usercontroller.deleteUserAddress)
-router.get('/wallet', usercontroller.getWalletTRans)
-router.get('/cart', usercontroller.getCart)
-router.put('/cart/update/:productId', usercontroller.updateCartItem);
-router.delete('/cart/remove/:productId', usercontroller.deleteItemsCart)
-router.post ('/cart', usercontroller.addToCart)
-router.post ('/cart/add', usercontroller.addtoCartProductpage)
-router.post('/cart/apply_coupon', usercontroller.postApplyCoupon)
-router.post ('/cart/addaddress', usercontroller.postAddressCart)
+router.get ('/profile/changepassword',userSession , usercontroller.getChangePassProfile)
+router.post('/change-password',userSession , usercontroller.postProfileChangePass)
+router.post ('/profile/edit-profile' ,userSession , usercontroller.editBasicProfile)
+router.post ('/profile/addaddress',userSession , usercontroller.postAddAddress)
+router.post ('/profile/editaddress',userSession , usercontroller.postEditAddress)
+router.delete ('/profile/delete/:addressID',userSession , usercontroller.deleteUserAddress)
+router.get('/wallet',userSession , usercontroller.getWalletTRans)
+router.get('/cart',userSession , usercontroller.getCart)
+router.put('/cart/update/:productId',userSession , usercontroller.updateCartItem);
+router.delete('/cart/remove/:productId',userSession , usercontroller.deleteItemsCart)
+router.post ('/cart',userSession , usercontroller.addToCart)
+router.post ('/cart/add',userSession , usercontroller.addtoCartProductpage)
+router.post('/cart/apply_coupon',userSession , usercontroller.postApplyCoupon)
+router.post ('/cart/addaddress',userSession , usercontroller.postAddressCart)
 
-router.post ('/wishlist/add/:productId', usercontroller.addToWishlistIndividual)
+router.post ('/wishlist/add/:productId',userSession , usercontroller.addToWishlistIndividual)
 
-router.get ('/orders', usercontroller.getOrders)
-router.get('/orders/details/:orderId', usercontroller.getOrderDetails)
-router.post ('/orders/cancel/:orderId', usercontroller.cancelOrder)
-router.post('/orders/return/:orderId', usercontroller.returnOrder)
+router.get ('/orders',userSession , usercontroller.getOrders)
+router.get('/orders/details/:orderId',userSession , usercontroller.getOrderDetails)
+router.post ('/orders/cancel/:orderId',userSession , usercontroller.cancelOrder)
+router.post('/orders/return/:orderId',userSession, usercontroller.returnOrder)
 
-router.get ('/wishlist', usercontroller.getWishlist)
-router.delete ('/wishlist/remove/:productId', usercontroller.deleteItemsfromWishlist)
+router.get ('/wishlist',userSession, usercontroller.getWishlist)
+router.delete ('/wishlist/remove/:productId',userSession, usercontroller.deleteItemsfromWishlist)
 router.get('/products', usercontroller.getProducts)
 router.get('/products/filter', usercontroller.applyFilter)
 router.post('/products/search', usercontroller.postSearchfilter)
@@ -56,10 +57,10 @@ router.get('/category/:categoryId', usercontroller.getCategoryFilter)
 
 router.get('/product/:productId', usercontroller.getIndividualProduct)
 
-router.get('/cart/placeorder', usercontroller.getPlaceOrder)
-router.post('/cart/placeorder/submit', usercontroller.postFinalOrderPlacing)
-router.post('/orderOnline',usercontroller.postOnlinePurchase)
-router.get('/afterorder', usercontroller.getAfterCheckout)
+router.get('/cart/placeorder',userSession, usercontroller.getPlaceOrder)
+router.post('/cart/placeorder/submit',userSession, usercontroller.postFinalOrderPlacing)
+router.post('/orderOnline',userSession,usercontroller.postOnlinePurchase)
+router.get('/afterorder',userSession, usercontroller.getAfterCheckout)
 
 
 
