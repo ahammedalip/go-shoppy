@@ -355,7 +355,7 @@ usercontroller.getIndividualProduct = async (req, res) => {
     }
     catch (error) {
         console.log('Error at individual product page:_________________________', error);
-        res.send('Error at individual page')
+        res.render('../views/user_views/productnotfound',{user:false})
     }
 }
 
