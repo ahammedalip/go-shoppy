@@ -23,61 +23,64 @@
 
 
                                     <% cartProducts.forEach((item, index)=> { %>
-                                       
-                                            <div>
+
+                                        <div>
 
 
-                                                <td class="product-info" style="vertical-align: middle;"><img
-                                                        style="width: 80px; height: 80px; border: 1px solid rgb(223, 219, 219); border-radius: 5px;"
-                                                        src="/uploads/<%= item.productId.images[0] %>"
-                                                        alt="<%= item.productId.productName %>">
-                                                    <%= item.productId.productName %>
-                                                </td>
-                                                <% if(item.productId.offer){ %>
-                                                    <td style="color: rgb(79, 174, 88); vertical-align: middle;">Offer price ₹ <span
-                                                        class="unit-price">
+                                            <td class="product-info" style="vertical-align: middle;"><img
+                                                    style="width: 80px; height: 80px; border: 1px solid rgb(223, 219, 219); border-radius: 5px;"
+                                                    src="/uploads/<%= item.productId.images[0] %>"
+                                                    alt="<%= item.productId.productName %>">
+                                                <%= item.productId.productName %>
+                                            </td>
+                                            <% if(item.productId.offer){ %>
+                                                <td style="color: rgb(79, 174, 88); vertical-align: middle;">Offer price
+                                                    ₹ <span class="unit-price">
                                                         <%= item.productId.offerPrice %>
                                                     </span>/per unit</td>
-                                               <% }else{%>
-                                                <td style="color: rgb(125, 125, 125); vertical-align: middle;">₹ <span
-                                                    class="unit-price">
-                                                    <%= item.productId.price %>
-                                                </span>/per unit</td>
-                                             <%  } %>
-                                                 
-                                                <td class="quantity" style="vertical-align: middle;">
-                                                    <button class="btn btn-warning btn-sm decrement"
-                                                        data-index="<%= index %>"
-                                                        data-product="<%= item._id %>">-</button>
-                                                    <input type="hidden" class="cart-quantity" data-index="<%= index %>"
-                                                        data-product="<%= item._id %>" value="<%= item.quantity %>">
-                                                    <span data-index="<%= index %>" data-product="<%= item._id %>">
-                                                        <%= item.quantity %>
-                                                    </span>
-                                                    <button class="btn btn-warning btn-sm increment"
-                                                        data-index="<%= index %>"
-                                                        data-product="<%= item._id %>">+</button>
-                                                </td>
-                                              
-                                                <td style="vertical-align: middle;" data-total="<%= item.total %>"
-                                                    data-product="<%= item._id %>" class="total-price">
-                                                    <span>Total Price: ₹ <%= item.total %></span>
-                                                </td>
-                                                
-                                                <td style="vertical-align: middle;">
-                                                    <div>
-                                                        <button class="btn btn-sm remove-item"
-                                                            data-product="<%= item._id %>">Remove</button>
-                                                    </div>
-                                                    <!-- <div>
+                                                <% }else{%>
+                                                    <td style="color: rgb(125, 125, 125); vertical-align: middle;">₹
+                                                        <span class="unit-price">
+                                                            <%= item.productId.price %>
+                                                        </span>/per unit</td>
+                                                    <% } %>
+
+                                                        <td class="quantity" style="vertical-align: middle;">
+                                                            <button class="btn btn-warning btn-sm decrement"
+                                                                data-index="<%= index %>"
+                                                                data-product="<%= item._id %>">-</button>
+                                                            <input type="hidden" class="cart-quantity"
+                                                                data-index="<%= index %>" data-product="<%= item._id %>"
+                                                                value="<%= item.quantity %>">
+                                                            <span data-index="<%= index %>"
+                                                                data-product="<%= item._id %>">
+                                                                <%= item.quantity %>
+                                                            </span>
+                                                            <button class="btn btn-warning btn-sm increment"
+                                                                data-index="<%= index %>"
+                                                                data-product="<%= item._id %>">+</button>
+                                                        </td>
+
+                                                        <td style="vertical-align: middle;"
+                                                            data-total="<%= item.total %>"
+                                                            data-product="<%= item._id %>" class="total-price">
+                                                            <span>Total Price: ₹ <%= item.total %></span>
+                                                        </td>
+
+                                                        <td style="vertical-align: middle;">
+                                                            <div>
+                                                                <button class="btn btn-sm remove-item"
+                                                                    data-product="<%= item._id %>">Remove</button>
+                                                            </div>
+                                                            <!-- <div>
                                         <a href="#"><i class='bx bx-heart' style="font-size: 30px; color: rgb(188, 80, 80);"></i></a>
                                     </div> -->
 
-                                                </td>
+                                                        </td>
 
 
-                                        </tr>
-                                        <% }); %>
+                                                        </tr>
+                                                        <% }); %>
 
                             </table>
                         </div>
@@ -98,11 +101,11 @@
 
                                     <input style="width: 200px; padding: 10px;" type="text" class="form-control"
                                         id="couponCode" name="couponCode" required>
-                                    <button type="submit" class="btn btn-primary">Apply</button>
+                                    <button type="submit" id="couponApplyButton" class="btn btn-primary">Apply</button>
                             </form>
-                            
+
                         </div>
-                        
+
 
                     </div>
                     <br>
@@ -286,7 +289,6 @@
                         });
                     });
 
-
                     // Add event listeners to all decrement buttons
                     decrementButtons.forEach((button, index) => {
                         button.addEventListener('click', () => {
@@ -378,6 +380,7 @@
                     function applyCoupon() {
                         // Get the coupon code from the input field
                         const couponCode = document.getElementById('couponCode').value;
+                        const couponApplyButton = document.getElementById('couponApplyButton');
 
                         fetch('/cart/apply_coupon', {
                             method: 'POST',
@@ -406,6 +409,8 @@
 
                                     document.getElementById('discountedTotal').textContent = ` ${disco.toFixed(2)}`;
                                     document.getElementById('couponGrandTotal').textContent = ` ${couponGrandtotal.toFixed(2)}`;
+                                    // Disable the coupon apply button
+                                    couponApplyButton.disabled = true;
 
                                 } else {
                                     // Handle errors here if needed

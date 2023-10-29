@@ -2,11 +2,9 @@
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const { Parser } = require('json2csv');
-
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-
 
 const adminSignup = require('../model/adminModel')
 const ProductCategory = require('../model/categorymodel')
@@ -17,13 +15,8 @@ const userSignup = require('../model/usermodel');
 const coupon = require('../model/couponModel');
 
 
-
-
 const adminController = {}
 
-
-
-// Set up multer storage and options
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'public/uploads/');
@@ -36,10 +29,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-
-
 adminController.getAdminlogin = (req, res) => {
-
     try {
         if (req.session.adminId) {
             res.redirect('/admin/dash')
@@ -50,8 +40,6 @@ adminController.getAdminlogin = (req, res) => {
         console.log('Error at get admin login', error);
         res.status(500).send('Error')
     }
-
-
 }
 
 adminController.postAdminLogin = async (req, res) => {
@@ -67,7 +55,6 @@ adminController.postAdminLogin = async (req, res) => {
             res.redirect('/admin/dash')
         } else if (adminverify.password !== req.body.password) {
             res.render('../views/admin_views/adminlogin', { message: "Password is wrong!" })
-
         }
 
     } catch (err) {
@@ -76,17 +63,12 @@ adminController.postAdminLogin = async (req, res) => {
     }
 }
 
-
-
-
-// code for block and unblock with db update
 adminController.toggleBlockStatus = async (req, res) => {
     try {
         const user = await userModel.findById(req.params.userId);
         if (!user) {
             return res.status(404).send('User not found');
         }
-
         user.isBlocked = !user.isBlocked;
         await user.save();
 
@@ -98,7 +80,7 @@ adminController.toggleBlockStatus = async (req, res) => {
 };
 
 adminController.getAdminDash = async (req, res) => {
-    // number of products
+
     const pipeline1 = [
         {
             $match: {
@@ -115,7 +97,6 @@ adminController.getAdminDash = async (req, res) => {
     const result1 = await order.aggregate(pipeline1);
     const totalOrders1 = result1[0] ? result1[0].totalOrders1 : 0;
 
-    // total selling price
     const pipeline2 = [
         {
             $match: {
@@ -175,9 +156,7 @@ adminController.getAdminDash = async (req, res) => {
     ];
     const totalProfit4 = await order.aggregate(pipeline4);
 
-    console.log('Total Purchase Price:', totalProfit4[0].totalPurchasePrice);
     const final = totalSalesAmount - totalProfit4[0].totalPurchasePrice
-    // console.log('final profit', final);
 
     const pipeline = [
         {
@@ -226,7 +205,6 @@ adminController.getAdminDash = async (req, res) => {
     const totalRevenueResult = await order.aggregate(pipeline);
     const totalRevenue = totalRevenueResult[0] ? totalRevenueResult[0].totalRevenue : 0;
 
-
     const pipeline5 = [{
         $match: {
             orderStatus: "Delivered"
@@ -241,7 +219,6 @@ adminController.getAdminDash = async (req, res) => {
     ];
 
     const paymentCounts = await order.aggregate(pipeline5).exec();
-    // console.log('payment count', paymentCounts);
 
     const pipeline6 = [
         {
@@ -304,17 +281,14 @@ adminController.getAdminDash = async (req, res) => {
             }
         }
     ]
-    const monthlySalesData = await order.aggregate(pipeline7).exec()
-    console.log('monthly sales', monthlySalesData);
 
+    const monthlySalesData = await order.aggregate(pipeline7).exec()
     const monthlySalesArray = Array.from({ length: 12 }, (_, i) => {
         const month = i + 1;
         const salesData = monthlySalesData.find(data => data.month === month);
         return salesData ? salesData.totalSales : 0;
     });
-
     res.render('../views/admin_views/admindash', { totalOrders1, totalSalesAmount: formattedSalesAmount, totalProfitAmount: final, paymentCounts, categoryCounts, monthlySalesArray })
-
 }
 
 
@@ -329,8 +303,8 @@ adminController.getSalesReportPage = async (req, res) => {
         res.send('error')
     }
 }
+
 adminController.downloadSalesReport = async (req, res) => {
-    // console.log('coming here');
     const { startDate, endDate } = req.query
     try {
         const salesResult = await order.find({
@@ -353,9 +327,6 @@ adminController.downloadSalesReport = async (req, res) => {
         console.log('Error at download sales report', error);
         res.send('Error at downloading sales report')
     }
-
-
-
 }
 
 adminController.getUserList = async (req, res) => {
@@ -374,7 +345,7 @@ adminController.getCategoryList = async (req, res) => {
         const categoryList = await ProductCategory.find(); // Fetch all categories from the database
         res.render('../views/admin_views/category', { categoryList, errorMessage: false }); // Pass categoryList to the EJS template
     } catch (error) {
-        // console.error(error);
+        console.error(error);
         res.send('Error fetching category list');
     }
 };
@@ -383,11 +354,7 @@ adminController.getCategoryList = async (req, res) => {
 adminController.postAddCategory = async (req, res) => {
     try {
         const { category } = req.body;
-
-        // Create a regular expression to match the category name case-insensitively
         const categoryRegex = new RegExp(`^${category}$`, 'i');
-
-        // Check if the category already exists in the database (case-insensitive check)
         const existingCategory = await ProductCategory.findOne({ categoryName: categoryRegex });
 
         if (existingCategory) {
@@ -396,11 +363,7 @@ adminController.postAddCategory = async (req, res) => {
         }
 
         const newCategory = new ProductCategory({ categoryName: category });
-
-        // console.log(category);
-
         await newCategory.save()
-
         res.redirect('/admin/category')
     } catch (error) {
         console.log(error);
@@ -408,7 +371,6 @@ adminController.postAddCategory = async (req, res) => {
     }
 }
 
-// Display the edit page
 adminController.getEditCategory = async (req, res) => {
     try {
         const category = await ProductCategory.findById(req.params.categoryId);
@@ -419,7 +381,6 @@ adminController.getEditCategory = async (req, res) => {
     }
 };
 
-// Handle form submission to update the category
 adminController.updateCategory = async (req, res) => {
     try {
         const categoryId = req.params.categoryId;
@@ -430,19 +391,11 @@ adminController.updateCategory = async (req, res) => {
             const categoryList = await ProductCategory.find();
             return res.render('../views/admin_views/category', { categoryList, errorMessage: 'Category already exists' });
         }
-
-        // Update the existing category name in the database
         const result = await ProductCategory.updateOne(
             { _id: categoryId },
             { $set: { categoryName: newCategoryName } }
         );
-
-
         res.redirect('/admin/category'); // Redirect back to the category list
-
-        // No document was modified, category ID might not exist
-        // res.status(404).send('Category not found');
-
     } catch (error) {
         console.error(error);
         res.send('Error updating category');
@@ -451,20 +404,13 @@ adminController.updateCategory = async (req, res) => {
 
 adminController.toggleListStatus = async (req, res) => {
     try {
-        // console.log('Toggle List Status called');
-
         const category = await ProductCategory.findById(req.params.categoryId);
-        // console.log('Found category:', category);
-
         if (!category) {
             return res.status(404).send('Category not found');
         }
 
         category.isUnlisted = !category.isUnlisted;
         await category.save();
-        // console.log('Category updated:', category);
-
-
         res.redirect('/admin/category'); // Redirect back to the category list
     } catch (error) {
         console.error(error);
@@ -475,19 +421,15 @@ adminController.toggleListStatus = async (req, res) => {
 adminController.getProduct = async (req, res) => {
     try {
         const productList = await Product.find() // Populate the category field
-
         productList.forEach(product => {
             product.fullImages = product.images.map(image => '/uploads/' + image); // Update the path as per your image storage
         });
-
         res.render('../views/admin_views/product', { productList });
     } catch (error) {
         console.error(error);
         res.send('Error fetching product list');
     }
 }
-
-
 
 adminController.getAddProduct = async (req, res) => {
     try {
@@ -508,8 +450,6 @@ adminController.postAddProduct = [
         try {
             const { productName, purchaseRate, offer, category, price, quantity, additionalInfo, brand, colour } = req.body;
             const uploadedImages = req.files; // Access uploaded files using req.files
-
-            // Fetch the category document using the provided categoryId
             const selectedCategory = await ProductCategory.findOne({ _id: category });
             console.log('offer', offer);
             let offerPrice;
@@ -522,8 +462,6 @@ adminController.postAddProduct = [
             if (!selectedCategory) {
                 return res.send('Selected category not found'); // Handle category not found case
             }
-
-            // Create a new product using the model and form data
             const newProduct = new Product({
                 productName,
                 purchaseRate,
@@ -537,10 +475,7 @@ adminController.postAddProduct = [
                 offerPrice,
                 images: uploadedImages.map(image => image.filename) // Store filenames in the images array
             });
-
-            // Save the product to the database
             await newProduct.save();
-
             res.redirect('/admin/product'); // Redirect after successful addition
         } catch (error) {
             console.error(error);
@@ -555,11 +490,9 @@ adminController.toggleProductStatus = async (req, res) => {
 
     try {
         const productStatus = await Product.findById(req.params.productId)
-
         if (!Product) {
             return res.status(404).send('Category not found');
         }
-
         productStatus.unlisted = !productStatus.unlisted
         await productStatus.save();
         res.redirect('/admin/product')
@@ -567,17 +500,13 @@ adminController.toggleProductStatus = async (req, res) => {
         console.log(error);
         res.status(500).send('error toggling', error)
     }
-
 };
 
 
 adminController.getEditProduct = async (req, res) => {
     try {
         const editProduct = await Product.findById(req.params.productId);
-
-        // Populate fullImages array with image URLs
         editProduct.fullImages = editProduct.images.map(image => '/uploads/' + image); // Update the path as per your image storage
-
         res.render('../views/admin_views/editproduct', { editProduct });
     } catch (err) {
         console.log(err);
@@ -589,9 +518,6 @@ adminController.getEditProduct = async (req, res) => {
 adminController.UpdateProduct = async (req, res) => {
     try {
         const productId = req.params.productId;
-
-        // console.log('prduct id from updateproduct',productId);
-
         const {
             productName,
             purchaseRate,
@@ -610,10 +536,6 @@ adminController.UpdateProduct = async (req, res) => {
         } else {
             offerPrice = 0;
         }
-
-
-
-        // Update the existing category name in the database
         const result = await Product.updateOne(
             { _id: productId },
             {
@@ -630,7 +552,6 @@ adminController.UpdateProduct = async (req, res) => {
                 }
             }
         );
-
         res.redirect('/admin/product');
     } catch (error) {
         console.log('error at updateProduct', error);
@@ -642,21 +563,17 @@ adminController.getTotalOrderList = async (req, res) => {
     try {
         const orderList = await order.find().populate('userId').populate('products.productId')
         const user = await userModel.find()
-        //    console.log('users', user);
-
         res.render('../views/admin_views/totalOrder', { orderList })
     }
     catch (error) {
         console.log('Error at get total orders list ');
         res.status(500).send('Error at getTotalOrderList')
     }
-
 }
 
 adminController.postStatusUpdate = async (req, res) => {
     const { orderId } = req.params;
     const { status } = req.body;
-    // console.log('status----------', req.body);
     try {
         const updatedOrder = await order.findByIdAndUpdate(orderId, { orderStatus: status }, { new: true });
 
@@ -675,7 +592,6 @@ adminController.postStatusUpdate = async (req, res) => {
                     amount: returnToWallet,
                     transactionType: "Credit"
                 }
-
                 await userSignup.findOneAndUpdate(
                     { _id: payuser.userId },
                     {
@@ -683,9 +599,7 @@ adminController.postStatusUpdate = async (req, res) => {
                         $push: { walletTransaction: walletTrans }
                     }
                 );
-
-                // Log the updated wallet amount
-                console.log('Updated Wallet Amount:', updateWallet);
+                // console.log('Updated Wallet Amount:', updateWallet);
             } catch (error) {
                 console.error('Error returning payment to wallet:', error);
                 throw error; // You can choose to rethrow the error or handle it as needed.
@@ -695,15 +609,12 @@ adminController.postStatusUpdate = async (req, res) => {
         if (updatedOrder.paymentMethod === 'WalletPay' && status === 'cancelled') {
             try {
                 await returnPaymentToWallet(orderId)
-
             }
             catch (error) {
                 console.log('Error at payment return in cancelling order at postStatusUpdate', error);
                 res.send('Error at cancelling order')
             }
         }
-
-        // Send a success response
         res.json({ message: 'Order status updated successfully', updatedOrder });
     } catch (error) {
         console.error('Error updating order status:', error);
@@ -713,26 +624,18 @@ adminController.postStatusUpdate = async (req, res) => {
 
 adminController.getCompleteOrderDetails = async (req, res) => {
     try {
-
         const orderId = req.params.orderId;
-        // console.log('order id', orderId);
-
         const ordered = await order.findById(orderId).populate('products.productId')
-        // console.log('complete order details', ordered);
-
         res.render('../views/admin_views/detailedOrderView', { ordered })
     }
     catch (error) {
         console.log('Error at detailed order view', error);
         res.send('Error while fetching Order details')
     }
-
 }
 
 
 adminController.getCoupon = async (req, res) => {
-
-
     const mess = req.query.message;
     if (mess) {
         var message = 'Succesfully added coupon!';
@@ -748,7 +651,6 @@ adminController.getCoupon = async (req, res) => {
                 await couponItem.save(); // Save the updated coupon
             }
         }
-
         res.render('../views/admin_views/coupon.ejs', { message, coupons })
     } catch (error) {
         console.log('error at coupons listing', error);
@@ -800,7 +702,5 @@ adminController.adminLogout = (req, res) => {
         res.redirect('/admin/dash'); // Redirect to dashboard if user was not logged in
     }
 };
-
-
 
 module.exports = adminController

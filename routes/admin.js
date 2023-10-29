@@ -11,7 +11,7 @@ const router = express.Router()
 router.get('/login', adminController.getAdminlogin)
 router.post('/login', adminController.postAdminLogin)
 
-// router.use(requireAdminAuth)
+router.use(requireAdminAuth)
 
 
 router.get('/dash', adminController.getAdminDash)
@@ -50,7 +50,6 @@ router.delete ('/delete_coupon/:couponId', adminController.deleteCoupon)
 
 router.get('/salesreport', adminController.getSalesReportPage)
 router.get('/download-salesReport', adminController.downloadSalesReport);
-// router.get('/downloadreport', adminController.downloadReport)
 
 router.get('/logout', adminController.adminLogout)
 
