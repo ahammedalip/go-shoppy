@@ -112,7 +112,7 @@ adminController.getAdminDash = async (req, res) => {
     ]
     const totalSales = await order.aggregate(pipeline2)
     const totalSalesAmount = totalSales[0] ? totalSales[0].totalSalesAmount : 0;
-    console.log('total sales amount', totalSalesAmount);
+    // console.log('total sales amount', totalSalesAmount);
     const formattedSalesAmount = totalSalesAmount.toLocaleString('en-IN', {
         useGrouping: true,
         minimumFractionDigits: 0,
@@ -249,7 +249,7 @@ adminController.getAdminDash = async (req, res) => {
     ];
 
     const categoryCounts = await order.aggregate(pipeline6).exec();
-    console.log('category count', categoryCounts);
+    // console.log('category count', categoryCounts);
 
     const pipeline7 = [
         {
@@ -320,7 +320,7 @@ adminController.downloadSalesReport = async (req, res) => {
             paymentMethod: order.paymentMethod,
             totalAmount: order.totalprice,
         }));
-        console.log('dajhdiufh',data);
+        // console.log('dajhdiufh',data);
         res.json(data);
     }
     catch (error) {

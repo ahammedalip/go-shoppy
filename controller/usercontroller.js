@@ -360,7 +360,7 @@ usercontroller.getIndividualProduct = async (req, res) => {
 }
 
 usercontroller.applyFilter = async (req, res) => {
-    const min = req.query.min;
+    const min = req.query.min; 
     const max = req.query.max;
     const above = req.query.above;
     try {
@@ -419,7 +419,7 @@ usercontroller.postSearchfilter = async (req, res) =>{
 }
 
 usercontroller.getCart = async (req, res) => {
-    if (req.cookies.user) {
+    
         try {
             const user = await userSignup.findOne({ email: req.cookies.user })
                 .populate({
@@ -451,9 +451,7 @@ usercontroller.getCart = async (req, res) => {
             console.log('error at get cart', error);
             res.send('Error fetching cart');
         }
-    } else {
-        return res.redirect('/login')
-    }
+   
 }
 
 usercontroller.updateCartItem = async (req, res) => {
@@ -579,9 +577,7 @@ usercontroller.postAddressCart = async (req, res) => {
 
 
 usercontroller.addtoCartProductpage = async (req, res) => {
-    if (!req.cookies.user) {
-        return res.redirect('/login');
-    }
+  
     try {
         const user = await userSignup.findOne({ email: req.cookies.user }).populate('cart.productId');
         const productId = req.body.productId; // Get the product ID from the form data
@@ -640,9 +636,7 @@ usercontroller.addToCart = async (req, res) => {
 
 
 usercontroller.addToWishlistIndividual = async (req, res) => {
-    if (!req.cookies.user) {
-        return res.redirect('/login');
-    }
+   
     try {
         const user = await userSignup.findOne({ email: req.cookies.user });
         const productId = req.params.productId;
@@ -666,9 +660,7 @@ usercontroller.addToWishlistIndividual = async (req, res) => {
 
 
 usercontroller.getWishlist = async (req, res) => {
-    if (!req.cookies.user) {
-        return res.redirect('/login');
-    }
+  
     const user = await userSignup.findOne({ email: req.cookies.user })
     const wishlistedItems = await userSignup.findOne({ email: req.cookies.user }).populate('wishlist.productId')
     res.render('../views/user_views/wishlist', { wishlist: wishlistedItems.wishlist, user })
