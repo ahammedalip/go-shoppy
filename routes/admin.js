@@ -5,9 +5,6 @@ const Product = require('../model/productmodel');
 const requireAdminAuth = require ('../middleware/sessionmiddleware')
 const router = express.Router()
 
-
-
-
 router.get('/login', adminController.getAdminlogin)
 router.post('/login', adminController.postAdminLogin)
 
