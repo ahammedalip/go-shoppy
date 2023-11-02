@@ -10,13 +10,10 @@ router.post('/login', adminController.postAdminLogin)
 
 router.use(requireAdminAuth)
 
-
 router.get('/dash', adminController.getAdminDash)
 router.get('/user', adminController.getUserList)
 
 router.post('/toggle-block/:userId', adminController.toggleBlockStatus);
-
-
 
 router.get('/category', adminController.getCategoryList)
 router.post('/category', adminController.postAddCategory)
