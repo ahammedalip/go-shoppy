@@ -311,7 +311,6 @@ adminController.downloadSalesReport = async (req, res) => {
             orderStatus: 'Delivered',
             orderDate: { $gte: startDate, $lte: endDate },
         })
-        //   .populate('userId').populate('products.productId');
 
         const data = salesResult.map((order) => ({
             date: order.orderDate.toISOString().substring(0, 10),
@@ -320,7 +319,7 @@ adminController.downloadSalesReport = async (req, res) => {
             paymentMethod: order.paymentMethod,
             totalAmount: order.totalprice,
         }));
-        // console.log('dajhdiufh',data);
+  
         res.json(data);
     }
     catch (error) {
