@@ -57,7 +57,6 @@ usercontroller.postLoginPage = async (req, res) => {
     if (req.body.password.length < 5) {
         res.render('../views/user_views/userlogin', { errorMessage: 'Password should be minimum 5 characters' });
     }
-
     try {
         const userverify = await userSignup.findOne({ email: req.body.email })
         if (userverify.isBlocked) {
@@ -128,14 +127,16 @@ usercontroller.PostSignup = async (req, res) => {
             subject: 'OTP Verification',
             text: `Your OTP for verification of Go Shoppy is : ${generatedOTP}. 
      Do not share the OTP with anyone.
-     For further details and complaints visit info.goshoppy.com`
+     For further details and complaints visit www.scale.b.online`
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.log(error);
+                res.status(400).json({success: false, message: "Error at sending mail"})
             } else {
                 console.log('Email sent: ' + info.response);
+                
             }
         });
         res.redirect('/verify_otp')
