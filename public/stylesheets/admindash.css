@@ -18,6 +18,7 @@
 }
 .sidebar.active{
   width: 60px;
+  background: #f4f4f4;
 }
 .sidebar .logo-details{
   height: 80px;
@@ -53,7 +54,7 @@
   transition: all 0.4s ease;
 }
 /* .sidebar .nav-links li a.active{
-  background: #88acc2;
+  background: #FBBC05;
   color: black;
 } */
 .sidebar .nav-links li a:hover{
@@ -392,7 +393,7 @@ nav .profile-details img{
 
 /* Responsive Media Query */
 @media (max-width: 1240px) {
-  .sidebar{
+  /* .sidebar{
     width: 60px;
   }
   .sidebar.active{
@@ -414,7 +415,7 @@ nav .profile-details img{
   .sidebar.active ~ .home-section nav{
     width: calc(100% - 220px);
     left: 220px;
-  }
+  } */
 }
 @media (max-width: 1150px) {
   .home-content .sales-boxes{
@@ -460,7 +461,7 @@ nav .profile-details img{
 }
 @media (max-width: 400px) {
   .sidebar{
-    width: 0;
+    width: 100px;
   }
   .sidebar.active{
     width: 60px;
@@ -477,8 +478,8 @@ nav .profile-details img{
     width: 100%;
     left: 0;
   }
-  .sidebar.active ~ .home-section nav{
+  /* .sidebar.active ~ .home-section nav{
     left: 60px;
     width: calc(100% - 60px);
-  }
+  } */
 }
